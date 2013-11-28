@@ -1,7 +1,12 @@
 package de.lukeslog.alarmclock;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.ProtocolException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -52,7 +57,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
     public static String SONG_NAME="";
     public static int timesincewakeup =1000;
     private Thread runner;
-    int[] mediaarray = {R.raw.trance};//, R.raw.ilrr, R.raw.idan, R.raw.hb, R.raw.du, R.raw.cm, R.raw.htbs, R.raw.g};
+    int[] mediaarray = {R.raw.swag};//, R.raw.ilrr, R.raw.idan, R.raw.hb, R.raw.du, R.raw.cm, R.raw.htbs, R.raw.g};
     //int[] mediaarray = {R.raw.tetris};
 
     MediaPlayer mp = new MediaPlayer();
@@ -268,6 +273,25 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		Intent alarm = new Intent(this, Alarm.class);
 		alarm.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		alarm.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+		//Turn on my Coffe machine
+		//http://192.168.1.242/control?cmd=set_state_actuator&number=3&function=1&page=control.html	
+		new Thread(new Runnable()
+		{
+			public void run()
+			{
+				try
+				{
+			        URL oracle = new URL("http://192.168.1.242/control?cmd=set_state_actuator&number=3&function=1&page=control.html");
+			        URLConnection yc = oracle.openConnection();
+			        BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
+					System.out.println("command->heat");
+				}
+				catch(Exception e)
+				{
+					Log.e("HUE", "there was an error when setting the lightbulb");
+				}
+			}
+	 	}).start();
 		startActivity(alarm);
 		//Find an mp3
 		if(RINGTONE)
@@ -364,7 +388,8 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 	        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 	        int station = settings.getInt("radiostation", 0);
 	        Log.d("clock", "Station---------------------"+station);
-	        mp2.setDataSource("http://dradio-ogg-dlf-l.akacast.akamaistream.net/7/629/135496/v1/gnl.akacast.akamaistream.net/dradio_ogg_dlf_l");
+	        try
+	        {
 	        if(station==0)
 	        {
 	        	mp2.setDataSource("http://dradio-ogg-dlf-l.akacast.akamaistream.net/7/629/135496/v1/gnl.akacast.akamaistream.net/dradio_ogg_dlf_l");
@@ -382,12 +407,25 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 	        	//http://sc2.3wk.com/3wk-u-ogg-lo
 	        	mp2.setDataSource("http://sc2.3wk.com/3wk-u-ogg-lo");
 	        }
+	        }
+	        catch(Exception e)
+	        {
+	        	Log.d("clock", "default radio");
+	        	try
+	        	{
+	        	mp2.setDataSource("http://dradio-ogg-dlf-l.akacast.akamaistream.net/7/629/135496/v1/gnl.akacast.akamaistream.net/dradio_ogg_dlf_l");
+	        	}
+	        	catch(Exception ex)
+	        	{
+	        		Log.d("clock", "fuck this");
+	        	}
+	        }
 	    	mp2.setVolume(0.99f, 0.99f);
 	        mp2.setOnPreparedListener(this);
 	        mp2.prepareAsync();
 
 		}
-	    catch (IOException e) 
+	    catch (Exception ee) 
 	    {
 	      	Log.e("Error", "No Stream");
 	    }
@@ -399,6 +437,24 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		{
 			timesincewakeup=0;
 			lightshow=false;
+    		new Thread(new Runnable()
+    		{
+    			public void run()
+    			{
+    				try
+    				{
+    			        URL oracle = new URL("http://192.168.1.242/control?cmd=set_state_actuator&number=2&function=1&page=control.html");
+    			        URLConnection yc = oracle.openConnection();
+    			        BufferedReader in = new BufferedReader(new InputStreamReader(
+    			                                yc.getInputStream()));
+    					Log.d("clock", "command->heat");
+    				}
+    				catch(Exception e)
+    				{
+    					Log.e("HUE", "there was an error when setting the lightbulb");
+    				}
+    			}
+    	 	}).start();
 			mp.stop();
 			mp.release();
 		}
@@ -516,6 +572,28 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    }
 		    if(active)
 		    {
+		    	if((getAlarmHour()==(getHour()+2) && getAlarmMinute()==getMinute()))
+		    	{
+		    		//Turn on the heat
+		    		new Thread(new Runnable()
+		    		{
+		    			public void run()
+		    			{
+		    				try
+		    				{
+						        URL oracle = new URL("http://192.168.1.242/control?cmd=set_state_actuator&number=2&function=4&page=control.html");
+						        URLConnection yc = oracle.openConnection();
+						        BufferedReader in = new BufferedReader(new InputStreamReader(
+						                                yc.getInputStream()));
+								Log.d("clock", "command->heat");
+		    				}
+		    				catch(Exception e)
+		    				{
+		    					Log.e("HUE", "there was an error when setting the lightbulb");
+		    				}
+		    			}
+		    	 	}).start();
+		    	}
 		    	if((getAlarmHour()==getHour() && getAlarmMinute()==getMinute() && newalert) || snoozetime==0)
 		    	{
 		    		snoozetime=-1;
@@ -567,6 +645,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    	Log.i("clock", "rtime="+rtime);
 		    	Log.i("clock", "getHour()"+getHour());
 		    	Log.i("clock", "alarm,Minute()="+getAlarmMinute());
+		    	
 		    	if(getMinute()==getAlarmMinute() && rtime==getHour() && reminder)
 		    	{
 		    		Date d = new Date();
@@ -919,7 +998,32 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 
 	public void radioOff() 
 	{
-		mp2.stop();
-		mp2.release();
+		new Thread(new Runnable()
+		{
+			public void run()
+			{
+				try
+				{
+					 URL oracle = new URL("http://192.168.1.242/control?cmd=set_state_actuator&number=2&function=1&page=control.html");
+				     URLConnection yc = oracle.openConnection();
+				     BufferedReader in = new BufferedReader(new InputStreamReader(
+				                                yc.getInputStream()));
+					Log.d("clock", "command->heat");
+				}
+				catch(Exception e)
+				{
+					Log.e("HUE", "there was an error when setting the lightbulb");
+				}
+			}
+	 	}).start();
+		try
+		{
+			mp2.stop();
+			mp2.release();
+		}
+		catch(Exception e)
+		{
+			
+		}
 	}
 }
