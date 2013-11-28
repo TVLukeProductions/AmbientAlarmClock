@@ -443,7 +443,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
     			{
     				try
     				{
-    			        URL oracle = new URL("http://192.168.1.242/control?cmd=set_state_actuator&number=2&function=1&page=control.html");
+    			        URL oracle = new URL("http://192.168.1.242/control?cmd=set_state_actuator&number=1&function=1&page=control.html");
     			        URLConnection yc = oracle.openConnection();
     			        BufferedReader in = new BufferedReader(new InputStreamReader(
     			                                yc.getInputStream()));
@@ -581,7 +581,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    			{
 		    				try
 		    				{
-						        URL oracle = new URL("http://192.168.1.242/control?cmd=set_state_actuator&number=2&function=4&page=control.html");
+						        URL oracle = new URL("http://192.168.1.242/control?cmd=set_state_actuator&number=1&function=4&page=control.html");
 						        URLConnection yc = oracle.openConnection();
 						        BufferedReader in = new BufferedReader(new InputStreamReader(
 						                                yc.getInputStream()));
@@ -1004,7 +1004,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 			{
 				try
 				{
-					 URL oracle = new URL("http://192.168.1.242/control?cmd=set_state_actuator&number=2&function=1&page=control.html");
+					 URL oracle = new URL("http://192.168.1.242/control?cmd=set_state_actuator&number=1&function=1&page=control.html");
 				     URLConnection yc = oracle.openConnection();
 				     BufferedReader in = new BufferedReader(new InputStreamReader(
 				                                yc.getInputStream()));
