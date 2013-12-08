@@ -237,9 +237,6 @@ public class AlarmClockActivity extends Activity
             case R.id.text1:    final Intent intent = new Intent(this, Settings.class);
             					startActivity(intent);
                                 break;
-            case R.id.text3:    final Intent intent3 = new Intent(this, SoundSettings.class);
-								startActivity(intent3);
-								break;
         }
         return true;
     }

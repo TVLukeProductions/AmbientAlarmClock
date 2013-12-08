@@ -12,6 +12,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.farng.mp3.MP3File;
+import org.farng.mp3.TagException;
+import org.farng.mp3.id3.ID3v1;
+
 import de.jaetzold.philips.hue.ColorHelper;
 import de.jaetzold.philips.hue.HueBridge;
 import de.jaetzold.philips.hue.HueLightBulb;
@@ -166,6 +170,123 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 	    return active;
 	}
 	
+	private void scrobble(final String artist, final String song)
+	{
+	    new Thread(new Runnable() 
+    	{
+    	    public void run() 
+    	    {
+				SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+			    String lastfmusername = settings.getString("lastfmusername", "");
+			    String lastfmpassword = settings.getString("lastfmpassword", "");
+				if(!lastfmusername.equals(""))
+				{
+					Session session=null;
+					try
+					{
+						Caller.getInstance().setCache(null);
+						session = Authenticator.getMobileSession(lastfmusername, lastfmpassword, LastFMConstants.key, LastFMConstants.secret);
+					}
+					catch(Exception e)
+					{
+						Log.e("clock", e.getMessage());
+					}
+					if(session!=null)
+					{
+						int now = (int) (System.currentTimeMillis() / 1000);
+						ScrobbleResult result = Track.updateNowPlaying(artist, song, session);
+						result = Track.scrobble(artist, song, now, session);
+					}
+				}
+    	    }
+    	}).start();
+	}
+	
+	private void goplaymp3()
+	{
+		boolean mExternalStorageAvailable = false;
+		boolean mExternalStorageWriteable = false;
+		String state = Environment.getExternalStorageState();
+
+		if (Environment.MEDIA_MOUNTED.equals(state)) 
+		{
+		    // We can read and write the media
+		    mExternalStorageAvailable = mExternalStorageWriteable = true;
+		} 
+		else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+		    // We can only read the media
+		    mExternalStorageAvailable = true;
+		    mExternalStorageWriteable = false;
+		} 
+		else 
+		{
+		    // Something else is wrong. It may be one of many other states, but all we need
+		    //  to know is we can neither read nor write
+		    mExternalStorageAvailable = mExternalStorageWriteable = false;
+		}
+		if( mExternalStorageAvailable)
+		{
+			Log.i("clock", Environment.getExternalStorageState());
+			File filesystem = Environment.getExternalStorageDirectory();
+			String path = filesystem.getAbsolutePath();
+			File[] filelist = filesystem.listFiles();
+			Log.i("clock", SONG_NAME);
+			for(int i=0; i<filelist.length; i++)
+			{
+				//Log.i("clock", filelist[i].getName());
+				if(filelist[i].getName().equals("WakeUpSongs"))
+				{
+					File[] filelist2 = filelist[i].listFiles();
+					randomsongnumber = (int) (Math.random() * (filelist2.length-1));
+					String musicpath = filelist2[randomsongnumber].getAbsolutePath();
+					File f = new File(musicpath);
+					try 
+					{
+						MP3File mp3 = new MP3File(f);
+						ID3v1 id3 = mp3.getID3v1Tag();
+						String artist = id3.getArtist();
+						Log.d("clock", "----------->ARTIST:"+artist);
+						String song = id3.getSongTitle();
+						Log.d("clock", "----------->SONG:"+song);
+						scrobble(artist, song);
+					} 
+					catch (IOException e1) 
+					{
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} 
+					catch (TagException e1) 
+					{
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					try 
+					{
+						mp = new MediaPlayer();
+						mp.setScreenOnWhilePlaying(true);
+						mp.setDataSource(musicpath);
+						mp.setLooping(false);
+				        mp.setVolume(0.99f, 0.99f);
+				        mp.setOnPreparedListener(this);
+				        mp.prepareAsync();
+					} 
+					catch (IllegalArgumentException e) 
+					{
+						e.printStackTrace();
+					} 
+					catch (IllegalStateException e) 
+					{
+						e.printStackTrace();
+					} 
+					catch (IOException e) 
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+	
 	private void goplay()
 	{
 		randomsongnumber = (int) (Math.random() * (mediaarray.length-1));
@@ -174,7 +295,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
     	    public void run() 
     	    {
     		    SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-/**    		    String lastfmusername = settings.getString("lastfmusername", "");
+    		    String lastfmusername = settings.getString("lastfmusername", "");
     		    String lastfmpassword = settings.getString("lastfmpassword", "");
 				if(!lastfmusername.equals(""))
 				{
@@ -191,7 +312,17 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 					if(session!=null)
 					{
 						int now = (int) (System.currentTimeMillis() / 1000);
-						if(mediaarray[randomsongnumber]==R.raw.surf)
+						if(mediaarray[randomsongnumber]==R.raw.swag)
+						{
+							ScrobbleResult result = Track.updateNowPlaying("Untertagen", "Dreh den (Indie-)SWAG auf!", session);
+							result = Track.scrobble("Untertagen", "Dreh den (Indie-)SWAG auf!", now, session);
+						}
+						if(mediaarray[randomsongnumber]==R.raw.trance)
+						{
+							ScrobbleResult result = Track.updateNowPlaying("Kansas Beat Guru Lies", "TranceIstIon", session);
+							result = Track.scrobble("Kansas Beat Guru Lies", "TranceIstIon", now, session);
+						}
+						/**if(mediaarray[randomsongnumber]==R.raw.surf)
 						{
 							ScrobbleResult result = Track.updateNowPlaying("Surf Rider", "The Lively Ones", session);
 							result = Track.scrobble("Surf Rider", "The Lively Ones", now, session);
@@ -245,9 +376,9 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 						{
 							ScrobbleResult result = Track.updateNowPlaying("Fugees", "Ready Or Not", session);
 							result = Track.scrobble("Fugees", "Ready Or Not", now, session);
-						}
+						}**/
 					}
-				}**/
+				}
     	    }
     	}).start();
 		mp = new MediaPlayer();
@@ -273,35 +404,18 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		Intent alarm = new Intent(this, Alarm.class);
 		alarm.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		alarm.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-		//Turn on my Coffe machine
-		//http://192.168.1.242/control?cmd=set_state_actuator&number=3&function=1&page=control.html	
-		new Thread(new Runnable()
-		{
-			public void run()
-			{
-				try
-				{
-			        URL oracle = new URL("http://192.168.1.242/control?cmd=set_state_actuator&number=3&function=1&page=control.html");
-			        URLConnection yc = oracle.openConnection();
-			        BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
-					System.out.println("command->heat");
-				}
-				catch(Exception e)
-				{
-					Log.e("HUE", "there was an error when setting the lightbulb");
-				}
-			}
-	 	}).start();
 		startActivity(alarm);
 		//Find an mp3
 		if(RINGTONE)
 		{
-			goplay();
+			goplaymp3();
+			//goplay();
 			//startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse("http://www.youtube.com/watch?v=Hxy8BZGQ5Jo")).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 		}
 		else
 		{
-			boolean mExternalStorageAvailable = false;
+			goplaymp3();
+			/**boolean mExternalStorageAvailable = false;
 			boolean mExternalStorageWriteable = false;
 			String state = Environment.getExternalStorageState();
 
@@ -367,13 +481,13 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 						}
 					}
 				}
-			}
+			}**/
 		}
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		boolean radio = settings.getBoolean("radio", true);
 		if(radio)
 		{
-			
+			turnOnRadio();
 		}
 	}
 	
@@ -532,6 +646,15 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 	@Override
 	public void onPrepared(MediaPlayer mpx) 
 	{
+		mpx.setOnCompletionListener(new OnCompletionListener(){
+
+			@Override
+			public void onCompletion(MediaPlayer mpx) 
+			{
+				goplaymp3();
+			}
+			
+		});
 		mpx.start();
 	}
 	
@@ -572,6 +695,43 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    }
 		    if(active)
 		    {
+		    	boolean turnoncoffee=false;
+		    	if(getAlarmMinute()>4)
+		    	{
+		    		if((getAlarmHour()==(getHour()) && (getAlarmMinute()-5)==getMinute()))
+			    	{
+		    			turnoncoffee=true;
+			    	}
+		    	}
+		    	else
+		    	{
+		    		if((getAlarmHour()==(getHour()-1) && (getAlarmMinute()+55)==getMinute()))
+			    	{
+		    			turnoncoffee=true;
+			    	}
+		    	}
+		    	if(turnoncoffee)
+		    	{
+		    		//Turn on my Coffe machine
+		    		//http://192.168.1.242/control?cmd=set_state_actuator&number=3&function=1&page=control.html	
+		    		new Thread(new Runnable()
+		    		{
+		    			public void run()
+		    			{
+		    				try
+		    				{
+		    			        URL oracle = new URL("http://192.168.1.242/control?cmd=set_state_actuator&number=3&function=1&page=control.html");
+		    			        URLConnection yc = oracle.openConnection();
+		    			        BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
+		    					System.out.println("command->heat");
+		    				}
+		    				catch(Exception e)
+		    				{
+		    					Log.e("HUE", "there was an error when setting the lightbulb");
+		    				}
+		    			}
+		    	 	}).start();
+		    	}
 		    	if((getAlarmHour()==(getHour()+2) && getAlarmMinute()==getMinute()))
 		    	{
 		    		//Turn on the heat
@@ -648,6 +808,24 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    	
 		    	if(getMinute()==getAlarmMinute() && rtime==getHour() && reminder)
 		    	{
+		    		//TURN OFF COFFE MACHINE
+		    		new Thread(new Runnable()
+		    		{
+		    			public void run()
+		    			{
+		    				try
+		    				{
+		    			        URL oracle = new URL("http://192.168.1.242/control?cmd=set_state_actuator&number=3&function=2&page=control.html");
+		    			        URLConnection yc = oracle.openConnection();
+		    			        BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
+		    					System.out.println("command->heat");
+		    				}
+		    				catch(Exception e)
+		    				{
+		    					Log.e("LOL", "there was an error when setting the PLUG");
+		    				}
+		    			}
+		    	 	}).start();
 		    		Date d = new Date();
 		    		if(d.getSeconds()<5)
 		    		{

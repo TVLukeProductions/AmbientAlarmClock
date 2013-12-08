@@ -131,7 +131,7 @@ public class SoundSettings extends ListActivity
 			File[] filelist = filesystem.listFiles();
 			for(int i=0; i<filelist.length; i++)
 			{
-				if(filelist[i].getName().equals("Music"))
+				if(filelist[i].getName().equals("WakeUpSongs"))
 				{
 					File[] filelist2 = filelist[i].listFiles();
 					for(int j=0; j<filelist2.length; j++)

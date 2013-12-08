@@ -29,7 +29,7 @@ public class Alarm extends Activity
     ClockService mService;
     boolean mBound = false;
     public static final String PREFS_NAME = "TwentyEightClock";
-    boolean pureradio = false;
+    static boolean pureradio = false;
     WakeLock wakeLock;
     
     /** Called when the activity is first created. */

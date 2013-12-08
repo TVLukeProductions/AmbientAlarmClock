@@ -52,12 +52,12 @@ public class Settings extends Activity
 			String gmailaccString= settings.getString("gmailacc", "");
 		    String gmailpswString= settings.getString("gmailpsw", "");
 		    
-		    //CheckBox radioCheckBox = (CheckBox) findViewById(R.id.radioCheckBox);
+		    CheckBox radioCheckBox = (CheckBox) findViewById(R.id.checkBox_radio);
 		    CheckBox fadeInCheckBox = (CheckBox) findViewById(R.id.fadeInCheckBox);
 		    connectbar = (ProgressBar) findViewById(R.id.progressBar1);
 		    connectbutton = (Button) findViewById(R.id.findhue);
 		    text = (TextView) findViewById(R.id.textView4);
-		    //radioCheckBox.setChecked(radio);
+		    radioCheckBox.setChecked(radio);
 		    fadeInCheckBox.setChecked(fadein);
 		    
 		    final TextView lastfmusernamefield = (TextView) findViewById(R.id.lastfm);
@@ -114,7 +114,7 @@ public class Settings extends Activity
 					SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 	            	Editor edit = settings.edit();
 
-	    		    //CheckBox radioCheckBox = (CheckBox) findViewById(R.id.radioCheckBox);
+	    		    CheckBox radioCheckBox = (CheckBox) findViewById(R.id.checkBox_radio);
 	    		    CheckBox fadeInCheckBox = (CheckBox) findViewById(R.id.fadeInCheckBox);
 	    		    
 	    		    EditText snoozetime = (EditText) findViewById(R.id.snoozetime);
@@ -130,9 +130,32 @@ public class Settings extends Activity
 	    		    edit.putString("gmailacc", gmailacc.getEditableText().toString());
 	    		    edit.putString("gmailpsw", gmailpsw.getEditableText().toString());
 	    		    
-	    		    //edit.putBoolean("radio", radioCheckBox.isChecked());
+	    		    edit.putBoolean("radio", radioCheckBox.isChecked());
 
 	    		    edit.putBoolean("fadein", fadeInCheckBox.isChecked());
+	    		    
+	    		    RadioButton rb0 = (RadioButton) findViewById(R.id.radio0);
+	    		    RadioButton rb1 = (RadioButton) findViewById(R.id.radio1);
+	    		    RadioButton rb2 = (RadioButton) findViewById(R.id.radio2);
+	    		    RadioButton rb3 = (RadioButton) findViewById(R.id.radio3);
+	    		    if(rb0.isChecked())
+	    		    {
+	    		    	edit.putInt("radiostation", 0);
+	    		    }
+	    		    if(rb1.isChecked())
+	    		    {
+	    		    	edit.putInt("radiostation", 1);
+	    		    }
+	    		    if(rb2.isChecked())
+	    		    {
+	    		    	edit.putInt("radiostation", 2);
+	    		    }
+	    		    if(rb3.isChecked())
+	    		    {
+	    		    	edit.putInt("radiostation", 3);
+	    		    }
+	    		    
+	    		    
 	            	edit.commit();
 	            	Settings.this.finish();
 				}
