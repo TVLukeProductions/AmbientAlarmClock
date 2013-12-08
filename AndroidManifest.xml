@@ -21,19 +21,19 @@
         android:label="@string/app_name" >
         <activity
             android:label="@string/app_name"
-            android:name="de.lukeslog.alarmclock.AlarmClockActivity" >
+            android:name="de.lukeslog.alarmclock.main.AlarmClockActivity" >
             <intent-filter >
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="de.lukeslog.alarmclock.Alarm" />
-        <activity android:name="de.lukeslog.alarmclock.Settings" />
-		<activity android:name="de.lukeslog.alarmclock.SoundSettings" />
-       <service android:name="de.lukeslog.alarmclock.ClockService">
+        <activity android:name="de.lukeslog.alarmclock.main.Alarm" />
+        <activity android:name="de.lukeslog.alarmclock.main.Settings" />
+		<activity android:name="de.lukeslog.alarmclock.main.SoundSettings" />
+       <service android:name="de.lukeslog.alarmclock.main.ClockService">
        </service>
-       <receiver android:name="de.lukeslog.alarmclock.ClockService">
+       <receiver android:name="de.lukeslog.alarmclock.main.ClockService">
        <intent-filter>
             <action android:name="android.intent.action.BOOT_COMPLETED"/>
        </intent-filter>

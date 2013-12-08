@@ -1,4 +1,4 @@
-package de.lastfm.stuff;
+package de.lukeslog.alarmclock.lastfm;
 
 public class LastFMConstants {
 

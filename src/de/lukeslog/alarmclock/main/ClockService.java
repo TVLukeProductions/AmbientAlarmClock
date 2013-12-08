@@ -1,4 +1,4 @@
-package de.lukeslog.alarmclock;
+package de.lukeslog.alarmclock.main;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,8 +19,8 @@ import org.farng.mp3.id3.ID3v1;
 import de.jaetzold.philips.hue.ColorHelper;
 import de.jaetzold.philips.hue.HueBridge;
 import de.jaetzold.philips.hue.HueLightBulb;
-import de.lastfm.stuff.LastFMConstants;
 import de.lukeslog.alarmclock.R;
+import de.lukeslog.alarmclock.lastfm.LastFMConstants;
 import de.umass.lastfm.Authenticator;
 import de.umass.lastfm.Caller;
 import de.umass.lastfm.Session;

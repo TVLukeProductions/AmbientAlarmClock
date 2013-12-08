@@ -1,4 +1,4 @@
-package de.lukeslog.alarmclock;
+package de.lukeslog.alarmclock.main;
 
 import java.util.Collection;
 import java.util.List;

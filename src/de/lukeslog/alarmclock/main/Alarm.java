@@ -1,6 +1,6 @@
-package de.lukeslog.alarmclock;
+package de.lukeslog.alarmclock.main;
 
-import de.lukeslog.alarmclock.ClockService.LocalBinder;
+import de.lukeslog.alarmclock.main.ClockService.LocalBinder;
 import de.lukeslog.alarmclock.R;
 import android.app.Activity;
 import android.app.KeyguardManager;
