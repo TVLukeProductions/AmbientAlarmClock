@@ -3,10 +3,13 @@ package de.lukeslog.alarmclock.main;
 import java.util.Collection;
 import java.util.List;
 
+import com.dropbox.sync.android.DbxAccountManager;
+
 import de.jaetzold.philips.hue.ColorHelper;
 import de.jaetzold.philips.hue.HueBridge;
 import de.jaetzold.philips.hue.HueLightBulb;
 import de.lukeslog.alarmclock.R;
+import de.lukeslog.alarmclock.dropbox.DropBoxConstants;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
@@ -33,12 +36,18 @@ public class Settings extends Activity
 	 ProgressBar connectbar;
 	 Button connectbutton;
 	 TextView text;
+	 Activity ctx;
+	 
+	 private static final int REQUEST_LINK_TO_DBX = 0;
+	 
+	 private DbxAccountManager mDbxAcctMgr;
 	 
 	 /** Called when the activity is first created. */
 		public void onCreate(Bundle savedInstanceState) 
 		{
 		    super.onCreate(savedInstanceState);
 		    setContentView(R.layout.settings);
+		    ctx=this;
 		    SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		    boolean radio = settings.getBoolean("radio", true);
 		    //boolean system = settings.getBoolean("system", true);
@@ -47,6 +56,7 @@ public class Settings extends Activity
 		    String lastfmpassword = settings.getString("lastfmpassword", "");
 		    String websiteaddress = settings.getString("websiteaddress", "");
 		    int snoozetime = settings.getInt("snoozetime", 5);
+		    boolean showSnooze = settings.getBoolean("showsnooze", true);
 		    int station = settings.getInt("radiostation", 0);
 		    getAccountInfo();
 			String gmailaccString= settings.getString("gmailacc", "");
@@ -54,11 +64,13 @@ public class Settings extends Activity
 		    
 		    CheckBox radioCheckBox = (CheckBox) findViewById(R.id.checkBox_radio);
 		    CheckBox fadeInCheckBox = (CheckBox) findViewById(R.id.fadeInCheckBox);
+		    CheckBox showSnoozeCheckBox = (CheckBox) findViewById(R.id.showsnooze);
 		    connectbar = (ProgressBar) findViewById(R.id.progressBar1);
 		    connectbutton = (Button) findViewById(R.id.findhue);
 		    text = (TextView) findViewById(R.id.textView4);
 		    radioCheckBox.setChecked(radio);
 		    fadeInCheckBox.setChecked(fadein);
+		    showSnoozeCheckBox.setChecked(showSnooze);
 		    
 		    final TextView lastfmusernamefield = (TextView) findViewById(R.id.lastfm);
 		    lastfmusernamefield.setText(lastfmusername);
@@ -100,9 +112,11 @@ public class Settings extends Activity
 		    	websiteaddressfield.setText(websiteaddress);
 		    }
 		    
-
+		    
+		    
 		    EditText snoozetimeText = (EditText) findViewById(R.id.snoozetime);
 		    snoozetimeText.setText(""+snoozetime);
+		    
 		    
 		    Button settingButton = (Button) findViewById(R.id.settingsave);
 		    settingButton.setOnClickListener(new View.OnClickListener() 
@@ -116,7 +130,9 @@ public class Settings extends Activity
 
 	    		    CheckBox radioCheckBox = (CheckBox) findViewById(R.id.checkBox_radio);
 	    		    CheckBox fadeInCheckBox = (CheckBox) findViewById(R.id.fadeInCheckBox);
+	    		    CheckBox showSnoozeCheckBox = (CheckBox) findViewById(R.id.showsnooze);
 	    		    
+	    		   
 	    		    EditText snoozetime = (EditText) findViewById(R.id.snoozetime);
 	    		    Editable st = snoozetime.getEditableText();
 	    		    String sts = st.toString();
@@ -131,7 +147,7 @@ public class Settings extends Activity
 	    		    edit.putString("gmailpsw", gmailpsw.getEditableText().toString());
 	    		    
 	    		    edit.putBoolean("radio", radioCheckBox.isChecked());
-
+	    		    edit.putBoolean("showsnooze",  showSnoozeCheckBox.isChecked());
 	    		    edit.putBoolean("fadein", fadeInCheckBox.isChecked());
 	    		    
 	    		    RadioButton rb0 = (RadioButton) findViewById(R.id.radio0);
@@ -158,6 +174,31 @@ public class Settings extends Activity
 	    		    
 	            	edit.commit();
 	            	Settings.this.finish();
+				}
+		    	
+	        });
+		    
+		    Button dropboxconnect = (Button) findViewById(R.id.dropboxconnect);
+		    
+		    mDbxAcctMgr = DbxAccountManager.getInstance(getApplicationContext(), DropBoxConstants.appKey, DropBoxConstants.appSecret);
+		    if(mDbxAcctMgr.hasLinkedAccount())
+		    {
+		    	dropboxconnect.setVisibility(View.GONE);
+		    }
+		    else
+		    {
+		    	//TODO: if use dropbox is on.
+		    	mDbxAcctMgr.startLink((Activity)ctx, REQUEST_LINK_TO_DBX);
+		    }
+		    
+		    dropboxconnect.setOnClickListener(new View.OnClickListener() 
+	        {
+
+				@Override
+				public void onClick(View v) 
+				{
+					Log.d("clock", "DROPBOX CONNECT CLICK!");
+					mDbxAcctMgr.startLink((Activity)ctx, REQUEST_LINK_TO_DBX);
 				}
 		    	
 	        });
@@ -312,4 +353,24 @@ public class Settings extends Activity
 			    }
 			}
 		}
+	    
+	   @Override
+	    public void onActivityResult(int requestCode, int resultCode, Intent data) 
+	    {
+	    	Log.d("clock", "activity result");
+	        if (requestCode == REQUEST_LINK_TO_DBX) 
+	        {
+	            if (resultCode == Activity.RESULT_OK) 
+	            {
+	                //doDropboxTest();
+	            } 
+	            else 
+	            {
+	                Log.d("clock", "Link to Dropbox failed or was cancelled.");
+	            }
+	        } else 
+	        {
+	            super.onActivityResult(requestCode, resultCode, data);
+	        }
+	    }
 }

@@ -37,7 +37,7 @@
             <Button
                 android:id="@+id/settingsave"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="93dp"
                 android:text="@string/save" />
 
             <TextView
@@ -53,6 +53,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/fadein" />
+
+            <CheckBox
+                android:id="@+id/showsnooze"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Show Snooze Button" />
 
             <TextView
                 android:id="@+id/textView1"
@@ -96,7 +102,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#FF9955"
-                android:text="Website"
+                android:text="Website on Wake Up"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <TextView
@@ -117,7 +123,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#FF9955"
-                android:text="Google Username"
+                android:text="Google Username (For Reminder Emails via. Google Account)"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <TextView
@@ -159,7 +165,7 @@
                 android:id="@+id/checkBox_radio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Radio" />
+                android:text="Play Radio while Playing Music" />
 
             <RadioGroup
                 android:id="@+id/radioGroup1"
@@ -200,6 +206,12 @@
                 android:text="Last.fm"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
+            <CheckBox
+                android:id="@+id/checkBox_radio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Play Radio while Playing Music" />
+                        
             <TextView
                 android:id="@+id/textView6"
                 android:layout_width="match_parent"
@@ -227,6 +239,65 @@
                 android:ems="10"
                 android:inputType="textPassword" />
 
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FF9955"
+                android:text="Wake Up Sounds"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+            
+           <TextView
+                android:id="@+id/textView6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="All files have to be .mp3 files!"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+      		<CheckBox
+                android:id="@+id/use_local"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Use Local File System" />
+                        
+            <TextView
+                android:id="@+id/textView634231"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Folder Name (has To be Top Level)"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <EditText
+                android:id="@+id/localfolder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10" />
+
+          <CheckBox
+                android:id="@+id/use_local"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Use DropBox" />
+                        
+            <TextView
+                android:id="@+id/textView4534"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Folder Name (has To be Top Level)"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <EditText
+                android:id="@+id/dropboxfolder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10" />
+            
+           <Button
+                android:id="@+id/dropboxconnect"
+                android:layout_width="match_parent"
+                android:layout_height="93dp"
+                android:text="Connect To DropBox" />
+                        
             <TextView
                 android:id="@+id/textView1"
                 android:layout_width="match_parent"

@@ -56,6 +56,7 @@ public class Alarm extends Activity
         webView.getSettings().setJavaScriptEnabled(true);
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         String websiteaddress = settings.getString("websiteaddress", "");
+        boolean showSnooze = settings.getBoolean("showsnooze", true);
         if(websiteaddress.equals(""))
         {
         	webView.loadUrl("http://www.tagesschau.de");
@@ -65,6 +66,10 @@ public class Alarm extends Activity
         	webView.loadUrl(websiteaddress);
         }
         final Button button = (Button) findViewById(R.id.button1);
+        if(!showSnooze)
+        {
+        	button.setVisibility(View.GONE);
+        }
         button.setOnClickListener(new View.OnClickListener() 
         {
             public void onClick(View v)
@@ -126,6 +131,17 @@ public class Alarm extends Activity
         }
     };
     
+  
+  public void onPause()
+  {
+	  super.onPause();
+  		mService.awake();
+  		mService.radioOff();
+  		Alarm.this.finish();
+  		onDestroy();
+	  
+  }
+  
   public void  onDestroy()
   {
 	  super.onDestroy();

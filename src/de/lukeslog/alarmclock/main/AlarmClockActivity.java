@@ -55,6 +55,7 @@ public class AlarmClockActivity extends Activity
 	    boolean active = settings.getBoolean("active", true);
 	    boolean reminder = settings.getBoolean("reminder", false);
 	    boolean sendemail = settings.getBoolean("sendemail", false);
+	    boolean showSnooze = settings.getBoolean("showsnooze", true);
 	    int remindersubtract = settings.getInt("remindersubtract", 8);
 	    String remindertext = settings.getString("remindertext", "");
 	    
@@ -264,7 +265,7 @@ public class AlarmClockActivity extends Activity
     private boolean isCloseToWakeUp()
     {
     	Log.i("clock", ""+ClockService.timesincewakeup);
-    	return ClockService.timesincewakeup<900;
+    	return ClockService.timesincewakeup<5;//TODO: change back to 900;
     }
 	
 }

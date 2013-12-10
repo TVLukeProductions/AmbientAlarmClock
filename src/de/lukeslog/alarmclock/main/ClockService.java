@@ -16,10 +16,21 @@ import org.farng.mp3.MP3File;
 import org.farng.mp3.TagException;
 import org.farng.mp3.id3.ID3v1;
 
+import com.dropbox.sync.android.DbxAccount;
+import com.dropbox.sync.android.DbxAccountManager;
+import com.dropbox.sync.android.DbxDatastore;
+import com.dropbox.sync.android.DbxException;
+import com.dropbox.sync.android.DbxException.Unauthorized;
+import com.dropbox.sync.android.DbxFile;
+import com.dropbox.sync.android.DbxFileSystem;
+import com.dropbox.sync.android.DbxPath;
+import com.dropbox.sync.android.DbxPath.InvalidPathException;
+
 import de.jaetzold.philips.hue.ColorHelper;
 import de.jaetzold.philips.hue.HueBridge;
 import de.jaetzold.philips.hue.HueLightBulb;
 import de.lukeslog.alarmclock.R;
+import de.lukeslog.alarmclock.dropbox.DropBoxConstants;
 import de.lukeslog.alarmclock.lastfm.LastFMConstants;
 import de.umass.lastfm.Authenticator;
 import de.umass.lastfm.Caller;
@@ -61,7 +72,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
     public static String SONG_NAME="";
     public static int timesincewakeup =1000;
     private Thread runner;
-    int[] mediaarray = {R.raw.swag};//, R.raw.ilrr, R.raw.idan, R.raw.hb, R.raw.du, R.raw.cm, R.raw.htbs, R.raw.g};
+    //int[] mediaarray = {R.raw.swag};//, R.raw.ilrr, R.raw.idan, R.raw.hb, R.raw.du, R.raw.cm, R.raw.htbs, R.raw.g};
     //int[] mediaarray = {R.raw.tetris};
 
     MediaPlayer mp = new MediaPlayer();
@@ -73,6 +84,12 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
     List<HueBridge> bridges;
     Collection<HueLightBulb> lights;
     boolean lightshow=true;
+    
+    public static String ezcontrolIP ="";
+    
+    private DbxAccountManager mDbxAcctMgr;
+    private DbxAccount mAccount ;
+    DbxDatastore store;
     
     public class LocalBinder extends Binder 
     {
@@ -121,6 +138,76 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		note.flags|=Notification.FLAG_AUTO_CANCEL;
 		
 		startForeground(1337, note);
+		
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		
+		ezcontrolIP = settings.getString("ezcontrolIP", "");
+		if(ezcontrolIP.equals(""))
+		{
+			ezcontrolIP="192.168.1.242";
+		}
+		
+		new Thread(new Runnable() 
+    	{
+    	    public void run() 
+    	    {
+				mDbxAcctMgr = DbxAccountManager.getInstance(getApplicationContext(), DropBoxConstants.appKey, DropBoxConstants.appSecret);
+				if (mDbxAcctMgr.hasLinkedAccount()) 
+				{
+					mAccount = mDbxAcctMgr.getLinkedAccount();
+				    try 
+				    {
+							DbxFileSystem dbxFs = DbxFileSystem.forAccount(mDbxAcctMgr.getLinkedAccount());
+							DbxFile testFile = dbxFs.create(new DbxPath("helloAlarm2.txt"));
+							DbxPath path = new DbxPath("/DropBoxTrashPlaylistDerHoelle");
+							boolean isFolder = dbxFs.isFolder(path);
+							if(isFolder)
+							{
+								Log.d("clock", "DROPBOX! IT IS A FOLDER");
+							}
+							else
+							{
+								Log.d("clock", "DROPBOX! IT IS NOT A FOLDER");
+							}
+							try 
+							{
+							    testFile.writeString("Hello Dropbox!");
+							} 
+							catch (IOException e) 
+							{
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} 
+							finally 
+							{
+							    testFile.close();
+						
+							}
+							dbxFs.syncNowAndWait();
+						} 
+				        catch (Unauthorized e) 
+				        {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} 
+				        catch (InvalidPathException e) 
+				        {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} 
+				        catch (DbxException e) 
+				        {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+				}
+				else
+				{
+					 Log.d("clock", "DROPBOX! no linked account.");
+				}
+    	    }
+    	}).start();
+		 
 		new Thread(new Runnable() 
     	{
     	    public void run() 
@@ -131,19 +218,19 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 					bridge.setUsername(BRIDGEUSERNAME);
 					if(bridge.authenticate(true)) 
 		            {
-		            	Log.d("HUE", "Access granted. username: " + bridge.getUsername());
+		            	Log.d("clock", "Access granted. username: " + bridge.getUsername());
 		    			lights = (Collection<HueLightBulb>) bridge.getLights();
-		    			Log.d("HUE", "Available LightBulbs: "+lights.size());
+		    			Log.d("clock", "Available LightBulbs: "+lights.size());
 		    			for (HueLightBulb bulb : lights) 
 		    			{
-		    				Log.d("HUE", bulb.toString());
+		    				Log.d("clock", bulb.toString());
 		    				//identifiy(bulb);
 		    			}
-		    			System.out.println("");
+		    			Log.d("clock", "");
 		            } 
 		            else 
 		            {
-		            	Log.d("HUE", "Authentication failed.");
+		            	Log.d("clock", "Authentication failed.");
 		            }
 			    }
     	    }
@@ -233,20 +320,22 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 			Log.i("clock", SONG_NAME);
 			for(int i=0; i<filelist.length; i++)
 			{
-				//Log.i("clock", filelist[i].getName());
+				Log.i("clock", filelist[i].getName());
 				if(filelist[i].getName().equals("WakeUpSongs"))
 				{
 					File[] filelist2 = filelist[i].listFiles();
 					randomsongnumber = (int) (Math.random() * (filelist2.length-1));
 					String musicpath = filelist2[randomsongnumber].getAbsolutePath();
 					File f = new File(musicpath);
+					String artist="";
+					String song="";
 					try 
 					{
 						MP3File mp3 = new MP3File(f);
 						ID3v1 id3 = mp3.getID3v1Tag();
-						String artist = id3.getArtist();
+						artist = id3.getArtist();
 						Log.d("clock", "----------->ARTIST:"+artist);
-						String song = id3.getSongTitle();
+						song = id3.getSongTitle();
 						Log.d("clock", "----------->SONG:"+song);
 						scrobble(artist, song);
 					} 
@@ -259,6 +348,10 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 					{
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
+					}
+					catch(Exception ex)
+					{
+						Log.e("clock", "There has been an exception while extracting ID3 Tag Information from the MP3");
 					}
 					try 
 					{
@@ -289,7 +382,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 	
 	private void goplay()
 	{
-		randomsongnumber = (int) (Math.random() * (mediaarray.length-1));
+		/**randomsongnumber = (int) (Math.random() * (mediaarray.length-1));
 	    new Thread(new Runnable() 
     	{
     	    public void run() 
@@ -376,7 +469,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 						{
 							ScrobbleResult result = Track.updateNowPlaying("Fugees", "Ready Or Not", session);
 							result = Track.scrobble("Fugees", "Ready Or Not", now, session);
-						}**/
+						}
 					}
 				}
     	    }
@@ -395,7 +488,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 			}
 			
 		});
-		mp.start();
+		mp.start();**/
 	}
 	
 	public void wake()
@@ -557,7 +650,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
     			{
     				try
     				{
-    			        URL oracle = new URL("http://192.168.1.242/control?cmd=set_state_actuator&number=1&function=1&page=control.html");
+    			        URL oracle = new URL("http://"+ezcontrolIP+"/control?cmd=set_state_actuator&number=1&function=1&page=control.html");
     			        URLConnection yc = oracle.openConnection();
     			        BufferedReader in = new BufferedReader(new InputStreamReader(
     			                                yc.getInputStream()));
@@ -687,7 +780,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    String remindertext = settings.getString("remindertext", "");
 		    SONG_NAME=song;
 		    FADE_IN = fadein;
-		    Log.i("clock", "? "+timesincewakeup);
+		    //Log.i("clock", "? "+timesincewakeup);
 		    if(snoozetime>0)
 		    {
 		    	snoozetime--;
@@ -696,17 +789,19 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    if(active)
 		    {
 		    	boolean turnoncoffee=false;
-		    	if(getAlarmMinute()>4)
+		    	if(getAlarmMinute()>5)
 		    	{
-		    		if((getAlarmHour()==(getHour()) && (getAlarmMinute()-5)==getMinute()))
+		    		if((getAlarmHour()==getHour() && (getAlarmMinute())==getMinute()+5))
 			    	{
+		    			Log.d("clock", "TURN THAT MACHINE ON");
 		    			turnoncoffee=true;
 			    	}
 		    	}
 		    	else
 		    	{
-		    		if((getAlarmHour()==(getHour()-1) && (getAlarmMinute()+55)==getMinute()))
+		    		if((getAlarmHour()==(getHour()+1) && (getAlarmMinute()+55)==getMinute()))
 			    	{
+		    			Log.d("clock", "TURN THAT MACHINE ON");
 		    			turnoncoffee=true;
 			    	}
 		    	}
@@ -720,14 +815,14 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    			{
 		    				try
 		    				{
-		    			        URL oracle = new URL("http://192.168.1.242/control?cmd=set_state_actuator&number=3&function=1&page=control.html");
+		    			        URL oracle = new URL("http://"+ezcontrolIP+"/control?cmd=set_state_actuator&number=3&function=1&page=control.html");
 		    			        URLConnection yc = oracle.openConnection();
 		    			        BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
-		    					System.out.println("command->heat");
+		    					Log.d("clock", "command->heat");
 		    				}
 		    				catch(Exception e)
 		    				{
-		    					Log.e("HUE", "there was an error when setting the lightbulb");
+		    					Log.e("clock", "there was an error when setting the lightbulb");
 		    				}
 		    			}
 		    	 	}).start();
@@ -741,7 +836,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    			{
 		    				try
 		    				{
-						        URL oracle = new URL("http://192.168.1.242/control?cmd=set_state_actuator&number=1&function=4&page=control.html");
+						        URL oracle = new URL("http://"+ezcontrolIP+"/control?cmd=set_state_actuator&number=1&function=4&page=control.html");
 						        URLConnection yc = oracle.openConnection();
 						        BufferedReader in = new BufferedReader(new InputStreamReader(
 						                                yc.getInputStream()));
@@ -749,7 +844,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    				}
 		    				catch(Exception e)
 		    				{
-		    					Log.e("HUE", "there was an error when setting the lightbulb");
+		    					Log.e("clock", "there was an error when setting the lightbulb");
 		    				}
 		    			}
 		    	 	}).start();
@@ -758,7 +853,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    	{
 		    		snoozetime=-1;
 		    		lightshow=true;
-		    		Log.i("clock", "alarm time");
+		    		//Log.i("clock", "alarm time");
 		    		if(FADE_IN)
 		    		{
 		    			fadein();
@@ -793,18 +888,18 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    		newalert=true;
 		    	}
 		    }
-		    Log.i("clock", "reminder is"+reminder);
+		    //Log.i("clock", "reminder is"+reminder);
 		    if(reminder)
 		    {
 		    	int rtime = getAlarmHour()-remindersubtract;
 		    	if(rtime<0)
 		    	{
 		    		rtime=24+rtime;
-		    		Log.i("clock", "rtime="+rtime);
+		    		//Log.i("clock", "rtime="+rtime);
 		    	}
-		    	Log.i("clock", "rtime="+rtime);
-		    	Log.i("clock", "getHour()"+getHour());
-		    	Log.i("clock", "alarm,Minute()="+getAlarmMinute());
+		    	//Log.i("clock", "rtime="+rtime);
+		    	//Log.i("clock", "getHour()"+getHour());
+		    	//Log.i("clock", "alarm,Minute()="+getAlarmMinute());
 		    	
 		    	if(getMinute()==getAlarmMinute() && rtime==getHour() && reminder)
 		    	{
@@ -815,7 +910,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    			{
 		    				try
 		    				{
-		    			        URL oracle = new URL("http://192.168.1.242/control?cmd=set_state_actuator&number=3&function=2&page=control.html");
+		    			        URL oracle = new URL("http://"+ezcontrolIP+"/control?cmd=set_state_actuator&number=3&function=2&page=control.html");
 		    			        URLConnection yc = oracle.openConnection();
 		    			        BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
 		    					System.out.println("command->heat");
@@ -984,12 +1079,12 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
     	            	{
     	            		Log.e("clock", e.getMessage());
     	            	}
-    	    			Log.d("HUE", "Available LightBulbs : "+lights.size());
+    	    			Log.d("clock", "Available LightBulbs : "+lights.size());
     	    			for (HueLightBulb bulb : lights) 
     	    			{
     	    				try
     	    				{
-	    	    				Log.d("HUE", bulb.toString());
+	    	    				Log.d("clock", bulb.toString());
 	    	    				bulb.setOn(true);
 	    	    				bulb.setTransitionTime(i*10);
 	    	    				setHueColor(bulb, 255.0, 255.0, 255.0);
@@ -1003,7 +1098,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
     	            } 
     	            else 
     	            {
-    	            	Log.d("HUE", "Authentication failed.");
+    	            	Log.d("clock", "Authentication failed.");
     	            }
     		    }
     	    }
@@ -1019,7 +1114,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 	 		{
 	 			try
 	 			{
-    				Log.d("HUE", bulb.toString());
+    				Log.d("clock", bulb.toString());
     				boolean originalyon=false;
     				if(bulb.getOn())
     				{
@@ -1085,7 +1180,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 	 			}
 	 			catch(Exception e)
 	 			{
-	 				Log.e("HUE", "error while setting lights 2");
+	 				Log.e("clock", "error while setting lights 2");
 	 			}
 			}
 	 	}).start();
@@ -1167,7 +1262,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 				}
 				catch(Exception e)
 				{
-					Log.e("HUE", "there was an error when setting the lightbulb");
+					Log.e("clock", "there was an error when setting the lightbulb");
 				}
 			}
 	 	}).start();
@@ -1182,7 +1277,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 			{
 				try
 				{
-					 URL oracle = new URL("http://192.168.1.242/control?cmd=set_state_actuator&number=1&function=1&page=control.html");
+					 URL oracle = new URL("http://"+ezcontrolIP+"/control?cmd=set_state_actuator&number=1&function=1&page=control.html");
 				     URLConnection yc = oracle.openConnection();
 				     BufferedReader in = new BufferedReader(new InputStreamReader(
 				                                yc.getInputStream()));
@@ -1190,7 +1285,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 				}
 				catch(Exception e)
 				{
-					Log.e("HUE", "there was an error when setting the lightbulb");
+					Log.e("clock", "there was an error when setting the lightbulb");
 				}
 			}
 	 	}).start();
