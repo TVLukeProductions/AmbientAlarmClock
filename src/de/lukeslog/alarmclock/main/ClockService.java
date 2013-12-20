@@ -71,8 +71,16 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
     public static String SONG_NAME="";
     public static int timesincewakeup =1000;
     private Thread runner;
-    //int[] mediaarray = {R.raw.swag};//, R.raw.ilrr, R.raw.idan, R.raw.hb, R.raw.du, R.raw.cm, R.raw.htbs, R.raw.g};
-    //int[] mediaarray = {R.raw.tetris};
+    
+    private static final int LIVINGROOM = 1;
+    private static final int BATHROOM=2;
+    
+    private static final int HEAT_LOW=1;
+    private static final int HEAT_MEDIUM=2;
+    private static final int HEAT_HIGH=3;
+    private static final int HEAT_VERRY_HIGH=4;
+    
+    public static final String ADDR_DRADIO = "http://dradio-ogg-dlf-l.akacast.akamaistream.net/7/629/135496/v1/gnl.akacast.akamaistream.net/dradio_ogg_dlf_l";
 
     MediaPlayer mp = new MediaPlayer();
     MediaPlayer mp2 = new MediaPlayer();
@@ -143,7 +151,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		ezcontrolIP = settings.getString("ezcontrolIP", "");
 		if(ezcontrolIP.equals(""))
 		{
-			ezcontrolIP="192.168.1.242";
+			ezcontrolIP="192.168.1.242"; //Default IP for ezControl Servers in a Home Network
 		}
 		
 		new Thread(new Runnable() 
@@ -377,117 +385,6 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		}
 	}
 	
-	private void goplay()
-	{
-		/**randomsongnumber = (int) (Math.random() * (mediaarray.length-1));
-	    new Thread(new Runnable() 
-    	{
-    	    public void run() 
-    	    {
-    		    SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-    		    String lastfmusername = settings.getString("lastfmusername", "");
-    		    String lastfmpassword = settings.getString("lastfmpassword", "");
-				if(!lastfmusername.equals(""))
-				{
-					Session session=null;
-					try
-					{
-						Caller.getInstance().setCache(null);
-						session = Authenticator.getMobileSession(lastfmusername, lastfmpassword, LastFMConstants.key, LastFMConstants.secret);
-					}
-					catch(Exception e)
-					{
-						Log.e("clock", e.getMessage());
-					}
-					if(session!=null)
-					{
-						int now = (int) (System.currentTimeMillis() / 1000);
-						if(mediaarray[randomsongnumber]==R.raw.swag)
-						{
-							ScrobbleResult result = Track.updateNowPlaying("Untertagen", "Dreh den (Indie-)SWAG auf!", session);
-							result = Track.scrobble("Untertagen", "Dreh den (Indie-)SWAG auf!", now, session);
-						}
-						if(mediaarray[randomsongnumber]==R.raw.trance)
-						{
-							ScrobbleResult result = Track.updateNowPlaying("Kansas Beat Guru Lies", "TranceIstIon", session);
-							result = Track.scrobble("Kansas Beat Guru Lies", "TranceIstIon", now, session);
-						}
-						/**if(mediaarray[randomsongnumber]==R.raw.surf)
-						{
-							ScrobbleResult result = Track.updateNowPlaying("Surf Rider", "The Lively Ones", session);
-							result = Track.scrobble("Surf Rider", "The Lively Ones", now, session);
-						}
-						if(mediaarray[randomsongnumber]==R.raw.who)
-						{
-							ScrobbleResult result = Track.updateNowPlaying("Michael Jackson", "Who is it", session);
-							result = Track.scrobble("Michael Jackson", "Who is it", now, session);
-						}
-						if(mediaarray[randomsongnumber]==R.raw.world)
-						{
-							ScrobbleResult result = Track.updateNowPlaying("R.E.M.", "World Leader Pretend", session);
-							result = Track.scrobble("R.E.M.", "World Leader Pretend", now, session);
-						}
-						if(mediaarray[randomsongnumber]==R.raw.mull)
-						{
-							ScrobbleResult result = Track.updateNowPlaying("Wings", "Mull Of Kintyre", session);
-							result = Track.scrobble("Wings", "Mull Of Kintyre", now, session);
-						}
-						if(mediaarray[randomsongnumber]==R.raw.robot)
-						{
-							ScrobbleResult result = Track.updateNowPlaying("Röyksopp", "The Girl And The Robot", session);
-							result = Track.scrobble("Röyksopp", "The Girl And The Robot", now, session);
-						}
-						if(mediaarray[randomsongnumber]==R.raw.sloop)
-						{
-							ScrobbleResult result = Track.updateNowPlaying("The Beach Boys", "Sloop John B", session);
-							result = Track.scrobble("The Beach Boys", "Sloop John B", now, session);
-						}
-						if(mediaarray[randomsongnumber]==R.raw.songs)
-						{
-							ScrobbleResult result = Track.updateNowPlaying("Weezer", "Heart Songs", session);
-							result = Track.scrobble("Weezer", "Heart Songs", now, session);
-						}
-						if(mediaarray[randomsongnumber]==R.raw.barra)
-						{
-							ScrobbleResult result = Track.updateNowPlaying("Rachid Taha", "Barra Barra", session);
-							result = Track.scrobble("Rachid Taha", "Barra Barra", now, session);
-						}
-						if(mediaarray[randomsongnumber]==R.raw.changes)
-						{
-							ScrobbleResult result = Track.updateNowPlaying("2Pack", "Changes", session);
-							result = Track.scrobble("2Pack", "Changes", now, session);
-						}
-						if(mediaarray[randomsongnumber]==R.raw.battery)
-						{
-							ScrobbleResult result = Track.updateNowPlaying("Metallica", "Battery", session);
-							result = Track.scrobble("Metallica", "Battery", now, session);
-						}
-						if(mediaarray[randomsongnumber]==R.raw.ready)
-						{
-							ScrobbleResult result = Track.updateNowPlaying("Fugees", "Ready Or Not", session);
-							result = Track.scrobble("Fugees", "Ready Or Not", now, session);
-						}
-					}
-				}
-    	    }
-    	}).start();
-		mp = new MediaPlayer();
-		mp.setScreenOnWhilePlaying(true);
-		mp = MediaPlayer.create(this, mediaarray[randomsongnumber]);
-		mp.setLooping(false);
-		mp.setOnPreparedListener(this);
-		mp.setOnCompletionListener(new OnCompletionListener(){
-
-			@Override
-			public void onCompletion(MediaPlayer mp) 
-			{
-				goplay();
-			}
-			
-		});
-		mp.start();**/
-	}
-	
 	public void wake()
 	{
 		Log.i("clock", "wake");
@@ -537,7 +434,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 	        {
 	        if(station==0)
 	        {
-	        	mp2.setDataSource("http://dradio-ogg-dlf-l.akacast.akamaistream.net/7/629/135496/v1/gnl.akacast.akamaistream.net/dradio_ogg_dlf_l");
+	        	mp2.setDataSource(ADDR_DRADIO);
 	        }
 	        if(station==1)
 	        {
@@ -558,7 +455,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 	        	Log.d("clock", "default radio");
 	        	try
 	        	{
-	        	mp2.setDataSource("http://dradio-ogg-dlf-l.akacast.akamaistream.net/7/629/135496/v1/gnl.akacast.akamaistream.net/dradio_ogg_dlf_l");
+	        	mp2.setDataSource(ADDR_DRADIO);
 	        	}
 	        	catch(Exception ex)
 	        	{
@@ -582,24 +479,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		{
 			timesincewakeup=0;
 			lightshow=false;
-    		new Thread(new Runnable()
-    		{
-    			public void run()
-    			{
-    				try
-    				{
-    			        URL oracle = new URL("http://"+ezcontrolIP+"/control?cmd=set_state_actuator&number=1&function=1&page=control.html");
-    			        URLConnection yc = oracle.openConnection();
-    			        BufferedReader in = new BufferedReader(new InputStreamReader(
-    			                                yc.getInputStream()));
-    					Log.d("clock", "command->heat");
-    				}
-    				catch(Exception e)
-    				{
-    					Log.e("HUE", "there was an error when setting the lightbulb");
-    				}
-    			}
-    	 	}).start();
+    		heatControl(LIVINGROOM, HEAT_LOW);
     		coffeMachine(false);
 			mp.stop();
 			mp.release();
@@ -748,24 +628,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    	if((getAlarmHour()==(getHour()+2) && getAlarmMinute()==getMinute()))
 		    	{
 		    		//Turn on the heat
-		    		new Thread(new Runnable()
-		    		{
-		    			public void run()
-		    			{
-		    				try
-		    				{
-						        URL oracle = new URL("http://"+ezcontrolIP+"/control?cmd=set_state_actuator&number=1&function=4&page=control.html");
-						        URLConnection yc = oracle.openConnection();
-						        BufferedReader in = new BufferedReader(new InputStreamReader(
-						                                yc.getInputStream()));
-								Log.d("clock", "command->heat");
-		    				}
-		    				catch(Exception e)
-		    				{
-		    					Log.e("clock", "there was an error when setting the lightbulb");
-		    				}
-		    			}
-		    	 	}).start();
+		    		heatControl(LIVINGROOM, HEAT_VERRY_HIGH);
 		    	}
 		    	if((getAlarmHour()==getHour() && getAlarmMinute()==getMinute() && newalert) || snoozetime==0)
 		    	{
@@ -822,23 +685,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    	if(getMinute()==getAlarmMinute() && rtime==getHour() && reminder)
 		    	{
 		    		//TURN OFF COFFE MACHINE
-		    		new Thread(new Runnable()
-		    		{
-		    			public void run()
-		    			{
-		    				try
-		    				{
-		    			        URL oracle = new URL("http://"+ezcontrolIP+"/control?cmd=set_state_actuator&number=3&function=2&page=control.html");
-		    			        URLConnection yc = oracle.openConnection();
-		    			        BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
-		    					System.out.println("command->heat");
-		    				}
-		    				catch(Exception e)
-		    				{
-		    					Log.e("LOL", "there was an error when setting the PLUG");
-		    				}
-		    			}
-		    	 	}).start();
+		    		coffeMachine(false);
 		    		Date d = new Date();
 		    		if(d.getSeconds()<5)
 		    		{
@@ -1140,24 +987,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 
 	public void radioOff() 
 	{
-		new Thread(new Runnable()
-		{
-			public void run()
-			{
-				try
-				{
-					 URL oracle = new URL("http://"+ezcontrolIP+"/control?cmd=set_state_actuator&number=1&function=1&page=control.html");
-				     URLConnection yc = oracle.openConnection();
-				     BufferedReader in = new BufferedReader(new InputStreamReader(
-				                                yc.getInputStream()));
-					Log.d("clock", "command->heat");
-				}
-				catch(Exception e)
-				{
-					Log.e("clock", "there was an error when setting the lightbulb");
-				}
-			}
-	 	}).start();
+		heatControl(LIVINGROOM,HEAT_LOW);
 		try
 		{
 			mp2.stop();
@@ -1192,7 +1022,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 				        URL oracle = new URL("http://"+ezcontrolIP+"/control?cmd=set_state_actuator&number=3&function="+function+"&page=control.html");
 				        URLConnection yc = oracle.openConnection();
 				        BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
-						Log.d("clock", "command->heat");
+						Log.d("clock", "command->coffee");
 					}
 					catch(Exception e)
 					{
@@ -1201,6 +1031,29 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 				}
 		 	}).start();
 		}
+	}
+	
+	private void heatControl(final int device, final int function)
+	{
+		//TODO this method assumes that the machine has the number 3. It should not... but this will all be better, when I have a good server for the ezcontrol
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		new Thread(new Runnable()
+		{
+			public void run()
+			{
+				try
+				{
+					URL oracle = new URL("http://"+ezcontrolIP+"/control?cmd=set_state_actuator&number="+device+"&function="+function+"&page=control.html");
+				    URLConnection yc = oracle.openConnection();
+				    BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
+					Log.d("clock", "command->heat");
+				}
+				catch(Exception e)
+				{
+					Log.e("clock", "there was an error when setting the lightbulb");
+				}
+			}
+		}).start();
 	}
 	
 	private void sendMail(String subject, String text)
