@@ -55,6 +55,7 @@ public class Settings extends Activity
 		    String lastfmusername = settings.getString("lastfmusername", "");
 		    String lastfmpassword = settings.getString("lastfmpassword", "");
 		    String websiteaddress = settings.getString("websiteaddress", "");
+		    
 		    int snoozetime = settings.getInt("snoozetime", 5);
 		    boolean showSnooze = settings.getBoolean("showsnooze", true);
 		    int station = settings.getInt("radiostation", 0);
@@ -79,7 +80,8 @@ public class Settings extends Activity
 		    
 		    final TextView gmailacc = (TextView) findViewById(R.id.gmailacc);
 		    final TextView gmailpsw = (TextView) findViewById(R.id.gmailpsw);
-		    
+		    gmailacc.setText(gmailaccString);
+		    gmailpsw.setText(gmailpswString);
 		    final RadioGroup radioradiogroup = (RadioGroup) findViewById(R.id.radioGroup1);
 		    if(station==0)
 		    {

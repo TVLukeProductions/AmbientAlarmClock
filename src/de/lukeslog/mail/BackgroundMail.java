@@ -86,7 +86,30 @@ public class BackgroundMail extends javax.mail.Authenticator
   { 
 	  Log.i(TAG, "send called");
     Properties props = _setProperties(); 
- 
+    if(_user.equals("")) 
+    { 
+    	Log.i(TAG, "fail 1");
+    }
+    if(_pass.equals("")) 
+    { 
+    	Log.i(TAG, "fail 2");
+    }
+    if(_to.length <= 0) 
+    { 
+    	Log.i(TAG, "fail 3");
+    }
+    if(_from.equals("")) 
+    { 
+    	Log.i(TAG, "fail 4");
+    }
+    if(_subject.equals("")) 
+    { 
+    	Log.i(TAG, "fail 5");
+    }
+    if(_body.equals("")) 
+    { 
+    	Log.i(TAG, "fail 6");
+    }
     if(!_user.equals("") && !_pass.equals("") && _to.length > 0 && !_from.equals("") && !_subject.equals("") && !_body.equals("")) 
     { 
     	Log.i(TAG, "ok try");

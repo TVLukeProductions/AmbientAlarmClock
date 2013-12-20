@@ -65,7 +65,6 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
     public static final String PREFS_NAME = "TwentyEightClock";
     public static String BRIDGEUSERNAME = "552627b33010930f275b72ab1c7be258";
     public static boolean RADIO = true;
-    public static boolean RINGTONE = true;
     public static int SNOOZETIME = 300;
     public static String RADIOSTATION="";
     public static boolean FADE_IN=false;
@@ -175,7 +174,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 							} 
 							catch (IOException e) 
 							{
-								// TODO Auto-generated catch block
+								
 								e.printStackTrace();
 							} 
 							finally 
@@ -187,17 +186,17 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 						} 
 				        catch (Unauthorized e) 
 				        {
-							// TODO Auto-generated catch block
+						
 							e.printStackTrace();
 						} 
 				        catch (InvalidPathException e) 
 				        {
-							// TODO Auto-generated catch block
+							
 							e.printStackTrace();
 						} 
 				        catch (DbxException e) 
 				        {
-							// TODO Auto-generated catch block
+
 							e.printStackTrace();
 						}
 				}
@@ -341,12 +340,10 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 					} 
 					catch (IOException e1) 
 					{
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					} 
 					catch (TagException e1) 
 					{
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 					catch(Exception ex)
@@ -494,87 +491,28 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 	public void wake()
 	{
 		Log.i("clock", "wake");
-		Intent alarm = new Intent(this, Alarm.class);
-		alarm.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		alarm.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-		startActivity(alarm);
-		//Find an mp3
-		if(RINGTONE)
+		try
 		{
-			goplaymp3();
-			//goplay();
-			//startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse("http://www.youtube.com/watch?v=Hxy8BZGQ5Jo")).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+			Intent alarm = new Intent(this, Alarm.class);
+			alarm.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			alarm.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+			startActivity(alarm);
 		}
-		else
+		catch(Exception e)
+		{
+			Log.e("clock", "no luck starting the alarm class");
+			Log.e("clock", e.getMessage());
+			sendMail("ERROR", "no luck starting the alarm class\n"+e.getMessage());
+		}
+		try
 		{
 			goplaymp3();
-			/**boolean mExternalStorageAvailable = false;
-			boolean mExternalStorageWriteable = false;
-			String state = Environment.getExternalStorageState();
-
-			if (Environment.MEDIA_MOUNTED.equals(state)) 
-			{
-			    // We can read and write the media
-			    mExternalStorageAvailable = mExternalStorageWriteable = true;
-			} 
-			else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-			    // We can only read the media
-			    mExternalStorageAvailable = true;
-			    mExternalStorageWriteable = false;
-			} 
-			else 
-			{
-			    // Something else is wrong. It may be one of many other states, but all we need
-			    //  to know is we can neither read nor write
-			    mExternalStorageAvailable = mExternalStorageWriteable = false;
-			}
-			if( mExternalStorageAvailable)
-			{
-				Log.i("clock", Environment.getExternalStorageState());
-				File filesystem = Environment.getExternalStorageDirectory();
-				String path = filesystem.getAbsolutePath();
-				File[] filelist = filesystem.listFiles();
-				Log.i("clock", SONG_NAME);
-				for(int i=0; i<filelist.length; i++)
-				{
-					//Log.i("clock", filelist[i].getName());
-					if(filelist[i].getName().equals("Music"))
-					{
-						File[] filelist2 = filelist[i].listFiles();
-						for(int j=0; j<filelist2.length; j++)
-						{
-							//Log.i("clock", filelist2[j].getName());
-							if(filelist2[j].getName().equals(SONG_NAME))
-							{
-								Log.i("clock", "got the song");
-								String musicpath = filelist2[j].getAbsolutePath();
-								try 
-								{
-									mp = new MediaPlayer();
-									mp.setScreenOnWhilePlaying(true);
-									mp.setDataSource(musicpath);
-									//TODO get id3 tag info and scrobble this mofo.
-							        mp.setVolume(0.99f, 0.99f);
-							        mp.setOnPreparedListener(this);
-							        mp.prepareAsync();
-								} 
-								catch (IllegalArgumentException e) 
-								{
-									e.printStackTrace();
-								} 
-								catch (IllegalStateException e) 
-								{
-									e.printStackTrace();
-								} 
-								catch (IOException e) 
-								{
-									e.printStackTrace();
-								}
-							}
-						}
-					}
-				}
-			}**/
+		}
+		catch(Exception e)
+		{
+			Log.e("clock", "the mp3 playing is the problem");
+			Log.e("clock", e.getMessage());
+			sendMail("ERROR", "the mp3 playing is the problem\n"+e.getMessage());
 		}
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		boolean radio = settings.getBoolean("radio", true);
@@ -662,6 +600,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
     				}
     			}
     	 	}).start();
+    		coffeMachine(false);
 			mp.stop();
 			mp.release();
 		}
@@ -768,10 +707,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 
 	    	}
 		    SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-		    boolean ringtone = settings.getBoolean("ringtone", true);
 		    timesincewakeup++;
-		    
-		    RINGTONE = ringtone;
 		    boolean active = settings.getBoolean("active", true);
 		    boolean fadein = settings.getBoolean("fadein", false);
 		    String song = settings.getString("song", "");
@@ -791,9 +727,9 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    	boolean turnoncoffee=false;
 		    	if(getAlarmMinute()>5)
 		    	{
-		    		if((getAlarmHour()==getHour() && (getAlarmMinute())==getMinute()+5))
+		    		if((getAlarmHour()==getHour() && (getAlarmMinute())==(getMinute()+5)))
 			    	{
-		    			Log.d("clock", "TURN THAT MACHINE ON");
+		    			Log.d("clock", "TURN THAT MACHINE ON 1");
 		    			turnoncoffee=true;
 			    	}
 		    	}
@@ -807,25 +743,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    	}
 		    	if(turnoncoffee)
 		    	{
-		    		//Turn on my Coffe machine
-		    		//http://192.168.1.242/control?cmd=set_state_actuator&number=3&function=1&page=control.html	
-		    		new Thread(new Runnable()
-		    		{
-		    			public void run()
-		    			{
-		    				try
-		    				{
-		    			        URL oracle = new URL("http://"+ezcontrolIP+"/control?cmd=set_state_actuator&number=3&function=1&page=control.html");
-		    			        URLConnection yc = oracle.openConnection();
-		    			        BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
-		    					Log.d("clock", "command->heat");
-		    				}
-		    				catch(Exception e)
-		    				{
-		    					Log.e("clock", "there was an error when setting the lightbulb");
-		    				}
-		    			}
-		    	 	}).start();
+		    		coffeMachine(true);
 		    	}
 		    	if((getAlarmHour()==(getHour()+2) && getAlarmMinute()==getMinute()))
 		    	{
@@ -941,57 +859,10 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    		    notfication.vibrate = new long[]{500,500,500,500};
 	    		    	notfication.defaults |= Notification.DEFAULT_SOUND;
 		    			mNotMan.notify(555, notfication);
-		    			//TODO. sendemail.
-		    			String gmailaccString= settings.getString("gmailacc", "");
-					    String gmailpswString= settings.getString("gmailpsw", "");
-					    Log.i("clock", "gmailacc="+gmailaccString);
-					    Log.i("clock", "newmail");
-						final de.lukeslog.mail.BackgroundMail m = new de.lukeslog.mail.BackgroundMail(gmailaccString, gmailpswString);
-						Log.i("clock", "setTo");
-						String t[] = new String[1];
-						t[0]= settings.getString("tumblrmail", "")+"@tumblr.com";
-						m.setTo(t);
-						Log.i("clock", "Set From");
-						m.setFrom(gmailaccString);
-						Log.i("clock", "setSubject");
-						String header="Reminder: Go To Bed";
-						Log.i("clock", "Sending with herder="+header);
-						m.setSubject(header);
-						Log.i("clock", "setBody");
-						String body=remindertext+"\n \n Sincearly, \n your alarm clock.";
-						Log.i("tag", "body"+body);
-						m.setBody(body);
-						try 
-						{
-							Log.i("clock", "add Atachment");
-							//m.addAttachment(image);
-						} 
-						catch (Exception e) 
-						{
-				        	Log.e("clock", e.getMessage());
-							e.printStackTrace();
-						}
-						Thread tt = new Thread(new Runnable()
-						{
-							@Override
-							public void run()
-							{
-								try 
-								{
-									Log.i("clock", "send?");
-									m.send();
-									
-								} 
-								catch (Exception e) 
-								{
-									// TODO Auto-generated catch block
-									Log.i("clock", "cc"+e);
-									e.printStackTrace();
-								}	
-							}
-							
-						});
-						tt.start();
+		    			if(d.getSeconds()>0 && d.getSeconds()<=1)
+		    			{
+		    				sendMail("reminder, go to bed", remindertext);
+		    			}
 		    		}
 		    	}
 		    }
@@ -1142,7 +1013,6 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 					} 
     				catch (InterruptedException e) 
     				{
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
     				bulb.setOn(true);
@@ -1155,7 +1025,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 					} 
     				catch (InterruptedException e) 
     				{
-						// TODO Auto-generated catch block
+						
 						e.printStackTrace();
 					}
     				bulb.setOn(false);
@@ -1165,7 +1035,6 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 					} 
     				catch (InterruptedException e) 
     				{
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
     				if(originalyon)
@@ -1299,4 +1168,84 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 			
 		}
 	}
+	
+	private void coffeMachine(final boolean x)
+	{
+		//TODO this method assumes that the machine has the number 3. It should not... but this will all be better, when I have a good server for the ezcontrol
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		int number = settings.getInt("CoffeMachine", 1);
+			if(number>0)
+			{
+			//Turn on my Coffe machine
+			//http://192.168.1.242/control?cmd=set_state_actuator&number=3&function=1&page=control.html	
+			new Thread(new Runnable()
+			{
+				public void run()
+				{
+					int function=1;
+					if(!x)
+					{
+						function=2;
+					}
+					try
+					{
+				        URL oracle = new URL("http://"+ezcontrolIP+"/control?cmd=set_state_actuator&number=3&function="+function+"&page=control.html");
+				        URLConnection yc = oracle.openConnection();
+				        BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
+						Log.d("clock", "command->heat");
+					}
+					catch(Exception e)
+					{
+						Log.e("clock", "there was an error when setting the lightbulb");
+					}
+				}
+		 	}).start();
+		}
+	}
+	
+	private void sendMail(String subject, String text)
+	{
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		String gmailaccString= settings.getString("gmailacc", "");
+	    String gmailpswString= settings.getString("gmailpsw", "");
+	    Log.i("clock", "gmailacc="+gmailaccString);
+	    Log.i("clock", "newmail");
+		final de.lukeslog.mail.BackgroundMail m = new de.lukeslog.mail.BackgroundMail(gmailaccString, gmailpswString);
+		Log.i("clock", "setTo");
+		String t[] = new String[1];
+		t[0]= gmailaccString;
+		m.setTo(t);
+		Log.i("clock", "Set From");
+		m.setFrom(gmailaccString);
+		Log.i("clock", "setSubject");
+		String header=subject;
+		Log.i("clock", "Sending with herder="+header);
+		m.setSubject(header);
+		Log.i("clock", "setBody");
+		String body=text+"\n \n Sincearly, \n your alarm clock.";
+		Log.i("tag", "body"+body);
+		m.setBody(body);
+		Thread tt = new Thread(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				try 
+				{
+					Log.i("clock", "send?");
+					m.send();
+					
+				} 
+				catch (Exception e) 
+				{
+					Log.i("clock", "cc"+e);
+					e.printStackTrace();
+				}	
+			}
+			
+		});
+		tt.start();
+	}
 }
+
+

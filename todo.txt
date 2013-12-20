@@ -1,0 +1,13 @@
+Version 1: "Eddie Murphy"
+
+Improvements to version 0.8
+- host of minor fixes
+- make the alarm/clock service register as a foreground service to make crashes less likely
+- improved some error handling
+- select on what day to sync with the regular week (saturday/sunday or monday/sunday)
+- created tabs for time converter
+- TODO: View for Opening Hours
+- TODO: Functionality for Time Converter
+- TODO: Add "Set As Alarm Time" Butten to converter
+- TODO: Functionality for Opening Hours
+- TODO: implement more radio stations
