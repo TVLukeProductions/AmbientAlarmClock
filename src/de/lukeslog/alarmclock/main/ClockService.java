@@ -1026,7 +1026,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 					}
 					catch(Exception e)
 					{
-						Log.e("clock", "there was an error when setting the lightbulb");
+						Log.e("clock", "there was an error while setting the coffe machine");
 					}
 				}
 		 	}).start();
@@ -1050,7 +1050,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 				}
 				catch(Exception e)
 				{
-					Log.e("clock", "there was an error when setting the lightbulb");
+					Log.e("clock", "there was an error when setting the heat");
 				}
 			}
 		}).start();
