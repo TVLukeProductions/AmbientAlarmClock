@@ -53,13 +53,9 @@ public class AlarmClockActivity extends Activity
 	    int hour = settings.getInt("hour", 0);
 	    int minute = settings.getInt("minute", 0);
 	    boolean active = settings.getBoolean("active", true);
-	    boolean reminder = settings.getBoolean("reminder", false);
-	    boolean sendemail = settings.getBoolean("sendemail", false);
-	    boolean showSnooze = settings.getBoolean("showsnooze", true);
-	    int remindersubtract = settings.getInt("remindersubtract", 8);
-	    String remindertext = settings.getString("remindertext", "");
+
 	    
-	    final CheckBox cb1 = (CheckBox)findViewById(R.id.checkBox1);
+    final CheckBox cb1 = (CheckBox)findViewById(R.id.checkBox1);
 	    cb1.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener()
 		{
 
@@ -73,84 +69,9 @@ public class AlarmClockActivity extends Activity
 			}
 	
 		});
-	    final CheckBox cb2 = (CheckBox)findViewById(R.id.checkBox2);
-	    cb2.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener()
-	    {
 
-			@Override
-			public void onCheckedChanged(CompoundButton arg0, boolean arg1)
-			{
-				Log.i("clock", "checked");
-				Editor edit = settings.edit();
-				edit.putBoolean("reminder", cb2.isChecked());
-				edit.commit();
-				
-			}
-	    	
-	    });
-	    final CheckBox cb3 = (CheckBox)findViewById(R.id.checkBox3);
-	    cb3.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener()
-	    {
 
-			@Override
-			public void onCheckedChanged(CompoundButton arg0, boolean arg1)
-			{
-				Log.i("clock", "checked");
-				Editor edit = settings.edit();
-				edit.putBoolean("sendemail", cb3.isChecked());
-				edit.commit();
-				
-			}
-	    	
-	    });
 	    cb1.setChecked(active);
-	    cb2.setChecked(reminder);
-	    cb3.setChecked(sendemail);
-	    
-	    final EditText editText500 = (EditText) findViewById(R.id.editText500);
-	    editText500.setText(""+remindersubtract);
-	    editText500.addTextChangedListener(new TextWatcher()
-	    {
-	        public void afterTextChanged(Editable s)
-	        {
-				Log.i("clock", "change reminder subtractX");
-            	Editor edit = settings.edit();
-            	try
-            	{
-            		edit.putInt("remindersubtract", Integer.parseInt(editText500.getEditableText().toString()));
-            	}
-            	catch(Exception e)
-            	{
-            		
-            	}
-            	edit.commit();
-	        }
-	        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
-	        public void onTextChanged(CharSequence s, int start, int before, int count){}
-	    });
-	   	    
-	    final EditText editText501 = (EditText) findViewById(R.id.editText501);
-	    editText501.setText(remindertext);
-	    editText501.addTextChangedListener(new TextWatcher()
-	    {
-	        public void afterTextChanged(Editable s)
-	        {
-				Log.i("clock", "change reminder subtractX");
-            	Editor edit = settings.edit();
-            	try
-            	{
-            		edit.putString("remindertext", editText501.getEditableText().toString());
-            	}
-            	catch(Exception e)
-            	{
-            		
-            	}
-            	edit.commit();
-	        }
-	        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
-	        public void onTextChanged(CharSequence s, int start, int before, int count){}
-	    }); 
-
 	    
 	    getApplicationContext().startService(new Intent(this, ClockService.class));
         Intent intent = new Intent(this, ClockService.class);
@@ -265,7 +186,7 @@ public class AlarmClockActivity extends Activity
     private boolean isCloseToWakeUp()
     {
     	Log.i("clock", ""+ClockService.timesincewakeup);
-    	return ClockService.timesincewakeup<5;//TODO: change back to 900;
+    	return ClockService.timesincewakeup<900;//TODO: change back to 900;
     }
 	
 }

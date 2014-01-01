@@ -1,4 +1,15 @@
-Version 1: "Eddie Murphy"
+TODO
+- Make the Checkbuttons for local storage and DP exclusive to one another
+- Store the valie from the localstorage EditText field
+- Write a DropBox-API Question for StackOverflow on the problem of using Core API and Sync API together.
+- Make the Calling of the UI for DropBox better (I have no Idea how to do this, but is has to be done...)
+- Make sure the "Connect to DB button vanishes, when the app is connected already"
+- If neccesarry write a DropBox-Service that tales care of synchronizing the folder (This is realy kind of a crappy thing)
+- Write a DropBoxTrashPlaylistDerHoelle Player. It has One Button (Play) and (Stop) and runs in background. It may have a sync button or a only sync in wifi button or something. But basically it just does as its told. And also, it has Geofunctions, that are loaded via some GPS shit... which comes later.
+- Make the "Play Radio while Playing Music" Checkmark relevant
+- Make the settings store themsleves when changes occur (remove "save"-button)
+- Put the reminder function into the settings
+- Make multiple alarms possible (?)
 
 Improvements to version 0.8
 - host of minor fixes

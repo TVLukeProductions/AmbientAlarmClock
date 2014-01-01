@@ -16,20 +16,17 @@ import org.farng.mp3.MP3File;
 import org.farng.mp3.TagException;
 import org.farng.mp3.id3.ID3v1;
 
-import com.dropbox.sync.android.DbxAccount;
-import com.dropbox.sync.android.DbxAccountManager;
-import com.dropbox.sync.android.DbxDatastore;
-import com.dropbox.sync.android.DbxException;
-import com.dropbox.sync.android.DbxException.Unauthorized;
-import com.dropbox.sync.android.DbxFile;
-import com.dropbox.sync.android.DbxFileSystem;
-import com.dropbox.sync.android.DbxPath;
-import com.dropbox.sync.android.DbxPath.InvalidPathException;
+import com.dropbox.client2.DropboxAPI;
+import com.dropbox.client2.android.AndroidAuthSession;
+import com.dropbox.client2.session.AccessTokenPair;
+import com.dropbox.client2.session.AppKeyPair;
+import com.dropbox.client2.session.Session.AccessType;
 
 import de.jaetzold.philips.hue.ColorHelper;
 import de.jaetzold.philips.hue.HueBridge;
 import de.jaetzold.philips.hue.HueLightBulb;
 import de.lukeslog.alarmclock.R;
+import de.lukeslog.alarmclock.dropbox.DropBox;
 import de.lukeslog.alarmclock.dropbox.DropBoxConstants;
 import de.lukeslog.alarmclock.lastfm.LastFMConstants;
 import de.umass.lastfm.Authenticator;
@@ -53,6 +50,8 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnPreparedListener;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Environment;
@@ -93,10 +92,13 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
     boolean lightshow=true;
     
     public static String ezcontrolIP ="";
+
+    // In the class declaration section:
+    public static DropboxAPI<AndroidAuthSession> mDBApi;
+    final static private AccessType ACCESS_TYPE = AccessType.DROPBOX;
     
-    private DbxAccountManager mDbxAcctMgr;
-    private DbxAccount mAccount ;
-    DbxDatastore store;
+    private static String dropboxfoldername="";
+
     
     public class LocalBinder extends Binder 
     {
@@ -147,73 +149,17 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		startForeground(1337, note);
 		
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		getDropboxAPI();
+		
+		DropBox.ListAllFolders();
+		//DropBox.getFiles2(settings);
 		
 		ezcontrolIP = settings.getString("ezcontrolIP", "");
 		if(ezcontrolIP.equals(""))
 		{
 			ezcontrolIP="192.168.1.242"; //Default IP for ezControl Servers in a Home Network
 		}
-		
-		new Thread(new Runnable() 
-    	{
-    	    public void run() 
-    	    {
-				mDbxAcctMgr = DbxAccountManager.getInstance(getApplicationContext(), DropBoxConstants.appKey, DropBoxConstants.appSecret);
-				if (mDbxAcctMgr.hasLinkedAccount()) 
-				{
-					mAccount = mDbxAcctMgr.getLinkedAccount();
-				    try 
-				    {
-							DbxFileSystem dbxFs = DbxFileSystem.forAccount(mDbxAcctMgr.getLinkedAccount());
-							DbxFile testFile = dbxFs.create(new DbxPath("helloAlarm2.txt"));
-							DbxPath path = new DbxPath("/DropBoxTrashPlaylistDerHoelle");
-							boolean isFolder = dbxFs.isFolder(path);
-							if(isFolder)
-							{
-								Log.d("clock", "DROPBOX! IT IS A FOLDER");
-							}
-							else
-							{
-								Log.d("clock", "DROPBOX! IT IS NOT A FOLDER");
-							}
-							try 
-							{
-							    testFile.writeString("Hello Dropbox!");
-							} 
-							catch (IOException e) 
-							{
-								
-								e.printStackTrace();
-							} 
-							finally 
-							{
-							    testFile.close();
-						
-							}
-							dbxFs.syncNowAndWait();
-						} 
-				        catch (Unauthorized e) 
-				        {
-						
-							e.printStackTrace();
-						} 
-				        catch (InvalidPathException e) 
-				        {
-							
-							e.printStackTrace();
-						} 
-				        catch (DbxException e) 
-				        {
 
-							e.printStackTrace();
-						}
-				}
-				else
-				{
-					 Log.d("clock", "DROPBOX! no linked account.");
-				}
-    	    }
-    	}).start();
 		 
 		new Thread(new Runnable() 
     	{
@@ -245,6 +191,25 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		
 
 
+	}
+	
+	private DropboxAPI <AndroidAuthSession> getDropboxAPI()
+	{
+		//AppKeyPair appKeys = new AppKeyPair(DropBoxConstants.appKey, DropBoxConstants.appSecret);
+		//AndroidAuthSession session = new AndroidAuthSession(appKeys, ACCESS_TYPE);
+		//mDBApi = new DropboxAPI<AndroidAuthSession>(session);	
+	
+		
+	    AppKeyPair appKeys = new AppKeyPair(DropBoxConstants.appKey, DropBoxConstants.appSecret);
+	    AndroidAuthSession session = new AndroidAuthSession(appKeys, ACCESS_TYPE);
+	    mDBApi = new DropboxAPI<AndroidAuthSession>(session);
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		String dbkey = settings.getString("DB_KEY", "");
+		String dbsecret= settings.getString("DB_SECRET", "");
+	    if (dbkey.equals("")) return null;
+	    AccessTokenPair access = new AccessTokenPair(dbkey, dbsecret);
+	    mDBApi.getSession().setAccessTokenPair(access);
+	    return mDBApi;
 	}
 	
 	@Override
@@ -576,8 +541,12 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 	{
 		boolean oktorun=true;
 		boolean newalert=true;
+		long runningcounter=0;
 		while(oktorun)
 		{
+			runningcounter++;
+		    SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+			//Log.d("clock", "run1");
 			try
 	    	{
 	    		  Thread.currentThread().sleep(1000);
@@ -586,7 +555,25 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 	    	{
 
 	    	}
-		    SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+			//Check if the name of the Dropboxfolder for the music has changed
+			String dropfolderstring = settings.getString("dropboxfolder", "");
+			if(!dropboxfoldername.equals("") && !dropboxfoldername.equals(dropfolderstring))
+			{
+				//TODO: The folder to be watched has changed!
+				Log.d("clock", "folder change");
+				
+			}
+			ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+			NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+			if (mWifi.isConnected()) 
+			{
+				if(runningcounter%120==1)
+				{
+					DropBox.syncFiles(settings);
+				}
+			}
+			//Log.d("clock", "run2");
 		    timesincewakeup++;
 		    boolean active = settings.getBoolean("active", true);
 		    boolean fadein = settings.getBoolean("fadein", false);
@@ -1099,6 +1086,8 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		});
 		tt.start();
 	}
+
+
 }
 
 

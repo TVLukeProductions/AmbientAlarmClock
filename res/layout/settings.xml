@@ -15,25 +15,6 @@
             android:layout_height="match_parent"
             android:orientation="vertical" >
 
-            <LinearLayout
-                android:id="@+id/linearLayout2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
-
-                <ImageView
-                    android:id="@+id/imageView1"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:src="@drawable/clock" />
-
-                <TextView
-                    android:id="@+id/textView2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/settings"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
-            </LinearLayout>
-
             <Button
                 android:id="@+id/settingsave"
                 android:layout_width="match_parent"
@@ -118,7 +99,7 @@
                 android:layout_height="wrap_content"
                 android:ems="10" />
 
-             <TextView
+            <TextView
                 android:id="@+id/TextView02google"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -132,19 +113,17 @@
                 android:layout_height="wrap_content"
                 android:text="Username" />
 
-
-
             <EditText
                 android:id="@+id/gmailacc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ems="10"  />
+                android:ems="10" />
 
             <TextView
                 android:id="@+id/TextView03"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Password"/>
+                android:text="Password" />
 
             <EditText
                 android:id="@+id/gmailpsw"
@@ -152,7 +131,58 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="textPassword" />
-            
+
+            <TextView
+                android:id="@+id/TextView02"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FF9955"
+                android:text="Go-To-Bed Reminder"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <CheckBox
+                android:id="@+id/reminder_generate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Generate Reminder" />
+
+            <TextView
+                android:id="@+id/TextView01"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="hours before"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <EditText
+                android:id="@+id/editText500"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:inputType="number" />
+
+            <TextView
+                android:id="@+id/TextView04"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Text:"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <EditText
+                android:id="@+id/editText501"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textMultiLine" />
+
+            <CheckBox
+                android:id="@+id/reminder_sendemail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Send Email" />
+
             <TextView
                 android:id="@+id/textView8"
                 android:layout_width="match_parent"
@@ -190,7 +220,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Club Sound" />
-                
+
                 <RadioButton
                     android:id="@+id/radio3"
                     android:layout_width="wrap_content"
@@ -210,8 +240,8 @@
                 android:id="@+id/checkBox_radio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Play Radio while Playing Music" />
-                        
+                android:text="Scroble To Last.fm" />
+
             <TextView
                 android:id="@+id/textView6"
                 android:layout_width="match_parent"
@@ -246,20 +276,20 @@
                 android:background="#FF9955"
                 android:text="Wake Up Sounds"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
-            
-           <TextView
+
+            <TextView
                 android:id="@+id/textView6"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="All files have to be .mp3 files!"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
 
-      		<CheckBox
+            <CheckBox
                 android:id="@+id/use_local"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Use Local File System" />
-                        
+
             <TextView
                 android:id="@+id/textView634231"
                 android:layout_width="match_parent"
@@ -273,12 +303,12 @@
                 android:layout_height="wrap_content"
                 android:ems="10" />
 
-          <CheckBox
-                android:id="@+id/use_local"
+            <CheckBox
+                android:id="@+id/use_dropbox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Use DropBox" />
-                        
+
             <TextView
                 android:id="@+id/textView4534"
                 android:layout_width="match_parent"
@@ -292,12 +322,17 @@
                 android:layout_height="wrap_content"
                 android:ems="10" />
             
-           <Button
+			<Spinner
+                android:id="@+id/spinnerdpf"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            
+            <Button
                 android:id="@+id/dropboxconnect"
                 android:layout_width="match_parent"
                 android:layout_height="93dp"
                 android:text="Connect To DropBox" />
-                        
+
             <TextView
                 android:id="@+id/textView1"
                 android:layout_width="match_parent"
@@ -325,6 +360,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>
+
     </ScrollView>
 
 </LinearLayout>

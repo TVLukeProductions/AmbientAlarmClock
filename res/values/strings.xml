@@ -12,7 +12,7 @@
     <string name="converter">Time Converter</string>
 	<string name="hoursystem">28 Hour Display</string><!-- the words for "28 hour system, providined in the settings to chose between 28 hour system and am/pm system"-->
 	<string name="sleepduration">Sleep duration</string><!--  Word for Sleep duration -->
-	<string name="settings">settings</string><!-- Settings -->
+	<string name="settings">Settings</string><!-- Settings -->
 	<string name="playonwakeup">Play radio on wake-up</string> <!-- Play Radio on Wake Up -->
 	<string name="choosestation">Choose station</string><!-- Choose Station -->
 	<string name="setalarmtime">Set alarm time</string>
