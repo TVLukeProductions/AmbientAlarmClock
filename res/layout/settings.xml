@@ -200,7 +200,7 @@
                 android:id="@+id/checkBox_radio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Play Radio while Playing Music" />
+                android:text="Play Radio on Alert" />
 
             <RadioGroup
                 android:id="@+id/radioGroup1"
