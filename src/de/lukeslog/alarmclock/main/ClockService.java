@@ -63,6 +63,8 @@ import android.util.Log;
 public class ClockService extends Service implements Runnable, OnPreparedListener
 {
     public static final String PREFS_NAME = AlarmClockConstants.PREFS_NAME;
+    public static String TAG = AlarmClockConstants.TAG;
+    
     public static String BRIDGEUSERNAME = "552627b33010930f275b72ab1c7be258"; //TODO: make random.
     public static boolean RADIO = true;
     public static int SNOOZETIME = 300;
@@ -173,19 +175,19 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 					bridge.setUsername(BRIDGEUSERNAME);
 					if(bridge.authenticate(true)) 
 		            {
-		            	Log.d("clock", "Access granted. username: " + bridge.getUsername());
+		            	Log.d(TAG, "Access granted. username: " + bridge.getUsername());
 		    			lights = (Collection<HueLightBulb>) bridge.getLights();
-		    			Log.d("clock", "Available LightBulbs: "+lights.size());
+		    			Log.d(TAG, "Available LightBulbs: "+lights.size());
 		    			for (HueLightBulb bulb : lights) 
 		    			{
-		    				Log.d("clock", bulb.toString());
+		    				Log.d(TAG, bulb.toString());
 		    				//identifiy(bulb);
 		    			}
-		    			Log.d("clock", "");
+		    			Log.d(TAG, "");
 		            } 
 		            else 
 		            {
-		            	Log.d("clock", "Authentication failed.");
+		            	Log.d(TAG, "Authentication failed.");
 		            }
 			    }
     	    }
@@ -217,7 +219,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 	@Override
     public void onDestroy() 
     {
-		Log.i("clock", "onDestroy!");
+		Log.i(TAG, "onDestroy!");
         super.onDestroy();
         mp.release();
         stopForeground(true);
@@ -251,7 +253,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 					}
 					catch(Exception e)
 					{
-						Log.e("clock", e.getMessage());
+						Log.e(TAG, e.getMessage());
 					}
 					if(session!=null)
 					{
@@ -269,7 +271,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		boolean mExternalStorageAvailable = false;
 		boolean mExternalStorageWriteable = false;
 		String state = Environment.getExternalStorageState();
-		Log.d("clock", "Go Play 3");
+		Log.d(TAG, "Go Play 3");
 		if (Environment.MEDIA_MOUNTED.equals(state)) 
 		{
 		    // We can read and write the media
@@ -288,25 +290,25 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		}
 		if( mExternalStorageAvailable)
 		{
-			Log.i("clock", Environment.getExternalStorageState());
+			Log.i(TAG, Environment.getExternalStorageState());
 			File filesystem = Environment.getExternalStorageDirectory();
 			String path = filesystem.getAbsolutePath();
 			File[] filelist = filesystem.listFiles();
-			Log.i("clock", "songname "+SONG_NAME+ "- "+filelist.length);
+			Log.i(TAG, "songname "+SONG_NAME+ "- "+filelist.length);
 			for(int i=0; i<filelist.length; i++)
 			{
-				Log.d("clock", filelist[i].getName());
+				Log.d(TAG, filelist[i].getName());
 				if(filelist[i].getName().equals("Music"))
 				{
 					File[] filelist2 = filelist[i].listFiles();
 					for(int j=0; j<filelist2.length; j++)
 					{
-						Log.d("clock", ">>"+filelist2[j].getName());
+						Log.d(TAG, ">>"+filelist2[j].getName());
 						if(filelist2[j].getName().equals("WakeUpSongs"))
 						{
-							Log.d("clock", "wakeupsongs");
+							Log.d(TAG, "wakeupsongs");
 							File[] filelist3 = filelist2[j].listFiles();
-							Log.d("clock", ""+filelist3.length);
+							Log.d(TAG, ""+filelist3.length);
 							String musicpath="";
 							if(filelist3.length>0)
 							{
@@ -320,9 +322,9 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 									MP3File mp3 = new MP3File(f);
 									ID3v1 id3 = mp3.getID3v1Tag();
 									artist = id3.getArtist();
-									Log.d("clock", "----------->ARTIST:"+artist);
+									Log.d(TAG, "----------->ARTIST:"+artist);
 									song = id3.getSongTitle();
-									Log.d("clock", "----------->SONG:"+song);
+									Log.d(TAG, "----------->SONG:"+song);
 									scrobble(artist, song);
 								} 
 								catch (IOException e1) 
@@ -336,7 +338,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 								
 								catch(Exception ex)
 								{
-									Log.e("clock", "There has been an exception while extracting ID3 Tag Information from the MP3");
+									Log.e(TAG, "There has been an exception while extracting ID3 Tag Information from the MP3");
 								}
 							}
 							try 
@@ -375,13 +377,13 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		}
 		else
 		{
-			Log.d("clock", "not read or writeable...");
+			Log.d(TAG, "not read or writeable...");
 		}
 	}
 	
 	public void wake()
 	{
-		Log.i("clock", "wake");
+		Log.i(TAG, "wake");
 		try
 		{
 			Intent alarm = new Intent(this, Alarm.class);
@@ -391,8 +393,8 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		}
 		catch(Exception e)
 		{
-			Log.e("clock", "no luck starting the alarm class");
-			Log.e("clock", e.getMessage());
+			Log.e(TAG, "no luck starting the alarm class");
+			Log.e(TAG, e.getMessage());
 			//sendMail("ERROR", "no luck starting the alarm class\n"+e.getMessage());
 		}
 		try
@@ -401,8 +403,8 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		}
 		catch(Exception e)
 		{
-			Log.e("clock", "the mp3 playing is the problem");
-			Log.e("clock", e.getMessage());
+			Log.e(TAG, "the mp3 playing is the problem");
+			Log.e(TAG, e.getMessage());
 			//sendMail("ERROR", "the mp3 playing is the problem\n"+e.getMessage());
 		}
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
@@ -418,13 +420,13 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		Log.d("clock", "turnOnRadio");
 		try
 		{
-			Log.d("clock", "try");
+			Log.d(TAG, "try");
 				mp2 = new MediaPlayer();
 		    	mp2.setScreenOnWhilePlaying(true);
 		        mp2.setAudioStreamType(AudioManager.STREAM_MUSIC);
 		        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		        int station = settings.getInt("radiostation", 0);
-		        Log.d("clock", "Station---------------------"+station);
+		        Log.d(TAG, "Station---------------------"+station);
 		        try
 		        {
 		        if(station==0)
@@ -447,14 +449,14 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		        }
 		        catch(Exception e)
 		        {
-		        	Log.d("clock", "default radio");
+		        	Log.d(TAG, "default radio");
 		        	try
 		        	{
 		        	mp2.setDataSource(ADDR_DRADIO);
 		        	}
 		        	catch(Exception ex)
 		        	{
-		        		Log.d("clock", "fuck this");
+		        		Log.d(TAG, "fuck this");
 		        	}
 		        }
 		    	mp2.setVolume(0.99f, 0.99f);
@@ -501,42 +503,42 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 	    	    	}
 	    	    	catch(Exception e)
 	    	    	{
-	    	    		Log.e("clock", e.getMessage());
+	    	    		Log.e(TAG, e.getMessage());
 	    	    	}
 	    			for(HueBridge bridge : bridges) 
 	    		    {
 	    				bridge.setUsername(BRIDGEUSERNAME);
 	    				if(bridge.authenticate(true)) 
 	    	            {
-	    	            	Log.d("HUE", "Access granted. username: " + bridge.getUsername());
+	    	            	Log.d(TAG, "Access granted. username: " + bridge.getUsername());
 	    	            	try
 	    	            	{
 	    	            		lights = (Collection<HueLightBulb>) bridge.getLights();
 	    	            	}
 	    	            	catch(Exception e)
 	    	            	{
-	    	            		Log.e("clock", e.getMessage());
+	    	            		Log.e(TAG, e.getMessage());
 	    	            	}
-	    	    			Log.d("HUE", "Available LightBulbs : "+lights.size());
+	    	    			Log.d(TAG, "Available LightBulbs : "+lights.size());
 	    	    			for (HueLightBulb bulb : lights) 
 	    	    			{
 	    	    				try
 	    	    				{
-		    	    				Log.d("HUE", bulb.toString());
+		    	    				Log.d(TAG, bulb.toString());
 		    	    				bulb.setOn(false);
 		    	    				//bulb.setTransitionTime(i*10);
 		    	    				//setHueColor(bulb, 255.0, 255.0, 255.0);
 	    	    				}
 	    	    				catch(Exception e)
 	    	    				{
-	    	    					Log.e("clock", e.getMessage());
+	    	    					Log.e(TAG, e.getMessage());
 	    	    				}
 	    	    			}
 	    	    			//System.out.println("");
 	    	            } 
 	    	            else 
 	    	            {
-	    	            	Log.d("HUE", "Authentication failed.");
+	    	            	Log.d(TAG, "Authentication failed.");
 	    	            }
 	    		    }
 	    	    }
@@ -592,7 +594,8 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 			if(!dropboxfoldername.equals("") && !dropboxfoldername.equals(dropfolderstring))
 			{
 				//TODO: The folder to be watched has changed!
-				Log.d("clock", "folder change");
+				Log.d(TAG, "folder change");
+				DropBox.syncFiles(settings);
 				
 			}
 			ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -619,7 +622,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    if(snoozetime>0)
 		    {
 		    	snoozetime--;
-		    	Log.d("clock", "snoozetime============="+snoozetime);
+		    	Log.d(TAG, "snoozetime============="+snoozetime);
 		    }
 		    if(active)
 		    {
@@ -628,7 +631,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    	{
 		    		if((getAlarmHour()==getHour() && (getAlarmMinute())==(getMinute()+5)))
 			    	{
-		    			Log.d("clock", "TURN THAT MACHINE ON 1");
+		    			Log.d(TAG, "TURN THAT MACHINE ON 1");
 		    			turnoncoffee=true;
 			    	}
 		    	}
@@ -636,7 +639,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    	{
 		    		if((getAlarmHour()==(getHour()+1) && (getAlarmMinute()+55)==getMinute()))
 			    	{
-		    			Log.d("clock", "TURN THAT MACHINE ON");
+		    			Log.d(TAG, "TURN THAT MACHINE ON");
 		    			turnoncoffee=true;
 			    	}
 		    	}
@@ -810,42 +813,42 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
     	    	}
     	    	catch(Exception e)
     	    	{
-    	    		Log.e("clock", e.getMessage());
+    	    		Log.e(TAG, e.getMessage());
     	    	}
     			for(HueBridge bridge : bridges) 
     		    {
     				bridge.setUsername(BRIDGEUSERNAME);
     				if(bridge.authenticate(true)) 
     	            {
-    	            	Log.d("HUE", "Access granted. username: " + bridge.getUsername());
+    	            	Log.d(TAG, "Access granted. username: " + bridge.getUsername());
     	            	try
     	            	{
     	            		lights = (Collection<HueLightBulb>) bridge.getLights();
     	            	}
     	            	catch(Exception e)
     	            	{
-    	            		Log.e("clock", e.getMessage());
+    	            		Log.e(TAG, e.getMessage());
     	            	}
-    	    			Log.d("clock", "Available LightBulbs : "+lights.size());
+    	    			Log.d(TAG, "Available LightBulbs : "+lights.size());
     	    			for (HueLightBulb bulb : lights) 
     	    			{
     	    				try
     	    				{
-	    	    				Log.d("clock", bulb.toString());
+	    	    				Log.d(TAG, bulb.toString());
 	    	    				bulb.setOn(true);
 	    	    				bulb.setTransitionTime(i*10);
 	    	    				setHueColor(bulb, 255.0, 255.0, 255.0);
     	    				}
     	    				catch(Exception e)
     	    				{
-    	    					Log.e("clock", e.getMessage());
+    	    					Log.e(TAG, e.getMessage());
     	    				}
     	    			}
     	    			//System.out.println("");
     	            } 
     	            else 
     	            {
-    	            	Log.d("clock", "Authentication failed.");
+    	            	Log.d(TAG, "Authentication failed.");
     	            }
     		    }
     	    }
@@ -861,7 +864,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 	 		{
 	 			try
 	 			{
-    				Log.d("clock", bulb.toString());
+    				Log.d(TAG, bulb.toString());
     				boolean originalyon=false;
     				if(bulb.getOn())
     				{
@@ -925,7 +928,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 	 			}
 	 			catch(Exception e)
 	 			{
-	 				Log.e("clock", "error while setting lights 2");
+	 				Log.e(TAG, "error while setting lights 2");
 	 			}
 			}
 	 	}).start();
@@ -1007,7 +1010,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 				}
 				catch(Exception e)
 				{
-					Log.e("clock", "there was an error when setting the lightbulb");
+					Log.e(TAG, "there was an error when setting the lightbulb");
 				}
 			}
 	 	}).start();
@@ -1051,11 +1054,11 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 				        URL oracle = new URL("http://"+ezcontrolIP+"/control?cmd=set_state_actuator&number=3&function="+function+"&page=control.html");
 				        URLConnection yc = oracle.openConnection();
 				        BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
-						Log.d("clock", "command->coffee");
+						Log.d(TAG, "command->coffee");
 					}
 					catch(Exception e)
 					{
-						Log.e("clock", "there was an error while setting the coffe machine");
+						Log.e(TAG, "there was an error while setting the coffe machine");
 					}
 				}
 		 	}).start();
@@ -1073,11 +1076,11 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 					URL oracle = new URL("http://"+ezcontrolIP+"/control?cmd=set_state_actuator&number="+device+"&function="+function+"&page=control.html");
 				    URLConnection yc = oracle.openConnection();
 				    BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
-					Log.d("clock", "command->heat");
+					Log.d(TAG, "command->heat");
 				}
 				catch(Exception e)
 				{
-					Log.e("clock", "there was an error when setting the heat");
+					Log.e(TAG, "there was an error when setting the heat");
 				}
 			}
 		}).start();
@@ -1088,22 +1091,22 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		String gmailaccString= settings.getString("gmailacc", "");
 	    String gmailpswString= settings.getString("gmailpsw", "");
-	    Log.i("clock", "gmailacc="+gmailaccString);
-	    Log.i("clock", "newmail");
+	    Log.i(TAG, "gmailacc="+gmailaccString);
+	    Log.i(TAG, "newmail");
 		final de.lukeslog.mail.BackgroundMail m = new de.lukeslog.mail.BackgroundMail(gmailaccString, gmailpswString);
-		Log.i("clock", "setTo");
+		Log.i(TAG, "setTo");
 		String t[] = new String[1];
 		t[0]= gmailaccString;
 		m.setTo(t);
-		Log.i("clock", "Set From");
+		Log.i(TAG, "Set From");
 		m.setFrom(gmailaccString);
-		Log.i("clock", "setSubject");
+		Log.i(TAG, "setSubject");
 		String header=subject;
-		Log.i("clock", "Sending with herder="+header);
+		Log.i(TAG, "Sending with herder="+header);
 		m.setSubject(header);
-		Log.i("clock", "setBody");
+		Log.i(TAG, "setBody");
 		String body=text+"\n \n Sincearly, \n your alarm clock.";
-		Log.i("tag", "body"+body);
+		Log.i(TAG, "body"+body);
 		m.setBody(body);
 		Thread tt = new Thread(new Runnable()
 		{
@@ -1112,13 +1115,13 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 			{
 				try 
 				{
-					Log.i("clock", "send?");
+					Log.i(TAG, "send?");
 					m.send();
 					
 				} 
 				catch (Exception e) 
 				{
-					Log.i("clock", "cc"+e);
+					Log.i(TAG, "cc"+e);
 					e.printStackTrace();
 				}	
 			}

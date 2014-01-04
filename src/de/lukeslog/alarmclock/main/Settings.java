@@ -45,10 +45,12 @@ import android.widget.Toast;
 public class Settings extends Activity implements AdapterView.OnItemSelectedListener
 {
     public static final String PREFS_NAME = AlarmClockConstants.PREFS_NAME;
-	 ProgressBar connectbar;
-	 Button connectbutton;
-	 TextView text;
-	 Activity ctx;
+    public static String TAG = AlarmClockConstants.TAG;
+    
+	ProgressBar connectbar;
+	Button connectbutton;
+	TextView text;
+	Activity ctx;
 	 
 	 private static final int REQUEST_LINK_TO_DBX = 547;
 	 
@@ -94,7 +96,7 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 				@Override
 				public void onCheckedChanged(CompoundButton arg0, boolean arg1)
 				{
-					Log.i("clock", "checked1");
+					Log.i(TAG, "checked1");
 					Editor edit = settings.edit();
 					edit.putBoolean("reminder", cb2.isChecked());
 					edit.commit();
@@ -109,7 +111,7 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 				@Override
 				public void onCheckedChanged(CompoundButton arg0, boolean arg1)
 				{
-					Log.i("clock", "checked2");
+					Log.i(TAG, "checked2");
 					Editor edit = settings.edit();
 					edit.putBoolean("sendemail", cb3.isChecked());
 					edit.commit();
@@ -223,7 +225,7 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 		    });
 		    
 		    ArrayList<String> folderlist = DropBox.folders;
-		    Log.d("clock", "folderlistsize="+folderlist.size());
+		    Log.d(TAG, "folderlistsize="+folderlist.size());
 		    final List<String> spinnerArray = new ArrayList<String>();
 		    int sf = settings.getInt("selectedfolder", 0);
 		    
@@ -240,7 +242,7 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 		    	@Override
 	            public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) 
 		    	{
-		    		Log.d("clock", "selected");
+		    		Log.d(TAG, "selected");
 		    		final EditText dropboxfolder = (EditText) findViewById(R.id.dropboxfolder);
 		    		dropboxfolder.setText(spinnerArray.get(arg2));
 		    		use_dropbox.setChecked(true);
@@ -252,7 +254,7 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 	            public void onNothingSelected(AdapterView<?> arg0) 
 	            {
 	               
-		    		Log.d("clock", "not selected");
+		    		Log.d(TAG, "not selected");
 	            }
 		    });
 
@@ -278,7 +280,7 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 		    {
 		        public void afterTextChanged(Editable s)
 		        {
-					Log.i("clock", "change reminder subtractX");
+					Log.i(TAG, "change reminder subtractX");
 	            	Editor edit = settings.edit();
 	            	try
 	            	{
@@ -300,7 +302,7 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 		    {
 		        public void afterTextChanged(Editable s)
 		        {
-					Log.i("clock", "change reminder subtractX");
+					Log.i(TAG, "change reminder subtractX");
 	            	Editor edit = settings.edit();
 	            	try
 	            	{
@@ -483,7 +485,7 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 		    }
 		    catch(Exception e)
 		    {
-		    	Log.e("clock", "WHY THE FUCK DOES THIS EVEN!");
+		    	Log.e(TAG, "WHY THE FUCK DOES THIS EVEN!");
 		    }
 		    
 		    dropboxconnect.setOnClickListener(new View.OnClickListener() 
@@ -492,7 +494,7 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 				@Override
 				public void onClick(View v) 
 				{
-					Log.d("clock", "DROPBOX CONNECT CLICK!");
+					Log.d(TAG, "DROPBOX CONNECT CLICK!");
 					 ClockService.mDBApi.getSession().startAuthentication(Settings.this);
 				}
 		    	
@@ -512,40 +514,40 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 				 			List<HueBridge> bridges = HueBridge.discover();
 						    for(HueBridge bridge : bridges) 
 						    {
-						    	Log.d("HUE", "Found " + bridge);
+						    	Log.d(TAG, "Found " + bridge);
 						        // You may need a better scheme to store your username that to just hardcode it.
 						        // suggestion: Save a mapping from HueBridge.getUDN() to HueBridge.getUsername() somewhere.
 						        bridge.setUsername(ClockService.BRIDGEUSERNAME);
 						        if(!bridge.authenticate(false)) 
 						        {
-						        	Log.d("HUE", "Press the button on your Hue bridge in the next 30 seconds to grant access.");
+						        	Log.d(TAG, "Press the button on your Hue bridge in the next 30 seconds to grant access.");
 						            if(bridge.authenticate(true)) 
 						            {
-						            	Log.d("HUE", "Access granted. username: " + bridge.getUsername());
+						            	Log.d(TAG, "Access granted. username: " + bridge.getUsername());
 						    			Collection<HueLightBulb> lights = (Collection<HueLightBulb>) bridge.getLights();
-						    			Log.d("HUE", "Available LightBulbs: "+lights.size());
+						    			Log.d(TAG, "Available LightBulbs: "+lights.size());
 						    			for (HueLightBulb bulb : lights) 
 						    			{
-						    				Log.d("HUE", bulb.toString());
+						    				Log.d(TAG, bulb.toString());
 						    				ClockService.identifiy(bulb);
 						    			}
 						    			System.out.println("");
 						            } 
 						            else 
 						            {
-						            	Log.d("HUE", "Authentication failed.");
+						            	Log.d(TAG, "Authentication failed.");
 						            }
 						        } 
 						        else 
 						        {
-						        	Log.d("HUE", "Already granted access. username: " + bridge.getUsername());
+						        	Log.d(TAG, "Already granted access. username: " + bridge.getUsername());
 					    			Collection<HueLightBulb> lights = (Collection<HueLightBulb>) bridge.getLights();
-					    			Log.d("HUE", "Available LightBulbs: "+lights.size());
+					    			Log.d(TAG, "Available LightBulbs: "+lights.size());
 					    			for (HueLightBulb bulb : lights) {
-					    				Log.d("HUE", bulb.toString());
+					    				Log.d(TAG, bulb.toString());
 					    				ClockService.identifiy(bulb);
 					    			}
-					    			System.out.println("");
+					    			Log.d(TAG, "");
 						        }
 						    }
 				 		}
@@ -566,12 +568,12 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 		{
 			protected Long doInBackground(Integer... urls) 
 			{
-			    	Log.d("HUE", "doInBackground");
+			    	Log.d(TAG, "doInBackground");
 			    	for(int i=0; i<30; i++)
 			    	{
 			    		try 
 						{
-			    			Log.d("HUE", "sleep");
+			    			Log.d(TAG, "sleep");
 							Thread.sleep(1000);
 						} 
 						catch (InterruptedException e) 
@@ -579,7 +581,7 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 
 								e.printStackTrace();
 						}
-			    		Log.d("HUE", "pp");
+			    		Log.d(TAG, "pp");
 						publishProgress(i);
 				    }
 					return 0l;
@@ -589,31 +591,31 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 				  {
 				    	 if(progress[0]==0)
 				    	 {
-					    	 Log.d("HUE", "set visble");
+					    	 Log.d(TAG, "set visble");
 				 	    	 connectbar.setVisibility(View.VISIBLE);
-				    		 Log.d("HUE", "p=0 start disc and auth");
+				    		 Log.d(TAG, "p=0 start disc and auth");
 				    	 }
 				    	 text.setText("Press the button on your Hue bridge in the next 30 seconds to grant access.");
 				    	 connectbutton.setClickable(false);
-				    	  Log.d("HUE", "int p");
+				    	  Log.d(TAG, "int p");
 				    	  double px = progress[0];
 				    	 int p = (int) (px/(0.3));
 				    	 if(progress[0]==29)
 				    	 {
 				    		 p=100;
 				    	 }
-				    	  Log.d("HUE", "p="+p);
+				    	  Log.d(TAG, "p="+p);
 				    	 connectbar.setProgress(p);
-				    	  Log.d("HUE", "done");
+				    	  Log.d(TAG, "done");
 				  	}
 
 				     protected void onPostExecute(Long result) 
 				     {
-				    	 Log.d("HUE", "on post execute");
+				    	 Log.d(TAG, "on post execute");
 				    	 connectbar.setVisibility(View.GONE);		    	
 				    	 connectbutton.setClickable(true);
 				    	 text.setText("");
-				    	 Log.d("Hue", "on Post Execute 2");
+				    	 Log.d(TAG, "on Post Execute 2");
 				     }
 				 }
 	
@@ -645,7 +647,7 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 		        } 
 		        catch (IllegalStateException e) 
 		        {
-		            Log.i("DbAuthLog", "Error authenticating", e);
+		            Log.i(TAG, "Error authenticating", e);
 		        }
 		    }
 		}
@@ -748,7 +750,7 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 			{
 			    if(account.type.equalsIgnoreCase("com.google"))
 			    {
-			    	Log.d("clock", account.name);
+			    	Log.d(TAG, account.name);
 			        String gmail = account.name;
 		        	Editor edit = settings.edit();
 		        	edit.putString("gmailacc", gmail);

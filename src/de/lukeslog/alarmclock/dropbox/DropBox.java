@@ -25,18 +25,20 @@ import com.dropbox.client2.session.Session.AccessType;
 
 
 import de.lukeslog.alarmclock.main.ClockService;
+import de.lukeslog.alarmclock.support.AlarmClockConstants;
 
 public class DropBox 
 {
     final static private AccessType ACCESS_TYPE = AccessType.DROPBOX;
     public static ArrayList<String> folders = new ArrayList<String>();
     public static boolean syncinprogress=false;
+    public static String TAG = AlarmClockConstants.TAG;
     
     public static void ListAllFolders()
     {
     	final DropboxAPI<AndroidAuthSession> mApi = ClockService.mDBApi;
     	final ArrayList<String> folders2 = new ArrayList<String>();
-    	Log.d("clock", "listallfolders");
+    	Log.d(TAG, "listallfolders");
     	new Thread(new Runnable() 
     	{
     	    public void run() 
@@ -64,7 +66,7 @@ public class DropBox
     	    	}
     	    	catch(Exception e)
     	    	{
-    	    		Log.e("clock", "->"+e.getMessage());
+    	    		Log.e(TAG, "->"+e.getMessage());
     	    	}
     	    }
     	}).start();
@@ -73,7 +75,7 @@ public class DropBox
     public static void syncFiles(final SharedPreferences settings)
 	{
 		final String dropfolderstring = settings.getString("dropboxfolder", "");
-		Log.d("clock", "olol "+dropfolderstring);
+		Log.d(TAG, "olol "+dropfolderstring);
 		//TODO: check if we are in wifi.
 		if(!syncinprogress)
 		{
@@ -110,19 +112,19 @@ public class DropBox
 	    	    		            		FileOutputStream outputStream = null;
 	    	    		            		try 
 	    	    		            		{
-		    	    		            		Log.d("clock", "music file");
+		    	    		            		Log.d(TAG, "music file");
 		    	    		            		fileNames.add(e.fileName());
 		    	    		            		if(!e.modified.equals(settings.getString("lastchange"+e.fileName(), "")))//last change has changed
 	   	    		            				{
 		    	    		            			Editor edit = settings.edit();
 		    	    		            			File file = new File(Environment.getExternalStorageDirectory().getPath() + "/Music/WakeUpSongs/"+e.fileName());
 		    	    		            			folder.mkdirs();
-			    	    		            		Log.d("clock", "have new file");
+			    	    		            		Log.d(TAG, "have new file");
 			    	    		            		outputStream = new FileOutputStream(file);
-			    	    		            		Log.d("clock", "have output stream for the file");
-			    	    		            		Log.d("clock", "String->"+dropboxDir1.fileName()+"/"+e.fileName());
+			    	    		            		Log.d(TAG, "have output stream for the file");
+			    	    		            		Log.d(TAG, "String->"+dropboxDir1.fileName()+"/"+e.fileName());
 			    	    		            		mApi.getFile(dropboxDir1.fileName()+"/"+e.fileName(), null, outputStream, null);
-			    	    		            		Log.d("clock", "stuff with stuff");
+			    	    		            		Log.d(TAG, "stuff with stuff");
 		    	    		            			edit.putString("lastchange"+e.fileName(), e.modified);
 		    	    		            			edit.commit();
 	   	    		            				}	    	    		            		
@@ -154,22 +156,22 @@ public class DropBox
 	    	    	}
 	    	    	catch (Exception ex) 
 	    	    	{
-	    	    		Log.e("clock", "ERROR in the DropBox Class");
-	    	    		Log.e("clock", "->"+ex.getMessage());
+	    	    		Log.e(TAG, "ERROR in the DropBox Class");
+	    	    		Log.e(TAG, "->"+ex.getMessage());
 		    	    	syncinprogress=false;
 	    	    	}
 	    	    	List<File> files = getListFiles(folder); 
-	    	    	Log.d("clock", "compare local files to delete those that are not needed no more");
+	    	    	Log.d(TAG, "compare local files to delete those that are not needed no more");
 	    	    	for(int i=0; i<files.size(); i++)
 	    	    	{
-	    	    		Log.d("clock", files.get(i).getName());
+	    	    		Log.d(TAG, files.get(i).getName());
 	    	    		if(fileNames.contains(files.get(i).getName()))
 	    	    		{
 	    	    			
 	    	    		}
 	    	    		else
 	    	    		{
-	    	    			Log.d("clock", "DELETE"+files.get(i).getName());
+	    	    			Log.d(TAG, "DELETE"+files.get(i).getName());
 	    	    			files.get(i).delete();
 	    	    		}
 	    	    	}

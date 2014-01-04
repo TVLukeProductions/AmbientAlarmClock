@@ -29,7 +29,10 @@ public class Alarm extends Activity
 {
     ClockService mService;
     boolean mBound = false;
+    
     public static final String PREFS_NAME = AlarmClockConstants.PREFS_NAME;
+    public static String TAG = AlarmClockConstants.TAG;
+    
     static boolean pureradio = false;
     WakeLock wakeLock;
     
@@ -54,9 +57,8 @@ public class Alarm extends Activity
 		}
 		catch(Exception e)
 		{
-			Log.e("clock", "The Problem seems to be to turn on or unlock the screen");
+			Log.e(TAG, "The Problem seems to be to turn on or unlock the screen");
 			String errortext = "The Problem seems to be to turn on or unlock the screen\n"+e.getMessage();
-			sendMail(errortext);
 		}
 		try
 		{
@@ -67,9 +69,8 @@ public class Alarm extends Activity
 		}
 		catch(Exception e)
 		{
-			Log.e("clock", "there is a service being creted and bound.");
+			Log.e(TAG, "there is a service being creted and bound.");
 			String errortext = "there is a service being creted and bound.\n"+e.getMessage();
-			sendMail(errortext);
 		}
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         String websiteaddress = settings.getString("websiteaddress", "");
@@ -89,10 +90,9 @@ public class Alarm extends Activity
 		}
 		catch(Exception e)
 		{
-			Log.e("clock", "the problem is displaying the website");
+			Log.e(TAG, "the problem is displaying the website");
 			String errortext = "the problem is displaying the website\n"+e.getMessage();
-			sendMail(errortext);
-			Log.e("clock", e.getMessage());
+			Log.e(TAG, e.getMessage());
 		}
         final Button button = (Button) findViewById(R.id.button1);
         if(!showSnooze)
@@ -125,19 +125,19 @@ public class Alarm extends Activity
         {
             public void onClick(View v)
             {
-            	Log.d("clock", "BUTTON");
+            	Log.d(TAG, "BUTTON");
             	Log.d("clock", "pureradio="+pureradio);
             	if(!pureradio)
             	{
-            		Log.d("clock", "pureradio="+pureradio);
+            		Log.d(TAG, "pureradio="+pureradio);
             		pureradio=true;
-            		Log.d("clock", "pureradio="+pureradio);
+            		Log.d(TAG, "pureradio="+pureradio);
             		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
             		boolean radio = settings.getBoolean("radio", true);
-            		Log.d("clock", "radio="+radio);
+            		Log.d(TAG, "radio="+radio);
             		if(!radio)
             		{
-            			Log.d("clock", "turn on now.");
+            			Log.d(TAG, "turn on now.");
             			mService.turnOnRadio();
             		}
             		mService.awake();
@@ -203,59 +203,5 @@ public class Alarm extends Activity
 	  {
 		  
 	  }
-  }
-
-  private void sendMail(String errortext)
-  {
-	   SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-	  String gmailaccString= settings.getString("gmailacc", "");
-	    String gmailpswString= settings.getString("gmailpsw", "");
-	    Log.i("clock", "gmailacc="+gmailaccString);
-	    Log.i("clock", "newmail");
-		final de.lukeslog.mail.BackgroundMail m = new de.lukeslog.mail.BackgroundMail(gmailaccString, gmailpswString);
-		Log.i("clock", "setTo");
-		String t[] = new String[1];
-		t[0]= gmailaccString;
-		m.setTo(t);
-		Log.i("clock", "Set From");
-		m.setFrom(gmailaccString);
-		Log.i("clock", "setSubject");
-		String header="ERROR";
-		Log.i("clock", "Sending with herder="+header);
-		m.setSubject(header);
-		Log.i("clock", "setBody");
-		String body=errortext+"\n \n Sincearly, \n your alarm clock.";
-		Log.i("tag", "body"+body);
-		m.setBody(body);
-		try 
-		{
-			Log.i("clock", "add Atachment");
-			//m.addAttachment(image);
-		} 
-		catch (Exception e) 
-		{
-      	Log.e("clock", e.getMessage());
-			e.printStackTrace();
-		}
-		Thread tt = new Thread(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				try 
-				{
-					Log.i("clock", "send?");
-					m.send();
-					
-				} 
-				catch (Exception e) 
-				{
-					Log.i("clock", "cc"+e);
-					e.printStackTrace();
-				}	
-			}
-			
-		});
-		tt.start();
   }
 }

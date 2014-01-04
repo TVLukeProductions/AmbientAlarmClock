@@ -44,6 +44,7 @@ public class AlarmClockActivity extends Activity
     //private Handler mHandler = new Handler();
     long mStartTime;
     public static final String PREFS_NAME = AlarmClockConstants.PREFS_NAME;
+    public static String TAG = AlarmClockConstants.TAG;
     
     /** Called when the activity is first created. */
 	public void onCreate(Bundle savedInstanceState) 
@@ -99,7 +100,7 @@ public class AlarmClockActivity extends Activity
 
             public void onTimeChanged(TimePicker view, int hourOfDay, int minutex) 
             {
-            	Log.i("clock", "wakeup time now"+hourOfDay+":"+minutex);
+            	Log.i(TAG, "wakeup time now"+hourOfDay+":"+minutex);
             	Editor edit = settings.edit();
           	    
               	//minutes
@@ -121,7 +122,7 @@ public class AlarmClockActivity extends Activity
 				TimePicker timePicker = (TimePicker) findViewById(R.id.timePicker1);
 				Integer hourOfDay = timePicker.getCurrentHour();
 				Integer minutex = timePicker.getCurrentMinute();
-				Log.i("clock", "wakeup time now"+hourOfDay+":"+minutex);
+				Log.i(TAG, "wakeup time now"+hourOfDay+":"+minutex);
 				Editor edit = settings.edit();
           	    
               	//minutes
@@ -188,7 +189,7 @@ public class AlarmClockActivity extends Activity
     
     private boolean isCloseToWakeUp()
     {
-    	Log.i("clock", ""+ClockService.timesincewakeup);
+    	Log.i(TAG, ""+ClockService.timesincewakeup);
     	if(AlarmClockConstants.TESTING)
     	{
     		return ClockService.timesincewakeup<1;

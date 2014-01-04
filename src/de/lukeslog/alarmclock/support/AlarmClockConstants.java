@@ -4,4 +4,5 @@ public class AlarmClockConstants
 {
 	public static final boolean TESTING = false;
 	public static final String PREFS_NAME = "TwentyEightClock";
+	public static final String TAG = "clock";
 }
