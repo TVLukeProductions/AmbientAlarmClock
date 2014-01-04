@@ -49,12 +49,29 @@ Yes. Whenever I make the app better to m ake sure I get up better I get used to 
 
 ## Version History
 #### Current
-** (AmbientAlarmClock 5.1.7)[]
+**AmbientAlarmClock 5.1.8** (04.01.2014)
 * Set Your Alarm Time
 * Set A Reminder to be displayed on the device and send via email
 * Choose a folder for music to play
-* Choose from 4 diferent radio stations to play either during alarm or after
-* Shows you a website on wake up (best for tablets)
+* If no folder is selected or no music is on the device a default song is now included
+* Choose from 4 different radio stations to play either during alarm or after
+* Shows you a web site on wake up (best for tablets)
+* Last.fm integration
+* DropBox integration
+* Philips Hue integration
+* Prototypical EZcontrol Home Server integration
+
+Changelog:
+* Included default song
+* Fixed a crashing issue (critical)
+* Fixed Folder finding during alarm (critical)
+#### Older Versions
+**AmbientAlarmClock 5.1.7** (04.01.2014)
+* Set Your Alarm Time
+* Set A Reminder to be displayed on the device and send via email
+* Choose a folder for music to play
+* Choose from 4 different radio stations to play either during alarm or after
+* Shows you a web site on wake up (best for tablets)
 * Last.fm integration
 * DropBox integration
 * Philips Hue integration

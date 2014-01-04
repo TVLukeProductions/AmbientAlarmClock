@@ -29,6 +29,7 @@ import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.dropbox.DropBox;
 import de.lukeslog.alarmclock.dropbox.DropBoxConstants;
 import de.lukeslog.alarmclock.lastfm.LastFMConstants;
+import de.lukeslog.alarmclock.support.AlarmClockConstants;
 import de.umass.lastfm.Authenticator;
 import de.umass.lastfm.Caller;
 import de.umass.lastfm.Session;
@@ -61,8 +62,8 @@ import android.util.Log;
 
 public class ClockService extends Service implements Runnable, OnPreparedListener
 {
-    public static final String PREFS_NAME = "TwentyEightClock";
-    public static String BRIDGEUSERNAME = "552627b33010930f275b72ab1c7be258";
+    public static final String PREFS_NAME = AlarmClockConstants.PREFS_NAME;
+    public static String BRIDGEUSERNAME = "552627b33010930f275b72ab1c7be258"; //TODO: make random.
     public static boolean RADIO = true;
     public static int SNOOZETIME = 300;
     public static String RADIOSTATION="";
@@ -83,6 +84,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 
     MediaPlayer mp = new MediaPlayer();
     MediaPlayer mp2 = new MediaPlayer();
+    int[] mediaarray = {R.raw.trance};
     int randomsongnumber;
     int snoozetime=-1;
     boolean playmusic=true;
@@ -267,7 +269,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		boolean mExternalStorageAvailable = false;
 		boolean mExternalStorageWriteable = false;
 		String state = Environment.getExternalStorageState();
-
+		Log.d("clock", "Go Play 3");
 		if (Environment.MEDIA_MOUNTED.equals(state)) 
 		{
 		    // We can read and write the media
@@ -290,64 +292,90 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 			File filesystem = Environment.getExternalStorageDirectory();
 			String path = filesystem.getAbsolutePath();
 			File[] filelist = filesystem.listFiles();
-			Log.i("clock", SONG_NAME);
+			Log.i("clock", "songname "+SONG_NAME+ "- "+filelist.length);
 			for(int i=0; i<filelist.length; i++)
 			{
-				//Log.i("clock", filelist[i].getName());
-				if(filelist[i].getName().equals("WakeUpSongs"))
+				Log.d("clock", filelist[i].getName());
+				if(filelist[i].getName().equals("Music"))
 				{
 					File[] filelist2 = filelist[i].listFiles();
-					randomsongnumber = (int) (Math.random() * (filelist2.length-1));
-					String musicpath = filelist2[randomsongnumber].getAbsolutePath();
-					File f = new File(musicpath);
-					String artist="";
-					String song="";
-					try 
+					for(int j=0; j<filelist2.length; j++)
 					{
-						MP3File mp3 = new MP3File(f);
-						ID3v1 id3 = mp3.getID3v1Tag();
-						artist = id3.getArtist();
-						Log.d("clock", "----------->ARTIST:"+artist);
-						song = id3.getSongTitle();
-						Log.d("clock", "----------->SONG:"+song);
-						scrobble(artist, song);
-					} 
-					catch (IOException e1) 
-					{
-						e1.printStackTrace();
-					} 
-					catch (TagException e1) 
-					{
-						e1.printStackTrace();
-					}
-					catch(Exception ex)
-					{
-						Log.e("clock", "There has been an exception while extracting ID3 Tag Information from the MP3");
-					}
-					try 
-					{
-						mp = new MediaPlayer();
-						mp.setScreenOnWhilePlaying(true);
-						mp.setDataSource(musicpath);
-						mp.setLooping(false);
-				        mp.setVolume(0.99f, 0.99f);
-				        mp.setOnPreparedListener(this);
-				        mp.prepareAsync();
-					} 
-					catch (IllegalArgumentException e) 
-					{
-						e.printStackTrace();
-					} 
-					catch (IllegalStateException e) 
-					{
-						e.printStackTrace();
-					} 
-					catch (IOException e) 
-					{
-						e.printStackTrace();
+						Log.d("clock", ">>"+filelist2[j].getName());
+						if(filelist2[j].getName().equals("WakeUpSongs"))
+						{
+							Log.d("clock", "wakeupsongs");
+							File[] filelist3 = filelist2[j].listFiles();
+							Log.d("clock", ""+filelist3.length);
+							String musicpath="";
+							if(filelist3.length>0)
+							{
+								randomsongnumber = (int) (Math.random() * (filelist3.length-1));
+								musicpath = filelist3[randomsongnumber].getAbsolutePath();
+								File f = new File(musicpath);
+								String artist="";
+								String song="";
+								try 
+								{
+									MP3File mp3 = new MP3File(f);
+									ID3v1 id3 = mp3.getID3v1Tag();
+									artist = id3.getArtist();
+									Log.d("clock", "----------->ARTIST:"+artist);
+									song = id3.getSongTitle();
+									Log.d("clock", "----------->SONG:"+song);
+									scrobble(artist, song);
+								} 
+								catch (IOException e1) 
+								{
+									e1.printStackTrace();
+								} 
+								catch (TagException e1) 
+								{
+									e1.printStackTrace();
+								}
+								
+								catch(Exception ex)
+								{
+									Log.e("clock", "There has been an exception while extracting ID3 Tag Information from the MP3");
+								}
+							}
+							try 
+							{
+								mp = new MediaPlayer();
+								mp.setScreenOnWhilePlaying(true);
+								if(filelist3.length==0)
+								{
+									 mp = MediaPlayer.create(this, mediaarray[0]);
+								}
+								else
+								{
+									mp.setDataSource(musicpath);
+								}
+								mp.setLooping(false);
+						        mp.setVolume(0.99f, 0.99f);
+						        mp.setOnPreparedListener(this);
+						        mp.prepareAsync();
+							} 
+							catch (IllegalArgumentException e) 
+							{
+								e.printStackTrace();
+							} 
+							catch (IllegalStateException e) 
+							{
+								e.printStackTrace();
+							} 
+							catch (IOException e) 
+							{
+								e.printStackTrace();
+							}
+						}
 					}
 				}
 			}
+		}
+		else
+		{
+			Log.d("clock", "not read or writeable...");
 		}
 	}
 	
@@ -365,7 +393,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		{
 			Log.e("clock", "no luck starting the alarm class");
 			Log.e("clock", e.getMessage());
-			sendMail("ERROR", "no luck starting the alarm class\n"+e.getMessage());
+			//sendMail("ERROR", "no luck starting the alarm class\n"+e.getMessage());
 		}
 		try
 		{
@@ -375,7 +403,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		{
 			Log.e("clock", "the mp3 playing is the problem");
 			Log.e("clock", e.getMessage());
-			sendMail("ERROR", "the mp3 playing is the problem\n"+e.getMessage());
+			//sendMail("ERROR", "the mp3 playing is the problem\n"+e.getMessage());
 		}
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		boolean radio = settings.getBoolean("radio", true);
@@ -621,6 +649,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    	{
 		    		//Turn on the heat
 		    		heatControl(LIVINGROOM, HEAT_VERRY_HIGH);
+		    		heatControl(BATHROOM, HEAT_VERRY_HIGH);
 		    	}
 		    	if((getAlarmHour()==getHour() && getAlarmMinute()==getMinute() && newalert) || snoozetime==0)
 		    	{

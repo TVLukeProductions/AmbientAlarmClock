@@ -1,6 +1,7 @@
 package de.lukeslog.alarmclock.main;
 
 import de.lukeslog.alarmclock.main.ClockService.LocalBinder;
+import de.lukeslog.alarmclock.support.AlarmClockConstants;
 import de.lukeslog.alarmclock.R;
 import android.app.Activity;
 import android.app.KeyguardManager;
@@ -28,7 +29,7 @@ public class Alarm extends Activity
 {
     ClockService mService;
     boolean mBound = false;
-    public static final String PREFS_NAME = "TwentyEightClock";
+    public static final String PREFS_NAME = AlarmClockConstants.PREFS_NAME;
     static boolean pureradio = false;
     WakeLock wakeLock;
     

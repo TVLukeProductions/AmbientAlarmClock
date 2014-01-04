@@ -35,7 +35,8 @@ public class DropBox
     public static void ListAllFolders()
     {
     	final DropboxAPI<AndroidAuthSession> mApi = ClockService.mDBApi;
-    	folders.clear();
+    	final ArrayList<String> folders2 = new ArrayList<String>();
+    	Log.d("clock", "listallfolders");
     	new Thread(new Runnable() 
     	{
     	    public void run() 
@@ -53,11 +54,13 @@ public class DropBox
     	    		        	Entry e = contents1.get(i);
     	    		        	if(e.isDir)
     	    		        	{
-    	    		        		folders.add(e.fileName());
+    	    		        		Log.i("clock", e.fileName());
+    	    		        		folders2.add(e.fileName());
     	    		        	}
     	    		        }
     	    		    }
     	    		}
+    	    		folders=folders2;
     	    	}
     	    	catch(Exception e)
     	    	{
@@ -81,10 +84,11 @@ public class DropBox
 	    	    {
 	    	    	syncinprogress=true;
         			File folder = new File(Environment.getExternalStorageDirectory().getPath() + "/Music/WakeUpSongs/");
+        			folder.mkdirs();
     	    		ArrayList<String> fileNames = new ArrayList<String>();
 	    	    	try
 	    	    	{ 
-	    	    		Log.d("clock", "try");
+	    	    		//Log.d("clock", "try");
 	    	    		//ArrayList<String> folderName=new ArrayList<String>();
 
 	    	    		Entry dropboxDir1 = mApi.metadata("/"+dropfolderstring, 0, null, true, null);    
@@ -100,7 +104,7 @@ public class DropBox
 	    	    		            String a = e.fileName();  
 	    	    		            if(!e.isDir)
 	    	    		            {
-	    	    		            	Log.d("clock", e.fileName());
+	    	    		            	//Log.d("clock", e.fileName());
 	    	    		            	if(e.fileName().endsWith(".mp3") || e.fileName().endsWith(".wav") || e.fileName().endsWith(".mp4"))
 	    	    		            	{
 	    	    		            		FileOutputStream outputStream = null;
@@ -140,8 +144,8 @@ public class DropBox
 	    	    		            		        {
 	    	    		            		        	
 	    	    		            		        }
-	    	    		            		        }
 	    	    		            		    }
+	    	    		            		}
 	    	    		            	}
 	    	    		            }
 	    	    		         }
@@ -180,15 +184,19 @@ public class DropBox
     {
         ArrayList<File> inFiles = new ArrayList<File>();
         File[] files = parentDir.listFiles();
-        for (File file : files) 
+        if(files!=null)
         {
-            if (file.isDirectory()) 
-            {
-            } 
-            else 
-            {
-            	inFiles.add(file);
-            }
+	        for (File file : files) 
+	        {
+	            if (file.isDirectory()) 
+	            {
+	            } 
+	            else 
+	            {
+	            	inFiles.add(file);
+	            }
+	        }
+	        return inFiles;
         }
         return inFiles;
     }

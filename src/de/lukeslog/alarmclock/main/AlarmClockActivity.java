@@ -1,6 +1,8 @@
 package de.lukeslog.alarmclock.main;
 
+import de.lukeslog.alarmclock.dropbox.DropBox;
 import de.lukeslog.alarmclock.main.ClockService.LocalBinder;
+import de.lukeslog.alarmclock.support.AlarmClockConstants;
 import de.lukeslog.alarmclock.R;
 
 import android.app.Activity;
@@ -41,7 +43,7 @@ public class AlarmClockActivity extends Activity
     boolean mBound = false;
     //private Handler mHandler = new Handler();
     long mStartTime;
-    public static final String PREFS_NAME = "TwentyEightClock";
+    public static final String PREFS_NAME = AlarmClockConstants.PREFS_NAME;
     
     /** Called when the activity is first created. */
 	public void onCreate(Bundle savedInstanceState) 
@@ -54,6 +56,7 @@ public class AlarmClockActivity extends Activity
 	    int minute = settings.getInt("minute", 0);
 	    boolean active = settings.getBoolean("active", true);
 
+	    DropBox.ListAllFolders();
 	    
     final CheckBox cb1 = (CheckBox)findViewById(R.id.checkBox1);
 	    cb1.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener()
@@ -186,7 +189,14 @@ public class AlarmClockActivity extends Activity
     private boolean isCloseToWakeUp()
     {
     	Log.i("clock", ""+ClockService.timesincewakeup);
-    	return ClockService.timesincewakeup<900;//TODO: change back to 900;
+    	if(AlarmClockConstants.TESTING)
+    	{
+    		return ClockService.timesincewakeup<1;
+    	}
+    	else
+    	{
+    		return ClockService.timesincewakeup<900;
+    	}
     }
 	
 }

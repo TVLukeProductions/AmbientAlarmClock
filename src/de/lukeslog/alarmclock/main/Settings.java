@@ -1,5 +1,6 @@
 package de.lukeslog.alarmclock.main;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import de.jaetzold.philips.hue.HueLightBulb;
 import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.dropbox.DropBox;
 import de.lukeslog.alarmclock.dropbox.DropBoxConstants;
+import de.lukeslog.alarmclock.support.AlarmClockConstants;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
@@ -42,7 +44,7 @@ import android.widget.Toast;
 
 public class Settings extends Activity implements AdapterView.OnItemSelectedListener
 {
-	 public static final String PREFS_NAME = "TwentyEightClock";
+    public static final String PREFS_NAME = AlarmClockConstants.PREFS_NAME;
 	 ProgressBar connectbar;
 	 Button connectbutton;
 	 TextView text;
@@ -70,7 +72,7 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 		    String lastfmusername = settings.getString("lastfmusername", "");
 		    String lastfmpassword = settings.getString("lastfmpassword", "");
 		    String websiteaddress = settings.getString("websiteaddress", "");
-		    String dropfolderstring = settings.getString("dropboxfolder", "");
+		    final String dropfolderstring = settings.getString("dropboxfolder", "");
 		    String localfolderstring = settings.getString("localfolder", "WakeUpSongs");
 		    int remindersubtract = settings.getInt("remindersubtract", 8);
 		    String remindertext = settings.getString("remindertext", "");
@@ -165,6 +167,7 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 					}
 				}
 		    });
+		    final Spinner dpfolderlist = (Spinner) findViewById(R.id.spinnerdpf); 
 		    use_dropbox.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 
 				@Override
@@ -172,7 +175,19 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 				{
 					if(arg1)
 					{
-						use_local.setChecked(false);
+						
+						final ArrayList<String> spinnerArray = DropBox.folders;
+						if(spinnerArray.size()>0)
+						{
+							final EditText dropboxfolder = (EditText) findViewById(R.id.dropboxfolder);
+							dropboxfolder.setText(spinnerArray.get(dpfolderlist.getSelectedItemPosition()));	
+							use_local.setChecked(false);
+						 }
+						 else
+						 {
+							 use_dropbox.setChecked(false);
+							 use_local.setChecked(true);
+						 }
 						saveall();
 					}
 				}
@@ -207,39 +222,55 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 		          public void onTextChanged(CharSequence s, int start, int before, int count) {}
 		    });
 		    
-		    final List<String> spinnerArray = DropBox.folders;
+		    ArrayList<String> folderlist = DropBox.folders;
+		    Log.d("clock", "folderlistsize="+folderlist.size());
+		    final List<String> spinnerArray = new ArrayList<String>();
+		    int sf = settings.getInt("selectedfolder", 0);
 		    
-		    ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArray);
-		    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		    Spinner dpfolderlist = (Spinner) findViewById(R.id.spinnerdpf);
-		    dpfolderlist.setAdapter(adapter);
-		    adapter.notifyDataSetChanged();
-		    
-		    //TODO this does not yet work
-		    dpfolderlist.setOnItemSelectedListener(this);
-		    		
-/**		    	dpfolderlist.setOnItemSelectedListener(new OnItemSelectedListener() {
+		    for(int i=0; i<folderlist.size(); i++)
+		    {
+			    spinnerArray.add(folderlist.get(i));	
+			    if(folderlist.get(i).equals(dropfolderstring))
+			    {
+			    	sf=i;
+			    }
+		    }
+		    dpfolderlist.setOnItemSelectedListener(new OnItemSelectedListener() 
+			    {
 		    	@Override
-	            public void onItemSelected(AdapterView<?> arg0, View arg1,
-	                    int arg2, long arg3) {
+	            public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) 
+		    	{
 		    		Log.d("clock", "selected");
-	               
-	                Object item = arg0.getItemAtPosition(arg2);
-	                if (item!=null) {
-	                    Toast.makeText(Settings.this, item.toString(),
-	                            Toast.LENGTH_SHORT).show();
-	                }
-	                Toast.makeText(Settings.this, "Selected",
-	                        Toast.LENGTH_SHORT).show();
-
+		    		final EditText dropboxfolder = (EditText) findViewById(R.id.dropboxfolder);
+		    		dropboxfolder.setText(spinnerArray.get(arg2));
+		    		use_dropbox.setChecked(true);
+	                saveall();
+	                DropBox.syncFiles(settings);
 	            }
-
+	
 	            @Override
-	            public void onNothingSelected(AdapterView<?> arg0) {
+	            public void onNothingSelected(AdapterView<?> arg0) 
+	            {
 	               
 		    		Log.d("clock", "not selected");
 	            }
-		    });**/
+		    });
+
+		    ArrayAdapter<String> adapter = new ArrayAdapter<String>(Settings.this, android.R.layout.simple_spinner_item, spinnerArray);
+		    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		    adapter.notifyDataSetChanged();
+		    dpfolderlist.setAdapter(adapter);
+		    dpfolderlist.setClickable(true);
+		    dpfolderlist.setSelected(true);
+		    if(DropBox.folders.size()>=sf)
+		    {
+		    	dpfolderlist.setSelection(sf);
+		    }
+		    adapter.notifyDataSetChanged();
+		    
+		    
+		    		
+
 		    
 		    final EditText editText500 = (EditText) findViewById(R.id.editText500);
 		    editText500.setText(""+remindersubtract);
@@ -656,6 +687,8 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 		    EditText websiteaddressfield = (EditText) findViewById(R.id.websiteaddress);
 		    EditText snoozetime = (EditText) findViewById(R.id.snoozetime);
 		    
+		    final Spinner dpfolderlist = (Spinner) findViewById(R.id.spinnerdpf); 
+		    
 		    //get content
 		    Editable st = snoozetime.getEditableText();
 		    String sts = st.toString();
@@ -678,6 +711,8 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 		    edit.putBoolean("showsnooze",  showSnoozeCheckBox.isChecked());
 		    edit.putBoolean("fadein", fadeInCheckBox.isChecked());
 		    edit.putBoolean("scrobble", lastfmcheckbox.isChecked());
+		    
+		    edit.putInt("selectedfolder", dpfolderlist.getSelectedItemPosition());
 		    
 		    RadioButton rb0 = (RadioButton) findViewById(R.id.radio0);
 		    RadioButton rb1 = (RadioButton) findViewById(R.id.radio1);

@@ -1,5 +1,9 @@
 package de.lukeslog.alarmclock.main;
 
-public class Photo {
+import de.lukeslog.alarmclock.support.AlarmClockConstants;
 
+public class Photo 
+{
+
+    public static final String PREFS_NAME = AlarmClockConstants.PREFS_NAME;
 }
