@@ -238,7 +238,8 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 				SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 			    String lastfmusername = settings.getString("lastfmusername", "");
 			    String lastfmpassword = settings.getString("lastfmpassword", "");
-				if(!lastfmusername.equals(""))
+			    boolean scrobbletolastfm = settings.getBoolean("scrobble", false);
+				if(!lastfmusername.equals("") && scrobbletolastfm)
 				{
 					Session session=null;
 					try
