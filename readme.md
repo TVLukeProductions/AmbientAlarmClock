@@ -34,7 +34,7 @@ Features:
 * Choose the color of light to wake you up (not yet implemented)
 
 ## Home Automation
-* Control home appliances like your coffemachine or the heating with the EZControl Home automation server (only a prototypical funtion yet)
+* Control home appliances like your coffe machine or the heating with the EZControl Home automation server (only a prototypical funtion yet)
 
 # FAQ
 **What the Hell? There are like a billion alarm clock apps out there?**
