@@ -126,8 +126,13 @@ public class Alarm extends Activity
             	if(!pureradio)
             	{
             		pureradio=true;
+            		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+            		boolean radio = settings.getBoolean("radio", true);
+            		if(!radio)
+            		{
+            			mService.turnOnRadio();
+            		}
             		mService.awake();
-            		mService.turnOnRadio();
             		button3.setText("Turn Radio Off");
             	}
             	else

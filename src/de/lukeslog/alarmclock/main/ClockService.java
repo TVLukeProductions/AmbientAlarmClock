@@ -389,47 +389,48 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		Log.i("clock", "turnOnRadio");
 		try
 		{
-			mp2 = new MediaPlayer();
-	    	mp2.setScreenOnWhilePlaying(true);
-	        mp2.setAudioStreamType(AudioManager.STREAM_MUSIC);
-	        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-	        int station = settings.getInt("radiostation", 0);
-	        Log.d("clock", "Station---------------------"+station);
-	        try
-	        {
-	        if(station==0)
-	        {
-	        	mp2.setDataSource(ADDR_DRADIO);
-	        }
-	        if(station==1)
-	        {
-	        	mp2.setDataSource("http://87.118.106.79:11006/ltop100.ogg");
-	        }
-	        if(station==2)
-	        {
-	        	mp2.setDataSource("http://revolutionradio.ru/live.ogg");
-	        }
-	        if(station==3)
-	        {
-	        	//http://sc2.3wk.com/3wk-u-ogg-lo
-	        	mp2.setDataSource("http://sc2.3wk.com/3wk-u-ogg-lo");
-	        }
-	        }
-	        catch(Exception e)
-	        {
-	        	Log.d("clock", "default radio");
-	        	try
-	        	{
-	        	mp2.setDataSource(ADDR_DRADIO);
-	        	}
-	        	catch(Exception ex)
-	        	{
-	        		Log.d("clock", "fuck this");
-	        	}
-	        }
-	    	mp2.setVolume(0.99f, 0.99f);
-	        mp2.setOnPreparedListener(this);
-	        mp2.prepareAsync();
+
+				mp2 = new MediaPlayer();
+		    	mp2.setScreenOnWhilePlaying(true);
+		        mp2.setAudioStreamType(AudioManager.STREAM_MUSIC);
+		        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		        int station = settings.getInt("radiostation", 0);
+		        Log.d("clock", "Station---------------------"+station);
+		        try
+		        {
+		        if(station==0)
+		        {
+		        	mp2.setDataSource(ADDR_DRADIO);
+		        }
+		        if(station==1)
+		        {
+		        	mp2.setDataSource("http://87.118.106.79:11006/ltop100.ogg");
+		        }
+		        if(station==2)
+		        {
+		        	mp2.setDataSource("http://revolutionradio.ru/live.ogg");
+		        }
+		        if(station==3)
+		        {
+		        	//http://sc2.3wk.com/3wk-u-ogg-lo
+		        	mp2.setDataSource("http://sc2.3wk.com/3wk-u-ogg-lo");
+		        }
+		        }
+		        catch(Exception e)
+		        {
+		        	Log.d("clock", "default radio");
+		        	try
+		        	{
+		        	mp2.setDataSource(ADDR_DRADIO);
+		        	}
+		        	catch(Exception ex)
+		        	{
+		        		Log.d("clock", "fuck this");
+		        	}
+		        }
+		    	mp2.setVolume(0.99f, 0.99f);
+		        mp2.setOnPreparedListener(this);
+		        mp2.prepareAsync();
 
 		}
 	    catch (Exception ee) 
@@ -542,6 +543,8 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		boolean oktorun=true;
 		boolean newalert=true;
 		long runningcounter=0;
+		boolean coffeealarmsend=false;
+		
 		while(oktorun)
 		{
 			runningcounter++;
@@ -608,9 +611,10 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    			turnoncoffee=true;
 			    	}
 		    	}
-		    	if(turnoncoffee)
+		    	if(turnoncoffee && ! coffeealarmsend)
 		    	{
 		    		coffeMachine(true);
+		    		coffeealarmsend=true;
 		    	}
 		    	if((getAlarmHour()==(getHour()+2) && getAlarmMinute()==getMinute()))
 		    	{
@@ -654,6 +658,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    	if((!(getAlarmHour()==getHour()) || !(getAlarmMinute()==getMinute())) && !newalert)
 		    	{
 		    		newalert=true;
+		    		coffeealarmsend=false;
 		    	}
 		    }
 		    //Log.i("clock", "reminder is"+reminder);
@@ -673,6 +678,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    	{
 		    		//TURN OFF COFFE MACHINE
 		    		coffeMachine(false);
+		    		coffeealarmsend=false;
 		    		Date d = new Date();
 		    		if(d.getSeconds()<5)
 		    		{
@@ -730,6 +736,12 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 	{
 		Date d = new Date();
 		return d.getMinutes();
+	}
+	
+	public int getSecond()
+	{
+		Date d = new Date();
+		return d.getSeconds();
 	}
 	
 	private void fadein()
@@ -1022,8 +1034,6 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 	
 	private void heatControl(final int device, final int function)
 	{
-		//TODO this method assumes that the machine has the number 3. It should not... but this will all be better, when I have a good server for the ezcontrol
-		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		new Thread(new Runnable()
 		{
 			public void run()
