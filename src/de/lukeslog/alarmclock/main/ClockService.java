@@ -292,7 +292,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 			Log.i("clock", SONG_NAME);
 			for(int i=0; i<filelist.length; i++)
 			{
-				Log.i("clock", filelist[i].getName());
+				//Log.i("clock", filelist[i].getName());
 				if(filelist[i].getName().equals("WakeUpSongs"))
 				{
 					File[] filelist2 = filelist[i].listFiles();
@@ -386,10 +386,10 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 	
 	void turnOnRadio()
 	{
-		Log.i("clock", "turnOnRadio");
+		Log.d("clock", "turnOnRadio");
 		try
 		{
-
+			Log.d("clock", "try");
 				mp2 = new MediaPlayer();
 		    	mp2.setScreenOnWhilePlaying(true);
 		        mp2.setAudioStreamType(AudioManager.STREAM_MUSIC);

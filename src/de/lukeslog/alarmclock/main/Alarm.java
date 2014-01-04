@@ -114,6 +114,7 @@ public class Alarm extends Activity
             {
             	mService.awake();
             	mService.radioOff();
+            	pureradio=false;
             	Alarm.this.finish();
             }
         });
@@ -123,22 +124,31 @@ public class Alarm extends Activity
         {
             public void onClick(View v)
             {
+            	Log.d("clock", "BUTTON");
+            	Log.d("clock", "pureradio="+pureradio);
             	if(!pureradio)
             	{
+            		Log.d("clock", "pureradio="+pureradio);
             		pureradio=true;
+            		Log.d("clock", "pureradio="+pureradio);
             		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
             		boolean radio = settings.getBoolean("radio", true);
+            		Log.d("clock", "radio="+radio);
             		if(!radio)
             		{
+            			Log.d("clock", "turn on now.");
             			mService.turnOnRadio();
             		}
             		mService.awake();
-            		button3.setText("Turn Radio Off");
+            		button3.setText("Turn Radio off");
+            		
             	}
             	else
             	{
             		mService.radioOff();
+            		pureradio=false;
                 	Alarm.this.finish();
+            		//button3.setText("Turn Radio off");
             	}
             }
         });
