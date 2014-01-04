@@ -30,19 +30,20 @@ Features:
 * Scrobble the song you woke up to on [last.fm](http://www.last.fm)
 
 #### Philips Hue Integration
-* Turn on the lights when its time to wake up with the Phillips Hue that can be connected with almost no effort
+* Turn on the lights when its time to wake up with the Philips Hue that can be connected with almost no effort
 * Choose the color of light to wake you up (not yet implemented)
 
 #### Home Automation
 * Control home appliances like your coffe machine or the heating with the EZControl Home automation server (only a prototypical funtion yet)
 
 ## FAQ
-**What the Hell? There are like a billion alarm clock apps out there?**
+**What the Hell? There are like a billion alarm clock apps out there!**
 
 Yes, but I don't know of any clock that does all the stuff this one does. I have a hard time getting up so I want loud music, bright lights 
-and my coffee to be ready. It is basically designed around my needs and I just put it here in case anybody wants to have this stuff too. You can just download the apk for free or get the code right here and make it even better.
+and my coffee to be ready. It is basically designed around my needs and I just put it here in case anybody wants to have this stuff too. 
+You can just download the apk or get the code right here and make it even better.
 
-**Will there be more features**
+**Will there be more features?**
 
 Yes. Whenever I make the app better to m ake sure I get up better I get used to the new feature after one or two weeks and I need to make the clock even better, even more tricky, even more effective. So, new features will come.
 
