@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Ambient Alarm Clock</string><!-- "clock"-->
+    <string name="app_name_short">AAC</string>
     <string name="alarm">Alarm</string><!-- "clock"-->
     <string name="coverter">Converter</string><!-- "clock"-->
     <string name="shophours">Shop Hours</string>

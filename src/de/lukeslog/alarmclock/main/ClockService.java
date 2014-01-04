@@ -131,7 +131,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 	public void onCreate() 
 	{
 		super.onCreate();
-		int icon = R.drawable.clock; 
+		int icon = R.drawable.launchericon; 
 		 Notification note=new Notification(icon, "Clock running", System.currentTimeMillis());
 		 Intent i=new Intent(this, AlarmClockActivity.class);
 
@@ -682,7 +682,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    		Date d = new Date();
 		    		if(d.getSeconds()<5)
 		    		{
-				    	int icon = R.drawable.clock; 
+				    	int icon = R.drawable.alerticon; 
 		    	    	final NotificationManager mNotMan = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		    			final Notification notfication = new Notification(
 								icon, "Reminder",

@@ -62,6 +62,7 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 		    boolean fadein = settings.getBoolean("fadein", true);
 		    boolean uselocalchecked = settings.getBoolean("uselocal", true);
 		    boolean usedropboxchecked = settings.getBoolean("usedropbox", false);
+		    boolean scrobbletolastfm = settings.getBoolean("scrobble", false);
 		    boolean reminder = settings.getBoolean("reminder", false);
 		    boolean sendemail = settings.getBoolean("sendemail", false);
 
@@ -288,7 +289,20 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 		    connectbutton = (Button) findViewById(R.id.findhue);
 		    text = (TextView) findViewById(R.id.textView4);
 		    
+		    CheckBox lastfmcheckbox = (CheckBox) findViewById(R.id.checkBox_lastfm);
+		    lastfmcheckbox.setChecked(scrobbletolastfm);
+		    lastfmcheckbox.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 
+				@Override
+				public void onCheckedChanged(CompoundButton arg0, boolean arg1) 
+				{
+					if(arg1)
+					{
+						
+						saveall();
+					}
+				}
+		    });
 		    
 		    EditText lastfmusernamefield = (EditText ) findViewById(R.id.lastfm);
 		    lastfmusernamefield.setText(lastfmusername);
@@ -304,6 +318,8 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 
 		          public void onTextChanged(CharSequence s, int start, int before, int count) {}
 		    });
+		    
+		    
 		    
 		    EditText lastfmpasswordfield = (EditText ) findViewById(R.id.lastfmpassword);
 		    lastfmpasswordfield.setText(lastfmpassword);
@@ -625,7 +641,8 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 		    CheckBox radioCheckBox = (CheckBox) findViewById(R.id.checkBox_radio);
 		    CheckBox fadeInCheckBox = (CheckBox) findViewById(R.id.fadeInCheckBox);
 		    CheckBox showSnoozeCheckBox = (CheckBox) findViewById(R.id.showsnooze);
-		    
+		    CheckBox lastfmcheckbox = (CheckBox) findViewById(R.id.checkBox_lastfm);
+		    		    
 		    EditText dropboxfolder = (EditText) findViewById(R.id.dropboxfolder);
 		    EditText localfolder = (EditText) findViewById(R.id.localfolder);
 		    
@@ -660,6 +677,7 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 		    edit.putBoolean("radio", radioCheckBox.isChecked());
 		    edit.putBoolean("showsnooze",  showSnoozeCheckBox.isChecked());
 		    edit.putBoolean("fadein", fadeInCheckBox.isChecked());
+		    edit.putBoolean("scrobble", lastfmcheckbox.isChecked());
 		    
 		    RadioButton rb0 = (RadioButton) findViewById(R.id.radio0);
 		    RadioButton rb1 = (RadioButton) findViewById(R.id.radio1);

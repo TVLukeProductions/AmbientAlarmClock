@@ -27,7 +27,7 @@
                             android:id="@+id/imageView1"
                             android:layout_width="30dp"
                             android:layout_height="30dp"
-                            android:src="@drawable/clock" />
+                            android:src="@drawable/icon" />
 
                         <TextView
                             android:id="@+id/textView2"
