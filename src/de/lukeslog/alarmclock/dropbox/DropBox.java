@@ -4,32 +4,22 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Environment;
 import android.util.Log;
 
 import com.dropbox.client2.DropboxAPI;
-import com.dropbox.client2.DropboxAPI.DropboxFileInfo;
 import com.dropbox.client2.DropboxAPI.Entry;
 import com.dropbox.client2.android.AndroidAuthSession;
-import com.dropbox.client2.session.AccessTokenPair;
-import com.dropbox.client2.session.AppKeyPair;
-import com.dropbox.client2.session.Session.AccessType;
-
 
 import de.lukeslog.alarmclock.main.ClockService;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
 
 public class DropBox 
 {
-    final static private AccessType ACCESS_TYPE = AccessType.DROPBOX;
     public static ArrayList<String> folders = new ArrayList<String>();
     public static boolean syncinprogress=false;
     public static String TAG = AlarmClockConstants.TAG;
@@ -103,7 +93,6 @@ public class DropBox
 	    	    		        for (int i = 0; i < contents1.size(); i++) 
 	    	    		        {
 	    	    		        	Entry e = contents1.get(i);
-	    	    		            String a = e.fileName();  
 	    	    		            if(!e.isDir)
 	    	    		            {
 	    	    		            	//Log.d("clock", e.fileName());
@@ -116,6 +105,7 @@ public class DropBox
 		    	    		            		fileNames.add(e.fileName());
 		    	    		            		if(!e.modified.equals(settings.getString("lastchange"+e.fileName(), "")))//last change has changed
 	   	    		            				{
+		    	    		            			Log.d(TAG, "->");
 		    	    		            			Editor edit = settings.edit();
 		    	    		            			File file = new File(Environment.getExternalStorageDirectory().getPath() + "/Music/WakeUpSongs/"+e.fileName());
 		    	    		            			folder.mkdirs();
@@ -127,7 +117,11 @@ public class DropBox
 			    	    		            		Log.d(TAG, "stuff with stuff");
 		    	    		            			edit.putString("lastchange"+e.fileName(), e.modified);
 		    	    		            			edit.commit();
-	   	    		            				}	    	    		            		
+	   	    		            				}	
+		    	    		            		else
+		    	    		            		{
+		    	    		            			Log.d(TAG, "  -> no change");
+		    	    		            		}
 		    	    		            	} 
 	    	    		            		catch (Exception em) 
 	    	    		            		{
@@ -167,12 +161,15 @@ public class DropBox
 	    	    		Log.d(TAG, files.get(i).getName());
 	    	    		if(fileNames.contains(files.get(i).getName()))
 	    	    		{
-	    	    			
+	    	    			Log.i(TAG, "-> keep");
 	    	    		}
 	    	    		else
 	    	    		{
 	    	    			Log.d(TAG, "DELETE"+files.get(i).getName());
 	    	    			files.get(i).delete();
+	    	    			Editor edit = settings.edit();
+	    	    			edit.putString("lastchange"+files.get(i).getName(), "");
+	            			edit.commit();
 	    	    		}
 	    	    	}
 	    	    	syncinprogress=false;

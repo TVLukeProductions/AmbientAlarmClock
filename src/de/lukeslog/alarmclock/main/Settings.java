@@ -6,15 +6,14 @@ import java.util.List;
 
 import com.dropbox.client2.session.AccessTokenPair;
 
-import de.jaetzold.philips.hue.ColorHelper;
 import de.jaetzold.philips.hue.HueBridge;
 import de.jaetzold.philips.hue.HueLightBulb;
 import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.dropbox.DropBox;
-import de.lukeslog.alarmclock.dropbox.DropBoxConstants;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -25,9 +24,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -40,8 +37,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
+@SuppressLint("CutPasteId")
 public class Settings extends Activity implements AdapterView.OnItemSelectedListener
 {
     public static final String PREFS_NAME = AlarmClockConstants.PREFS_NAME;
@@ -399,7 +396,7 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 		          public void onTextChanged(CharSequence s, int start, int before, int count) {}
 		       });
 		    
-		    RadioGroup radioradiogroup = (RadioGroup) findViewById(R.id.radioGroup1);
+		    //RadioGroup radioradiogroup = (RadioGroup) findViewById(R.id.radioGroup1);
 		    if(station==0)
 		    {
 		    	RadioButton rb0 = (RadioButton) findViewById(R.id.radio0);
@@ -509,7 +506,8 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 				{
 					new Thread(new Runnable()
 				 	{
-				 		public void run()
+				 		@SuppressWarnings("unchecked")
+						public void run()
 				 		{
 				 			List<HueBridge> bridges = HueBridge.discover();
 						    for(HueBridge bridge : bridges) 

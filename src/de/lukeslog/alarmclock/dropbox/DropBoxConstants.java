@@ -1,7 +1,5 @@
 package de.lukeslog.alarmclock.dropbox;
 
-import com.dropbox.*;
-
 public class DropBoxConstants 
 {
     public static final String appKey = "l3zthhbqqukq2hy";

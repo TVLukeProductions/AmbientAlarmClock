@@ -6,35 +6,22 @@ import de.lukeslog.alarmclock.support.AlarmClockConstants;
 import de.lukeslog.alarmclock.R;
 
 import android.app.Activity;
-import android.app.TabActivity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.content.res.Resources;
-import android.opengl.Visibility;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.SystemClock;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
-import android.widget.TabHost;
-import android.widget.TextView;
 import android.widget.TimePicker;
 
 public class AlarmClockActivity extends Activity 

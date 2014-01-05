@@ -3,6 +3,7 @@ package de.lukeslog.alarmclock.main;
 import de.lukeslog.alarmclock.main.ClockService.LocalBinder;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
 import de.lukeslog.alarmclock.R;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.ComponentName;
@@ -10,21 +11,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
-import android.text.Editable;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
 
+@SuppressLint({ "Wakelock", "SetJavaScriptEnabled" })
 public class Alarm extends Activity
 {
     ClockService mService;
@@ -58,8 +55,13 @@ public class Alarm extends Activity
 		catch(Exception e)
 		{
 			Log.e(TAG, "The Problem seems to be to turn on or unlock the screen");
-			String errortext = "The Problem seems to be to turn on or unlock the screen\n"+e.getMessage();
 		}
+		
+		WindowManager.LayoutParams params = getWindow().getAttributes();
+		params.screenBrightness = 1.0F;
+		getWindow().setAttributes(params);
+		
+		
 		try
 		{
 			getApplicationContext().startService(new Intent(this, ClockService.class));
@@ -70,7 +72,6 @@ public class Alarm extends Activity
 		catch(Exception e)
 		{
 			Log.e(TAG, "there is a service being creted and bound.");
-			String errortext = "there is a service being creted and bound.\n"+e.getMessage();
 		}
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         String websiteaddress = settings.getString("websiteaddress", "");
@@ -91,7 +92,6 @@ public class Alarm extends Activity
 		catch(Exception e)
 		{
 			Log.e(TAG, "the problem is displaying the website");
-			String errortext = "the problem is displaying the website\n"+e.getMessage();
 			Log.e(TAG, e.getMessage());
 		}
         final Button button = (Button) findViewById(R.id.button1);
@@ -104,6 +104,11 @@ public class Alarm extends Activity
             public void onClick(View v)
             {
             	mService.snooze();
+            	
+    			WindowManager.LayoutParams params = getWindow().getAttributes();
+    			params.screenBrightness = 0.1F;
+    			getWindow().setAttributes(params);
+    			
             	Alarm.this.finish();
             }
         });

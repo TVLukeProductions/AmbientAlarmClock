@@ -4,10 +4,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -36,8 +34,6 @@ import de.umass.lastfm.Session;
 import de.umass.lastfm.Track;
 import de.umass.lastfm.scrobble.ScrobbleResult;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -45,18 +41,14 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.content.res.Resources;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Binder;
 import android.os.Environment;
-import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -90,10 +82,9 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
     int randomsongnumber;
     int snoozetime=-1;
     boolean playmusic=true;
-    private Handler handler = new Handler();
     List<HueBridge> bridges;
     Collection<HueLightBulb> lights;
-    boolean lightshow=true;
+    boolean lightshowX=true;
     
     public static String ezcontrolIP ="";
 
@@ -167,7 +158,8 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		 
 		new Thread(new Runnable() 
     	{
-    	    public void run() 
+    	    @SuppressWarnings("unchecked")
+			public void run() 
     	    {
 				bridges = HueBridge.discover();
 				for(HueBridge bridge : bridges) 
@@ -220,9 +212,9 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
     public void onDestroy() 
     {
 		Log.i(TAG, "onDestroy!");
-        super.onDestroy();
         mp.release();
         stopForeground(true);
+        super.onDestroy();
     }
 	
 
@@ -266,33 +258,30 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
     	}).start();
 	}
 	
-	private void goplaymp3()
+	private void playmp3()
 	{
 		boolean mExternalStorageAvailable = false;
-		boolean mExternalStorageWriteable = false;
 		String state = Environment.getExternalStorageState();
 		Log.d(TAG, "Go Play 3");
 		if (Environment.MEDIA_MOUNTED.equals(state)) 
 		{
 		    // We can read and write the media
-		    mExternalStorageAvailable = mExternalStorageWriteable = true;
+		    mExternalStorageAvailable = true;
 		} 
 		else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
 		    // We can only read the media
 		    mExternalStorageAvailable = true;
-		    mExternalStorageWriteable = false;
 		} 
 		else 
 		{
 		    // Something else is wrong. It may be one of many other states, but all we need
 		    //  to know is we can neither read nor write
-		    mExternalStorageAvailable = mExternalStorageWriteable = false;
+		    mExternalStorageAvailable = false;
 		}
 		if( mExternalStorageAvailable)
 		{
 			Log.i(TAG, Environment.getExternalStorageState());
 			File filesystem = Environment.getExternalStorageDirectory();
-			String path = filesystem.getAbsolutePath();
 			File[] filelist = filesystem.listFiles();
 			Log.i(TAG, "songname "+SONG_NAME+ "- "+filelist.length);
 			for(int i=0; i<filelist.length; i++)
@@ -381,9 +370,39 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		}
 	}
 	
-	public void wake()
+	private void wake(boolean firstalert)
 	{
 		Log.i(TAG, "wake");
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		boolean radio = settings.getBoolean("radio", true);
+		//fade in the lights
+		if(FADE_IN && firstalert)
+		{
+			fadein();
+			try
+			{
+				lights(50);
+			}
+			catch(Exception e)
+			{
+				
+			}
+		}
+		else
+		{
+			try
+			{
+				lights(0);
+			}
+			catch(Exception e)
+			{
+				
+			}
+			AudioManager audio;
+			audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+			audio.setStreamVolume(AudioManager.STREAM_MUSIC, 15, AudioManager.FLAG_VIBRATE);
+		}
+		//start the activity
 		try
 		{
 			Intent alarm = new Intent(this, Alarm.class);
@@ -395,11 +414,11 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		{
 			Log.e(TAG, "no luck starting the alarm class");
 			Log.e(TAG, e.getMessage());
-			//sendMail("ERROR", "no luck starting the alarm class\n"+e.getMessage());
 		}
+		//start the music
 		try
 		{
-			goplaymp3();
+			playmp3();
 		}
 		catch(Exception e)
 		{
@@ -407,12 +426,12 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 			Log.e(TAG, e.getMessage());
 			//sendMail("ERROR", "the mp3 playing is the problem\n"+e.getMessage());
 		}
-		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-		boolean radio = settings.getBoolean("radio", true);
+		//if required, turn on the music
 		if(radio)
 		{
 			turnOnRadio();
 		}
+		
 	}
 	
 	void turnOnRadio()
@@ -475,7 +494,6 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		try
 		{
 			timesincewakeup=0;
-			lightshow=false;
     		heatControl(LIVINGROOM, HEAT_LOW);
     		coffeMachine(false);
 			mp.stop();
@@ -492,10 +510,10 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		snoozetime=SNOOZETIME;
 		try
 		{
-			lightshow=false;
 			new Thread(new Runnable() 
 	    	{
-	    	    public void run() 
+	    	    @SuppressWarnings("unchecked")
+				public void run() 
 	    	    {
 	    	    	try
 	    	    	{
@@ -526,15 +544,12 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 	    	    				{
 		    	    				Log.d(TAG, bulb.toString());
 		    	    				bulb.setOn(false);
-		    	    				//bulb.setTransitionTime(i*10);
-		    	    				//setHueColor(bulb, 255.0, 255.0, 255.0);
 	    	    				}
 	    	    				catch(Exception e)
 	    	    				{
 	    	    					Log.e(TAG, e.getMessage());
 	    	    				}
 	    	    			}
-	    	    			//System.out.println("");
 	    	            } 
 	    	            else 
 	    	            {
@@ -545,6 +560,8 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 	    	}).start();
 			mp.stop();
 			mp.release();
+			
+
 		}
 		catch(Exception e)
 		{
@@ -560,7 +577,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 			@Override
 			public void onCompletion(MediaPlayer mpx) 
 			{
-				goplaymp3();
+				playmp3();
 			}
 			
 		});
@@ -568,6 +585,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 	}
 	
 	
+	@SuppressWarnings("static-access")
 	@Override
 	public void run() 
 	{
@@ -593,7 +611,6 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 			String dropfolderstring = settings.getString("dropboxfolder", "");
 			if(!dropboxfoldername.equals("") && !dropboxfoldername.equals(dropfolderstring))
 			{
-				//TODO: The folder to be watched has changed!
 				Log.d(TAG, "folder change");
 				DropBox.syncFiles(settings);
 				
@@ -612,11 +629,9 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    timesincewakeup++;
 		    boolean active = settings.getBoolean("active", true);
 		    boolean fadein = settings.getBoolean("fadein", false);
-		    String song = settings.getString("song", "");
 		    boolean reminder = settings.getBoolean("reminder", false);
 		    int remindersubtract = settings.getInt("remindersubtract", 8);
 		    String remindertext = settings.getString("remindertext", "");
-		    SONG_NAME=song;
 		    FADE_IN = fadein;
 		    //Log.i("clock", "? "+timesincewakeup);
 		    if(snoozetime>0)
@@ -656,36 +671,9 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    	}
 		    	if((getAlarmHour()==getHour() && getAlarmMinute()==getMinute() && newalert) || snoozetime==0)
 		    	{
+		    		wake(snoozetime==-1);
 		    		snoozetime=-1;
-		    		lightshow=true;
 		    		//Log.i("clock", "alarm time");
-		    		if(FADE_IN)
-		    		{
-		    			fadein();
-		    			try
-		    			{
-		    				lights(10);
-		    			}
-		    			catch(Exception e)
-		    			{
-		    				
-		    			}
-		    		}
-		    		else
-		    		{
-		    			try
-		    			{
-		    				lights(0);
-		    			}
-		    			catch(Exception e)
-		    			{
-		    				
-		    			}
-		    			AudioManager audio;
-		    			audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-		    			audio.setStreamVolume(AudioManager.STREAM_MUSIC, 15, AudioManager.FLAG_VIBRATE);
-		    		}
-		    		wake();
 		    		newalert=false;
 		    	}
 		    	if((!(getAlarmHour()==getHour()) || !(getAlarmMinute()==getMinute())) && !newalert)
@@ -783,14 +771,15 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		new Thread(new Runnable() 
     	{
-    	    public void run() 
+    	    @SuppressWarnings("static-access")
+			public void run() 
     	    {
     			for(int x=0; x<16; x++)
     			{
     				audio.setStreamVolume(AudioManager.STREAM_MUSIC, x, AudioManager.FLAG_VIBRATE);
     				try
     		    	{
-    		    		  Thread.currentThread().sleep(1500);
+    		    		  Thread.currentThread().sleep(12000);
     		    	}
     		    	catch(Exception ie)
     		    	{
@@ -805,7 +794,8 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 	{
 		new Thread(new Runnable() 
     	{
-    	    public void run() 
+    	    @SuppressWarnings("unchecked")
+			public void run() 
     	    {
     	    	try
     	    	{
@@ -834,15 +824,15 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
     	    			{
     	    				try
     	    				{
-	    	    				Log.d(TAG, bulb.toString());
-	    	    				bulb.setOn(true);
-	    	    				bulb.setTransitionTime(i*10);
-	    	    				setHueColor(bulb, 255.0, 255.0, 255.0);
+    	    					setHueColor(bulb, 255.0, 255.0, 255.0, i);
+    	    					Thread.sleep(500);
+	    	    				
     	    				}
     	    				catch(Exception e)
     	    				{
-    	    					Log.e(TAG, e.getMessage());
+    	    					Log.e(TAG, e.getMessage());	
     	    				}
+    	    				
     	    			}
     	    			//System.out.println("");
     	            } 
@@ -934,7 +924,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 	 	}).start();
 	}
 
-	public static void setHueColor(final HueLightBulb bulb, double r, double g, double b)
+	public static void setHueColor(final HueLightBulb bulb, double r, double g, double b, final int fadein)
 	{
 	 	//method from http://www.everyhue.com/vanilla/discussion/166/hue-rgb-to-hsv-algorithm/p1
 		//r = (float(rInt) / 255)
@@ -993,20 +983,43 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		}
 		final double ch_x =chroma_x;
 		final double ch_y = chroma_y;
-		int brightness = (int)(Math.floor(Y / 100 *254)); //luminosity, Y
-		boolean isBulbOn = true;
-		if (brightness == 0)
-		{
-			isBulbOn = false; //bri:0 and the hue bulbs are still on
-		}
+		//int brightness = (int)(Math.floor(Y / 100 *254)); //luminosity, Y
 		new Thread(new Runnable()
 		{
 			public void run()
 			{
 				try
 				{
+
+					Log.d(TAG, "1");
 					bulb.setOn(true);
+					Log.d(TAG, "12");
+					bulb.setBrightness(0);
+					Log.d(TAG, "3");
 					bulb.setCieXY(ch_x , ch_y);
+					Log.d(TAG, "4");
+					if(fadein>0)
+					{
+						int steps = 255/fadein;
+						for(int i=0; i<=255; i=i+steps)
+						{
+							bulb.setBrightness(i);
+							Log.d(TAG, ""+i);
+							try
+							{
+								Thread.sleep(5000);
+							}
+							catch(Exception h)
+							{
+								Log.e(TAG, "thread sleep exception");
+							}
+							
+						}
+					}
+					else
+					{
+						bulb.setBrightness(255);
+					}
 				}
 				catch(Exception e)
 				{
