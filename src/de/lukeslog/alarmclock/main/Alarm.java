@@ -44,10 +44,10 @@ public class Alarm extends Activity
 			final KeyguardManager.KeyguardLock kl = km.newKeyguardLock("MyKeyguardLock");
 	
 			PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-			wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP
+			wakeLock = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ACQUIRE_CAUSES_WAKEUP
 			        | PowerManager.ON_AFTER_RELEASE, "MyWakeLock");
 			wakeLock.acquire();
-			getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+			getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 			getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
 			getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);	
 			kl.disableKeyguard();
@@ -56,12 +56,17 @@ public class Alarm extends Activity
 		{
 			Log.e(TAG, "The Problem seems to be to turn on or unlock the screen");
 		}
+		try
+		{
+			WindowManager.LayoutParams params = getWindow().getAttributes();
+			params.screenBrightness = 1.0F;
+			getWindow().setAttributes(params);
 		
-		WindowManager.LayoutParams params = getWindow().getAttributes();
-		params.screenBrightness = 1.0F;
-		getWindow().setAttributes(params);
-		
-		
+		}
+		catch(Exception e)
+		{
+			
+		}
 		try
 		{
 			getApplicationContext().startService(new Intent(this, ClockService.class));
@@ -73,91 +78,101 @@ public class Alarm extends Activity
 		{
 			Log.e(TAG, "there is a service being creted and bound.");
 		}
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-        String websiteaddress = settings.getString("websiteaddress", "");
-        boolean showSnooze = settings.getBoolean("showsnooze", true);
+	        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+	        String websiteaddress = settings.getString("websiteaddress", "");
+	        boolean showSnooze = settings.getBoolean("showsnooze", true);
 		try
 		{
-        WebView webView = (WebView) findViewById(R.id.webView1);
-        webView.getSettings().setJavaScriptEnabled(true);
-        if(websiteaddress.equals(""))
-        {
-        	webView.loadUrl("http://www.tagesschau.de");
-        }
-        else
-        {
-        	webView.loadUrl(websiteaddress);
-        }
+	        WebView webView = (WebView) findViewById(R.id.webView1);
+	        webView.getSettings().setJavaScriptEnabled(true);
+	        if(websiteaddress.equals(""))
+	        {
+	        	webView.loadUrl("http://www.tagesschau.de");
+	        }
+	        else
+	        {
+	        	webView.loadUrl(websiteaddress);
+	        }
 		}
 		catch(Exception e)
 		{
 			Log.e(TAG, "the problem is displaying the website");
 			Log.e(TAG, e.getMessage());
 		}
+		try
+		{
         final Button button = (Button) findViewById(R.id.button1);
         if(!showSnooze)
         {
         	button.setVisibility(View.GONE);
         }
-        button.setOnClickListener(new View.OnClickListener() 
+        else
         {
-            public void onClick(View v)
-            {
-            	mService.snooze();
-            	
-    			WindowManager.LayoutParams params = getWindow().getAttributes();
-    			params.screenBrightness = 0.1F;
-    			getWindow().setAttributes(params);
-    			
-            	Alarm.this.finish();
-            }
-        });
-        
-        final Button button2 = (Button) findViewById(R.id.button2);
-        button2.setOnClickListener(new View.OnClickListener() 
-        {
-            public void onClick(View v)
-            {
-            	mService.awake();
-            	mService.radioOff();
-            	pureradio=false;
-            	Alarm.this.finish();
-            }
-        });
-        
-        final Button button3 = (Button) findViewById(R.id.button3);
-        button3.setOnClickListener(new View.OnClickListener()
-        {
-            public void onClick(View v)
-            {
-            	Log.d(TAG, "BUTTON");
-            	Log.d("clock", "pureradio="+pureradio);
-            	if(!pureradio)
-            	{
-            		Log.d(TAG, "pureradio="+pureradio);
-            		pureradio=true;
-            		Log.d(TAG, "pureradio="+pureradio);
-            		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-            		boolean radio = settings.getBoolean("radio", true);
-            		Log.d(TAG, "radio="+radio);
-            		if(!radio)
-            		{
-            			Log.d(TAG, "turn on now.");
-            			mService.turnOnRadio();
-            		}
-            		mService.awake();
-            		button3.setText("Turn Radio off");
-            		
-            	}
-            	else
-            	{
-            		mService.radioOff();
-            		pureradio=false;
-                	Alarm.this.finish();
-            		//button3.setText("Turn Radio off");
-            	}
-            }
-        });
+		        button.setOnClickListener(new View.OnClickListener() 
+		        {
+		            public void onClick(View v)
+		            {
+		            	mService.snooze();
+		            	
+		    			WindowManager.LayoutParams params = getWindow().getAttributes();
+		    			params.screenBrightness = 0.1F;
+		    			getWindow().setAttributes(params);
+		    			
+		            	Alarm.this.finish();
+		            }
+		        });
+	        }
+	        
+	        final Button button2 = (Button) findViewById(R.id.button2);
+	        button2.setOnClickListener(new View.OnClickListener() 
+	        {
+	            public void onClick(View v)
+	            {
+	            	mService.awake();
+	            	mService.radioOff();
+	            	pureradio=false;
+	            	Alarm.this.finish();
+	            }
+	        });
+	        
+	        final Button button3 = (Button) findViewById(R.id.button3);
+	        button3.setOnClickListener(new View.OnClickListener()
+	        {
+	            public void onClick(View v)
+	            {
+	            	Log.d(TAG, "BUTTON");
+	            	Log.d("clock", "pureradio="+pureradio);
+	            	if(!pureradio)
+	            	{
+	            		Log.d(TAG, "pureradio="+pureradio);
+	            		pureradio=true;
+	            		Log.d(TAG, "pureradio="+pureradio);
+	            		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+	            		boolean radio = settings.getBoolean("radio", true);
+	            		Log.d(TAG, "radio="+radio);
+	            		if(!radio)
+	            		{
+	            			Log.d(TAG, "turn on now.");
+	            			mService.turnOnRadio();
+	            		}
+	            		mService.awake();
+	            		button3.setText("Turn Radio off");
+	            		
+	            	}
+	            	else
+	            	{
+	            		mService.radioOff();
+	            		pureradio=false;
+	                	Alarm.this.finish();
+	            		//button3.setText("Turn Radio off");
+	            	}
+	            }
+	        });
+		}
+		catch(Exception e)
+		{
+			
+		}
  }
 
 	/** Defines callbacks for service binding, passed to bindService() */
@@ -197,16 +212,10 @@ public class Alarm extends Activity
   
   public void  onDestroy()
   {
+	  if(wakeLock!=null)
+	  {
+		  wakeLock.release();
+	  }
 	  super.onDestroy();
-	  try
-	  {
-		  mService.awake();
-		  mService.radioOff();
-		  Alarm.this.finish();
-	  }
-	  catch(Exception e)
-	  {
-		  
-	  }
   }
 }

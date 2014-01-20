@@ -301,7 +301,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 							String musicpath="";
 							if(filelist3.length>0)
 							{
-								randomsongnumber = (int) (Math.random() * (filelist3.length-1));
+								randomsongnumber = (int) (Math.random() * (filelist3.length));
 								musicpath = filelist3[randomsongnumber].getAbsolutePath();
 								File f = new File(musicpath);
 								String artist="";
