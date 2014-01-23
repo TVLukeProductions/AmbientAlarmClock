@@ -44,7 +44,7 @@ public class Alarm extends Activity
 			final KeyguardManager.KeyguardLock kl = km.newKeyguardLock("MyKeyguardLock");
 	
 			PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-			wakeLock = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ACQUIRE_CAUSES_WAKEUP
+			wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK| PowerManager.ACQUIRE_CAUSES_WAKEUP
 			        | PowerManager.ON_AFTER_RELEASE, "MyWakeLock");
 			wakeLock.acquire();
 			getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
@@ -212,9 +212,16 @@ public class Alarm extends Activity
   
   public void  onDestroy()
   {
+	  try
+	  {
 	  if(wakeLock!=null)
 	  {
 		  wakeLock.release();
+	  }
+	  }
+	  catch(Exception e)
+	  {
+		  
 	  }
 	  super.onDestroy();
   }
