@@ -38,4 +38,5 @@
     <string name="day6">Saturday</string><!-- "Monday"-->
     <string name="day7">Sunday</string><!-- "Monday"-->
     <string name="choosefolder">Choose a Folder</string>
+    <string name="chooselocalfolder">Choose a Folder</string>
 </resources>

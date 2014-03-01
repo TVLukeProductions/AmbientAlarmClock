@@ -321,88 +321,91 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		}
 		if( mExternalStorageAvailable)
 		{
+			 final SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+			String localfolderstring = settings.getString("localfolder", "WakeUpSongs");
+		    boolean uselocalchecked = settings.getBoolean("uselocal", true);
+		    boolean usedropboxchecked = settings.getBoolean("usedropbox", false);
 			Log.i(TAG, Environment.getExternalStorageState());
 			File filesystem = Environment.getExternalStorageDirectory();
-			File[] filelist = filesystem.listFiles();
-			Log.i(TAG, "songname "+SONG_NAME+ "- "+filelist.length);
-			for(int i=0; i<filelist.length; i++)
+			if(usedropboxchecked)
 			{
-				Log.d(TAG, filelist[i].getName());
-				if(filelist[i].getName().equals("Music"))
+				localfolderstring = Environment.getExternalStorageDirectory().getPath() + "/Music/WakeUpSongs/";
+			}
+			File file = new File(localfolderstring);
+			Log.d(TAG, "wakeupsongs");
+			File[] filelist3 = file.listFiles();
+			//count mp3s
+			int numberOfMp3=0;
+			for(int i=0; i<filelist3.length; i++)
+			{
+				if(filelist3[i].getName().endsWith("mp3"))
 				{
-					File[] filelist2 = filelist[i].listFiles();
-					for(int j=0; j<filelist2.length; j++)
-					{
-						Log.d(TAG, ">>"+filelist2[j].getName());
-						if(filelist2[j].getName().equals("WakeUpSongs"))
-						{
-							Log.d(TAG, "wakeupsongs");
-							File[] filelist3 = filelist2[j].listFiles();
-							Log.d(TAG, ""+filelist3.length);
-							String musicpath="";
-							if(filelist3.length>0)
-							{
-								randomsongnumber = (int) (Math.random() * (filelist3.length));
-								musicpath = filelist3[randomsongnumber].getAbsolutePath();
-								File f = new File(musicpath);
-								String artist="";
-								String song="";
-								try 
-								{
-									MP3File mp3 = new MP3File(f);
-									ID3v1 id3 = mp3.getID3v1Tag();
-									artist = id3.getArtist();
-									Log.d(TAG, "----------->ARTIST:"+artist);
-									song = id3.getSongTitle();
-									Log.d(TAG, "----------->SONG:"+song);
-									scrobble(artist, song);
-								} 
-								catch (IOException e1) 
-								{
-									e1.printStackTrace();
-								} 
-								catch (TagException e1) 
-								{
-									e1.printStackTrace();
-								}
-								
-								catch(Exception ex)
-								{
-									Log.e(TAG, "There has been an exception while extracting ID3 Tag Information from the MP3");
-								}
-							}
-							try 
-							{
-								mp = new MediaPlayer();
-								mp.setScreenOnWhilePlaying(true);
-								if(filelist3.length==0)
-								{
-									 mp = MediaPlayer.create(this, mediaarray[0]);
-								}
-								else
-								{
-									mp.setDataSource(musicpath);
-								}
-								mp.setLooping(false);
-						        mp.setVolume(0.99f, 0.99f);
-						        mp.setOnPreparedListener(this);
-						        mp.prepareAsync();
-							} 
-							catch (IllegalArgumentException e) 
-							{
-								e.printStackTrace();
-							} 
-							catch (IllegalStateException e) 
-							{
-								e.printStackTrace();
-							} 
-							catch (IOException e) 
-							{
-								e.printStackTrace();
-							}
-						}
-					}
+					Log.d(TAG, "Number of MP3s");
+					numberOfMp3++;
 				}
+			}
+			Log.d(TAG, "FILELIST LENGTH "+filelist3.length);
+			String musicpath="";
+			if(filelist3.length>0)
+			{
+				randomsongnumber = (int) (Math.random() * (filelist3.length));
+				musicpath = filelist3[randomsongnumber].getAbsolutePath();
+				File f = new File(musicpath);
+				String artist="";
+				String song="";
+				try 
+				{
+					MP3File mp3 = new MP3File(f);
+					ID3v1 id3 = mp3.getID3v1Tag();
+					artist = id3.getArtist();
+					Log.d(TAG, "----------->ARTIST:"+artist);
+					song = id3.getSongTitle();
+					Log.d(TAG, "----------->SONG:"+song);
+					scrobble(artist, song);
+				} 
+				catch (IOException e1) 
+				{
+					e1.printStackTrace();
+				} 
+				catch (TagException e1) 
+				{
+					e1.printStackTrace();
+				}
+				
+				catch(Exception ex)
+				{
+					Log.e(TAG, "There has been an exception while extracting ID3 Tag Information from the MP3");
+				}
+			}
+			try 
+			{
+				mp = new MediaPlayer();
+				mp.setScreenOnWhilePlaying(true);
+				if(numberOfMp3==0)
+				{
+					Log.d(TAG, "DEFAULT FILE");
+					mp = MediaPlayer.create(this, mediaarray[0]);
+				}
+				else
+				{
+					mp.setDataSource(musicpath);
+				}
+				mp.setLooping(false);
+				mp.setVolume(0.99f, 0.99f);
+				mp.setOnPreparedListener(this);
+				mp.prepareAsync();
+			} 
+			catch (IllegalArgumentException e) 
+			{
+				e.printStackTrace();
+			} 
+			catch (IllegalStateException e) 
+			{
+				e.printStackTrace();
+			} 
+			catch (IOException e) 
+			{
+				e.printStackTrace();
 			}
 		}
 		else
@@ -649,7 +652,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		{
 			runningcounter++;
 		    SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-			Log.d("clock", "run1");
+			//Log.d("clock", "run1");
 			try
 	    	{
 	    		  Thread.currentThread().sleep(1000);

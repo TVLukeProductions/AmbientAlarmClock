@@ -1,5 +1,6 @@
 package de.lukeslog.alarmclock.main;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -20,6 +21,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -48,6 +50,8 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 	Button connectbutton;
 	TextView text;
 	Activity ctx;
+	
+    ArrayList<String> localFolderList;
 	 
 	 private static final int REQUEST_LINK_TO_DBX = 547;
 	 
@@ -63,6 +67,8 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 		    boolean fadein = settings.getBoolean("fadein", true);
 		    boolean uselocalchecked = settings.getBoolean("uselocal", true);
 		    boolean usedropboxchecked = settings.getBoolean("usedropbox", false);
+		    Log.d(TAG, "use local"+uselocalchecked);
+		    Log.d(TAG, "use dp"+usedropboxchecked);
 		    boolean scrobbletolastfm = settings.getBoolean("scrobble", false);
 		    boolean reminder = settings.getBoolean("reminder", false);
 		    boolean sendemail = settings.getBoolean("sendemail", false);
@@ -150,49 +156,9 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 					saveall();
 				}
 		    });
-		    
-		    final CheckBox use_local = (CheckBox) findViewById(R.id.use_local);
-		    use_local.setChecked(uselocalchecked);
-		    final CheckBox use_dropbox = (CheckBox) findViewById(R.id.use_dropbox);
-		    use_dropbox.setChecked(usedropboxchecked);
-		    //make sure these are exclusive
-		    use_local.setOnCheckedChangeListener(new OnCheckedChangeListener(){
-
-				@Override
-				public void onCheckedChanged(CompoundButton arg0, boolean arg1) 
-				{
-					if(arg1)
-					{
-						use_dropbox.setChecked(false);
-						saveall();
-					}
-				}
-		    });
 		    final Spinner dpfolderlist = (Spinner) findViewById(R.id.spinnerdpf); 
-		    use_dropbox.setOnCheckedChangeListener(new OnCheckedChangeListener(){
-
-				@Override
-				public void onCheckedChanged(CompoundButton arg0, boolean arg1) 
-				{
-					if(arg1)
-					{
-						
-						final ArrayList<String> spinnerArray = DropBox.folders;
-						if(spinnerArray.size()>0)
-						{
-							final EditText dropboxfolder = (EditText) findViewById(R.id.dropboxfolder);
-							dropboxfolder.setText(spinnerArray.get(dpfolderlist.getSelectedItemPosition()));	
-							use_local.setChecked(false);
-						 }
-						 else
-						 {
-							 use_dropbox.setChecked(false);
-							 use_local.setChecked(true);
-						 }
-						saveall();
-					}
-				}
-		    });
+		    final Spinner localfolderlist = (Spinner) findViewById(R.id.spinnerlocalf); 
+		    
 		    
 		    final EditText dropboxfolder = (EditText) findViewById(R.id.dropboxfolder);
 		    dropboxfolder.setText(dropfolderstring);
@@ -223,6 +189,72 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 		          public void onTextChanged(CharSequence s, int start, int before, int count) {}
 		    });
 		    
+		    Log.d(TAG, "2 use local"+uselocalchecked);
+		    Log.d(TAG, "2 use dp"+usedropboxchecked);
+		    final CheckBox use_local = (CheckBox) findViewById(R.id.use_local);
+
+		    Log.d(TAG, "3 use local"+uselocalchecked);
+		    Log.d(TAG, "3 use dp"+usedropboxchecked);
+		    final CheckBox use_dropbox = (CheckBox) findViewById(R.id.use_dropbox);
+
+		    Log.d(TAG, "4 use local"+uselocalchecked);
+		    Log.d(TAG, "4 use dp"+usedropboxchecked);
+		    
+		    //FILLING THE SPINER FOR LOCAL FOLDERS
+		    localFolderList = new ArrayList<String>();
+		    //get the folders
+		    File filesystem = Environment.getExternalStorageDirectory();
+			createFolderList(filesystem, 0);
+			//clean folderlist
+			for(int i=0; i<localFolderList.size(); i++)
+			{
+				
+			}
+			final List<String> localfolderspinerArray = new ArrayList<String>();
+			int lsf = settings.getInt("selectedLocalFolder", 0);
+			for(int i=0; i<localFolderList.size(); i++)
+			{
+				localfolderspinerArray.add(localFolderList.get(i));
+				if(localFolderList.get(i).equals(localfolderstring))
+				{
+					lsf=i;
+				}
+			}
+			localfolderlist.setOnItemSelectedListener(new OnItemSelectedListener() 
+		    {
+		    	@Override
+	            public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) 
+		    	{
+		    		Log.d(TAG, "selected");
+		    		final EditText localfolder = (EditText) findViewById(R.id.localfolder);
+		    		localfolder.setText(localfolderspinerArray.get(arg2));
+		    		//use_local.setChecked(true);
+	                saveall();
+	            }
+	
+	            @Override
+	            public void onNothingSelected(AdapterView<?> arg0) 
+	            {
+	               
+		    		Log.d(TAG, "not selected");
+	            }
+		    });
+		    ArrayAdapter<String> localadapter = new ArrayAdapter<String>(Settings.this, android.R.layout.simple_spinner_item, localfolderspinerArray);
+		    localadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		    localadapter.notifyDataSetChanged();
+		    localfolderlist.setAdapter(localadapter);
+		    localfolderlist.setClickable(true);
+		    localfolderlist.setSelected(true);
+		    if(localFolderList.size()>=lsf)
+		    {
+		    	localfolderlist.setSelection(lsf);
+		    }
+		    localadapter.notifyDataSetChanged();
+		    Log.d(TAG, "5 use ocal"+uselocalchecked);
+		    Log.d(TAG, "5 use dp"+usedropboxchecked);
+		    
+		    //---------------------------------------
+		    //FROM HERE ON WE FILL THE DROPBOX SPINER
 		    ArrayList<String> folderlist = DropBox.folders;
 		    Log.d(TAG, "folderlistsize="+folderlist.size());
 		    final List<String> spinnerArray = new ArrayList<String>();
@@ -244,7 +276,7 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 		    		Log.d(TAG, "selected");
 		    		final EditText dropboxfolder = (EditText) findViewById(R.id.dropboxfolder);
 		    		dropboxfolder.setText(spinnerArray.get(arg2));
-		    		use_dropbox.setChecked(true);
+		    		//use_dropbox.setChecked(true);
 	                saveall();
 	                DropBox.syncFiles(settings);
 	            }
@@ -268,6 +300,51 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 		    	dpfolderlist.setSelection(sf);
 		    }
 		    adapter.notifyDataSetChanged();
+		    
+		    Log.d(TAG, "6 use local"+uselocalchecked);
+		    Log.d(TAG, "6 use dp"+usedropboxchecked);
+
+		    //make sure these are exclusive
+		    use_local.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+
+				@Override
+				public void onCheckedChanged(CompoundButton arg0, boolean arg1) 
+				{
+					if(arg1)
+					{
+						use_dropbox.setChecked(false);
+						saveall();
+					}
+				}
+		    });
+		    use_dropbox.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+
+				@Override
+				public void onCheckedChanged(CompoundButton arg0, boolean arg1) 
+				{
+					if(arg1)
+					{
+						
+						final ArrayList<String> spinnerArray = DropBox.folders;
+						if(spinnerArray.size()>0)
+						{
+							final EditText dropboxfolder = (EditText) findViewById(R.id.dropboxfolder);
+							dropboxfolder.setText(spinnerArray.get(dpfolderlist.getSelectedItemPosition()));	
+							use_local.setChecked(false);
+						 }
+						 else
+						 {
+							 use_dropbox.setChecked(false);
+							 use_local.setChecked(true);
+						 }
+						saveall();
+					}
+				}
+		    });
+		    Log.d(TAG, "7 use local"+uselocalchecked);
+		    Log.d(TAG, "7 use dp"+usedropboxchecked);
+		    use_local.setChecked(uselocalchecked);
+		    use_dropbox.setChecked(usedropboxchecked);
 		    
 		    final EditText editText500 = (EditText) findViewById(R.id.editText500);
 		    editText500.setText(""+remindersubtract);
@@ -480,10 +557,8 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 
 		          public void onTextChanged(CharSequence s, int start, int before, int count) {}
 		       });
-		    //TODO: there are some items missing...
 		    
 		    
-		    //TODO: in the long term the save button should not exist anymore... but right now...
 		    Button settingButton = (Button) findViewById(R.id.settingsave);
 		    settingButton.setOnClickListener(new View.OnClickListener() 
 	        {
@@ -581,7 +656,22 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 	        });
 		}
 		
-		
+		private void createFolderList(File f, int depth)
+		{
+			//Log.d(TAG, "checkfolderlist");
+			if(f.isDirectory() && (depth<3 || localFolderList.size()<100))
+			{
+				File[] filelist = f.listFiles();
+				localFolderList.add(f.getAbsolutePath());
+				for(int j=0; j<filelist.length; j++)
+				{
+					if(filelist[j].isDirectory())
+					{
+						createFolderList(filelist[j], depth+1);
+					}
+				}
+			}
+		}
 		 
 		/**
 		  * @author lukas
@@ -714,7 +804,8 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 		    EditText snoozetime = (EditText) findViewById(R.id.snoozetime);
 		    EditText countdownSec = (EditText) findViewById(R.id.countdowntime);
 		    
-		    final Spinner dpfolderlist = (Spinner) findViewById(R.id.spinnerdpf); 
+		    final Spinner dpfolderlist = (Spinner) findViewById(R.id.spinnerdpf);
+		    final Spinner localfolderlist = (Spinner) findViewById(R.id.spinnerlocalf); 
 		    
 		    //get content
 		    try
@@ -757,6 +848,7 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 		    edit.putBoolean("showcountdown", countdown.isChecked());
 		    
 		    edit.putInt("selectedfolder", dpfolderlist.getSelectedItemPosition());
+		    edit.putInt("selectedLocalFolder", localfolderlist.getSelectedItemPosition());
 		    
 		    RadioButton rb0 = (RadioButton) findViewById(R.id.radio0);
 		    RadioButton rb1 = (RadioButton) findViewById(R.id.radio1);

@@ -263,7 +263,7 @@ public class Alarm extends Activity
 		public void run() 
 		{
 			// TODO Auto-generated method stub
-			Log.d(TAG, "countdown");
+			//Log.d(TAG, "countdown");
 			SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 			int countdownseconds = settings.getInt("countDownSeconds", 3000);
 			int hour = settings.getInt("hour", 0);
