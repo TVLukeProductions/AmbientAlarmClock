@@ -22,6 +22,7 @@ import android.os.PowerManager.WakeLock;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.WebSettings.PluginState;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.TextView;
@@ -111,6 +112,7 @@ public class Alarm extends Activity
 		{
 	        WebView webView = (WebView) findViewById(R.id.webView1);
 	        webView.getSettings().setJavaScriptEnabled(true);
+	        webView.getSettings().setPluginState(PluginState.ON);
 	        if(websiteaddress.equals(""))
 	        {
 	        	webView.loadUrl("http://www.tagesschau.de");

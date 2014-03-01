@@ -138,7 +138,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 	public void onCreate() 
 	{
 		super.onCreate();
-		Log.d(TAG, "ClockService onCreate( )");
+		Log.d(TAG, "ClockService onCreate()");
 		int icon = R.drawable.launchericon; 
 		 Notification note=new Notification(icon, "Clock running", System.currentTimeMillis());
 		 Intent i=new Intent(this, AlarmClockActivity.class);
@@ -180,7 +180,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 			ezcontrolIP="192.168.1.242"; //Default IP for ezControl Servers in a Home Network
 		}
 
-	    IntentFilter filter1 = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
+	   /* IntentFilter filter1 = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
 	    IntentFilter filter2 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
 	    IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
 	    this.registerReceiver(mReceiver, filter1);
@@ -193,7 +193,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
     	    {
     	    	connectToBluetooth();
     	    }
-    	}).start();
+    	}).start();*/
 		
 	    
 		new Thread(new Runnable() 
@@ -671,7 +671,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 
 			if (mWifi.isConnected()) 
 			{
-				if(runningcounter%120==1)
+				if(runningcounter%300==1)
 				{
 					DropBox.syncFiles(settings);
 				}
@@ -698,7 +698,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    		Date d = new Date();
 		    		if(d.getSeconds()==0)
 		    		{
-		    			connectToBluetooth();
+		    			//connectToBluetooth();
 		    		}
 		    	}
 		    	boolean turnoncoffee=false;

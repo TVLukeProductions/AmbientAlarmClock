@@ -9,27 +9,27 @@
     <Button
         android:id="@+id/button1"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:text="@string/snooze" />
 
 	<Button
 	    android:id="@+id/button3"
 	    android:layout_width="match_parent"
-	    android:layout_height="70dp"
+        android:layout_height="wrap_content"
 	    android:text="Listen To The Radio" />
 
 	<Button
 	    android:id="@+id/button2"
 	    android:layout_width="match_parent"
-	    android:layout_height="70dp"
+        android:layout_height="wrap_content"
 	    android:text="@string/awake" />
 
 	<TextView
 	    android:id="@+id/countdown"
 	    android:layout_width="match_parent"
-	    android:layout_height="185dp"
+        android:layout_height="wrap_content"
 	    android:text="00:00"
-	    android:textSize="80px"
+	    android:textSize="100px"
 	    android:gravity="center"
 	    android:textColor="#FF0000"
 	    android:textAppearance="?android:attr/textAppearanceLarge" />
