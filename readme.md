@@ -6,6 +6,10 @@
 
 The simple but effective alarm clock that plays you some music, offers you the news, turns on the light and more. [Download here](https://www.dropbox.com/s/789l8ah3w1z0h1c/AmbientAlarmClock_5_1_9.apk)
 
+<p align="center">
+<img src="https://raw.github.com/TVLukeProductions/AmbientAlarmClock/master/pics/overview.png" alt="UI"/>
+</p>
+
 Features:
 #### Alarm Clock
 * Alarm Clock that wakes you up with music of your choice
