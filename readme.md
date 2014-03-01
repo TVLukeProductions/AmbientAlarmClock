@@ -16,7 +16,7 @@ Features:
 #### Website on wake up
 * Define a web site to be shown on alert (for example a news web site)
 
-####Countdown on wake up
+#### Countdown on wake up
 * You don't have all the time in the world. You need to get the bus? You always wan't to know how much time is left until you need to get out? Activate the Countdown, which will start with the first alarm and tell you when you have to got. The alarm-clock will stop the alert when it has run out, so you don't even have to be there any more.
 
 #### Reminder to go to bed
@@ -44,7 +44,7 @@ Features:
 
 Yes, but I don't know of any clock that does all the stuff this one does. I have a hard time getting up so I want loud music, bright lights 
 and my coffee to be ready. It is basically designed around my needs and I just put it here in case anybody wants to have this stuff too. 
-You can just download the apk or get the code right here and make it even better.
+You can just download the APK or get the code right here and make it even better.
 
 **Will there be more features?**
 
@@ -66,7 +66,7 @@ Yes. Whenever I make the app better to make sure I get up better I get used to t
 * Philips Hue integration
 * Prototypical EZcontrol Home Server integration
 
-Changelog:
+Change Log:
 * Fixed issue with [DLF](http://www.deutschlandradio.de/) Streaming
 * Fixed Autorestart after Boote Issue
 * Included A countdown functionality
@@ -86,7 +86,7 @@ Changelog:
 * Philips Hue integration (The app can turn on the lights on alarm time)
 * Prototypical EZcontrol Home Server integration (Control heating or power plugs depending on alrm time)
 
-Changelog:
+Change Log:
 * Included default song
 * Fixed a crashing issue (critical)
 * Fixed Folder finding during alarm (critical)
@@ -102,3 +102,10 @@ Changelog:
 * DropBox integration
 * Philips Hue integration
 * Prototypical EZcontrol Home Server integration
+
+#License
+
+<p align="center"><a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+<img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a></p>
+
+<span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">Ambient Alarm Clock</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/TVLuke/AmbientAlarmClock/" property="cc:attributionName" rel="cc:attributionURL">Lukas Ruge</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.<br />Permissions beyond the scope of this license may be available at <a xmlns:cc="http://creativecommons.org/ns#" href="http://www.lukeslog.de/" rel="cc:morePermissions">http://www.lukeslog.de/</a>.
