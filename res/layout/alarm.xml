@@ -24,6 +24,16 @@
 	    android:layout_height="70dp"
 	    android:text="@string/awake" />
 
+	<TextView
+	    android:id="@+id/countdown"
+	    android:layout_width="match_parent"
+	    android:layout_height="185dp"
+	    android:text="00:00"
+	    android:textSize="80px"
+	    android:gravity="center"
+	    android:textColor="#FF0000"
+	    android:textAppearance="?android:attr/textAppearanceLarge" />
+
 	<WebView
 	    android:id="@+id/webView1"
 	    android:layout_width="match_parent"

@@ -6,9 +6,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 import org.farng.mp3.MP3File;
 import org.farng.mp3.TagException;
@@ -33,14 +36,20 @@ import de.umass.lastfm.Caller;
 import de.umass.lastfm.Session;
 import de.umass.lastfm.Track;
 import de.umass.lastfm.scrobble.ScrobbleResult;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothClass;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -74,8 +83,10 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
     private static final int HEAT_HIGH=3;
     private static final int HEAT_VERRY_HIGH=4;
     
-    public static final String ADDR_DRADIO = "http://dradio-ogg-dlf-l.akacast.akamaistream.net/7/629/135496/v1/gnl.akacast.akamaistream.net/dradio_ogg_dlf_l";
-
+    public static final String ADDR_DRADIO = "http://stream.dradio.de/7/249/142684/v1/gnl.akacast.akamaistream.net/dradio_mp3_dlf_m";
+    											
+    UUID uuid;
+    
     MediaPlayer mp = new MediaPlayer();
     MediaPlayer mp2 = new MediaPlayer();
     int[] mediaarray = {R.raw.trance};
@@ -87,6 +98,9 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
     boolean lightshowX=true;
     
     public static String ezcontrolIP ="";
+    
+    BluetoothAdapter mBluetoothAdapter;
+    private BluetoothSocket mSocket;
 
     // In the class declaration section:
     public static DropboxAPI<AndroidAuthSession> mDBApi;
@@ -110,8 +124,6 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 	@Override
 	public IBinder onBind(Intent intent) 
 	{
-		runner = new Thread(this);
-		runner.start();
 		return mBinder;
 	}
 	
@@ -126,6 +138,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 	public void onCreate() 
 	{
 		super.onCreate();
+		Log.d(TAG, "ClockService onCreate( )");
 		int icon = R.drawable.launchericon; 
 		 Notification note=new Notification(icon, "Clock running", System.currentTimeMillis());
 		 Intent i=new Intent(this, AlarmClockActivity.class);
@@ -140,7 +153,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 				"...running",
 				pi);
 		note.flags|=Notification.FLAG_AUTO_CANCEL;
-		
+		       
 		startForeground(1337, note);
 		
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
@@ -149,13 +162,40 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		DropBox.ListAllFolders();
 		//DropBox.getFiles2(settings);
 		
+		String uuids = settings.getString("UUID", "");
+		if(uuids.equals(""))
+		{
+			uuid = UUID.randomUUID();
+			Editor edit = settings.edit();
+			edit.putString("UUID", uuid.toString());
+			edit.commit();
+		}
+		else
+		{
+			uuid = UUID.fromString(uuids);
+		}
 		ezcontrolIP = settings.getString("ezcontrolIP", "");
 		if(ezcontrolIP.equals(""))
 		{
 			ezcontrolIP="192.168.1.242"; //Default IP for ezControl Servers in a Home Network
 		}
 
-		 
+	    IntentFilter filter1 = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
+	    IntentFilter filter2 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
+	    IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+	    this.registerReceiver(mReceiver, filter1);
+	    this.registerReceiver(mReceiver, filter2);
+	    this.registerReceiver(mReceiver, filter3);
+		new Thread(new Runnable() 
+    	{
+    	    @SuppressWarnings("unchecked")
+			public void run() 
+    	    {
+    	    	connectToBluetooth();
+    	    }
+    	}).start();
+		
+	    
 		new Thread(new Runnable() 
     	{
     	    @SuppressWarnings("unchecked")
@@ -185,7 +225,8 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
     	    }
     	}).start();
 		
-
+		runner = new Thread(this);
+		runner.start();
 
 	}
 	
@@ -479,7 +520,17 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		        	}
 		        }
 		    	mp2.setVolume(0.99f, 0.99f);
-		        mp2.setOnPreparedListener(this);
+		        mp2.setOnPreparedListener(new OnPreparedListener()
+		        {
+
+					@Override
+					public void onPrepared(MediaPlayer arg0) 
+					{
+						mp2.start();
+						
+					}
+		        	
+		        });
 		        mp2.prepareAsync();
 
 		}
@@ -598,7 +649,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		{
 			runningcounter++;
 		    SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-			//Log.d("clock", "run1");
+			Log.d("clock", "run1");
 			try
 	    	{
 	    		  Thread.currentThread().sleep(1000);
@@ -641,6 +692,15 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    }
 		    if(active)
 		    {
+		    	//Log.d(TAG, "active");
+		    	if(getMinute()%30==0 )
+		    	{
+		    		Date d = new Date();
+		    		if(d.getSeconds()==0)
+		    		{
+		    			connectToBluetooth();
+		    		}
+		    	}
 		    	boolean turnoncoffee=false;
 		    	if(getAlarmMinute()>5)
 		    	{
@@ -671,6 +731,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    	}
 		    	if((getAlarmHour()==getHour() && getAlarmMinute()==getMinute() && newalert) || snoozetime==0)
 		    	{
+		    		Log.d(TAG, "ALARM");
 		    		wake(snoozetime==-1);
 		    		snoozetime=-1;
 		    		//Log.i("clock", "alarm time");
@@ -764,6 +825,134 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		Date d = new Date();
 		return d.getSeconds();
 	}
+	
+	private void connectToBluetooth()
+	{
+		Log.d(TAG, "Bluetooth check");
+		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+		List mArrayAdapter = new ArrayList();
+		if (mBluetoothAdapter == null) {
+		    // Device does not support Bluetooth
+			Log.d(TAG, "device does not support bluetooth");
+		}
+		else
+		{
+			Log.d(TAG, "device supports bluetooth");
+			if (mBluetoothAdapter.isEnabled()) 
+			{
+				Log.d(TAG, "Bluetooth enabled");
+				mBluetoothAdapter.startDiscovery();
+				Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+				// If there are paired devices
+				if (pairedDevices.size() > 0) 
+				{
+					SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+			    	String deviceID = settings.getString("BluetoothDeviceAddress", "00:00");
+				    // Loop through paired devices
+				    for (BluetoothDevice device : pairedDevices) 
+				    {
+				    	if(deviceID.equals(device.getAddress()))
+			        	{
+				    		mBluetoothAdapter.cancelDiscovery();
+				    		BluetoothSocket tmp = null;
+				    		try
+			        		{
+			        			Log.d(TAG, "try to connect");
+								tmp = device.createRfcommSocketToServiceRecord(uuid);
+					    		mSocket=tmp;
+			        		} 
+			        		catch (IOException connectException) 
+			        		{
+				                // Unable to connect; close the socket and get out
+				                try 
+				                {
+					    			Log.e(TAG, "will close socket.");
+				                    mSocket.close();
+				                } 
+				                catch (IOException closeException) 
+				                { 
+				                	
+				                }
+			        		}
+				    		catch(Exception e)
+				    		{
+				    			Log.e(TAG, "-------"+e);
+				    		}
+				    		try
+				    		{
+				    			mSocket.connect();
+				    		}
+				    		catch(Exception e)
+				    		{
+				    			
+				    		}
+			        	}
+				    }
+				}
+			}
+		}
+	}
+	
+	// Create a BroadcastReceiver for ACTION_FOUND
+	private final BroadcastReceiver mReceiver = new BroadcastReceiver() 
+	{
+	    public void onReceive(Context context, Intent intent) 
+	    {
+	        String action = intent.getAction();
+	        // When discovery finds a device
+	        if (BluetoothDevice.ACTION_FOUND.equals(action)) 
+	        {
+	        	Log.d(TAG, "ACTION_FOUND");
+	        	BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+	        	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+	        	String deviceID = settings.getString("BluetoothDeviceAddress", "00:00");
+	        	if(deviceID.equals(device.getAddress()))
+	        	{
+	        		mBluetoothAdapter.cancelDiscovery();
+	        		try
+	        		{
+	        			Log.d(TAG, "try to connect");
+						mSocket = device.createRfcommSocketToServiceRecord(uuid);
+	        			mSocket.connect();
+	        		} 
+	        		catch (Exception exception) 
+	        		{
+		                // Unable to connect; close the socket and get out
+	        			Log.e(TAG, "will close socket.");
+		                try 
+		                {
+		                    mSocket.close();
+		                } 
+		                catch (Exception exception2) 
+		                { 
+		                	
+		                }
+	        		}
+	        	}
+	        }
+	        else if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) 
+	        {
+	        	// Add the name and address to an array adapter to show in a ListView
+	        	BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+		    	Log.d(TAG, ""+device.getBluetoothClass().getMajorDeviceClass());
+		    	if(BluetoothClass.Device.AUDIO_VIDEO_LOUDSPEAKER==device.getBluetoothClass().getMajorDeviceClass() 
+		    			|| device.getBluetoothClass().getMajorDeviceClass()==BluetoothClass.Device.AUDIO_VIDEO_UNCATEGORIZED
+		    			|| device.getBluetoothClass().getMajorDeviceClass()==BluetoothClass.Device.AUDIO_VIDEO_VIDEO_DISPLAY_AND_LOUDSPEAKER
+		    			|| device.getBluetoothClass().getMajorDeviceClass()==BluetoothClass.Device.AUDIO_VIDEO_VIDEO_MONITOR
+		    			|| device.getBluetoothClass().getMajorDeviceClass()==BluetoothClass.Device.AUDIO_VIDEO_HIFI_AUDIO
+		    			|| device.getBluetoothClass().getMajorDeviceClass()==BluetoothClass.Device.AUDIO_VIDEO_PORTABLE_AUDIO)
+		    		{
+			    		Log.d(TAG, "ITS A SPEAKER");
+			    		Log.d(TAG, ""+device.getAddress());
+			    		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+			    		Editor edit = settings.edit();
+			    		edit.putString("BluetoothDeviceAddress", device.getAddress());
+			    		edit.commit();
+		    		}
+
+	        }
+	    }
+	};
 	
 	private void fadein()
 	{

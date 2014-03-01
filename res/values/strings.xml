@@ -26,6 +26,7 @@
 	<string name="hour">Hour</string>
 	<string name="minute">Minute</string>
 	<string name="min">Min</string>
+	<string name="sec">Sec</string>
 	<string name="twentyfoursys">24 hour time</string>
 	<string name="twentyeightsyssys">28 hour time</string>
 	<string name="fadein">Fade In</string>

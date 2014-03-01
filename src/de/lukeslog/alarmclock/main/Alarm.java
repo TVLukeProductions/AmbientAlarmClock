@@ -1,5 +1,8 @@
 package de.lukeslog.alarmclock.main;
 
+import org.joda.time.DateTime;
+import org.joda.time.Seconds;
+
 import de.lukeslog.alarmclock.main.ClockService.LocalBinder;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
 import de.lukeslog.alarmclock.R;
@@ -12,6 +15,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
@@ -20,6 +24,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.TextView;
 
 @SuppressLint({ "Wakelock", "SetJavaScriptEnabled" })
 public class Alarm extends Activity
@@ -33,11 +38,14 @@ public class Alarm extends Activity
     static boolean pureradio = false;
     WakeLock wakeLock;
     
+    private UIUpdater updater;
+    
     /** Called when the activity is first created. */
 	public void onCreate(Bundle savedInstanceState) 
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.alarm);
+		Log.d(TAG, "alarm onCreate()");
 		try
 		{
 			KeyguardManager km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
@@ -76,11 +84,29 @@ public class Alarm extends Activity
 		}
 		catch(Exception e)
 		{
-			Log.e(TAG, "there is a service being creted and bound.");
+			Log.e(TAG, "there is a service being creted and bound. ");
 		}
 	        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 	        String websiteaddress = settings.getString("websiteaddress", "");
 	        boolean showSnooze = settings.getBoolean("showsnooze", true);
+	    try
+	    {
+	    	boolean showCountdown = settings.getBoolean("showcountdown", true);
+	    	TextView countdown = (TextView)findViewById(R.id.countdown);
+	    	if(!showCountdown)
+	    	{
+	    		countdown.setVisibility(View.GONE);
+	    	}
+	    	else
+	    	{
+	    		updater= new UIUpdater();
+		        updater.run();
+	    	}
+	    }
+	    catch(Exception e)
+	    {
+	    	
+	    }
 		try
 		{
 	        WebView webView = (WebView) findViewById(R.id.webView1);
@@ -225,4 +251,73 @@ public class Alarm extends Activity
 	  }
 	  super.onDestroy();
   }
+  
+	private class  UIUpdater implements Runnable
+    {
+		 private Handler handler = new Handler();
+         public static final int delay= 500;
+
+		@Override
+		public void run() 
+		{
+			// TODO Auto-generated method stub
+			Log.d(TAG, "countdown");
+			SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+			int countdownseconds = settings.getInt("countDownSeconds", 3000);
+			int hour = settings.getInt("hour", 0);
+			int minute = settings.getInt("minute", 0);
+			
+			DateTime d = new DateTime();
+			DateTime dt = new DateTime(d.getYear(), d.getMonthOfYear(), d.getDayOfMonth(), hour, minute, 0, 0);
+			
+			Seconds secondsSinceAlarm = Seconds.secondsBetween(dt, d);
+			int remainingseconds = countdownseconds - secondsSinceAlarm.getSeconds();
+			
+			int minutesToDisplay = remainingseconds/60;
+			int secondsToDisplay = remainingseconds-(minutesToDisplay*60);
+			if(minutesToDisplay==0 && secondsToDisplay==0)
+			{
+				try
+				{
+	            	mService.awake();
+	            	mService.radioOff();
+	            	pureradio=false;
+	            	Alarm.this.finish();
+	            	handler.removeCallbacks(this); 
+				}
+				catch(Exception e)
+				{
+					
+				}
+			}
+			String leadingNullForMinutes="";
+			String leadingNullForSeconds="";
+			TextView countdown = (TextView)findViewById(R.id.countdown);
+			if(minutesToDisplay<10)
+			{
+				leadingNullForMinutes="0";
+			}
+			if(secondsToDisplay<10)
+			{
+				leadingNullForSeconds="0";
+			}
+			countdown.setText(leadingNullForMinutes+minutesToDisplay+":"+leadingNullForSeconds+secondsToDisplay);
+			
+            handler.removeCallbacks(this); // remove the old callback
+            handler.postDelayed(this, delay); // register a new one
+        }
+        
+        public void onPause()
+	    {
+       	 	Log.d(TAG, "Activity update on Pause ");
+	        handler.removeCallbacks(this); // stop the map from updating
+	    }
+           
+        public void onResume()
+        {
+	         handler.removeCallbacks(this); // remove the old callback
+	         handler.postDelayed(this, delay); // register a new one
+        }
+		
+    }
 }

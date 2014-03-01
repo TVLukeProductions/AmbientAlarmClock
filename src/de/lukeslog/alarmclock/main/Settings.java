@@ -66,6 +66,7 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 		    boolean scrobbletolastfm = settings.getBoolean("scrobble", false);
 		    boolean reminder = settings.getBoolean("reminder", false);
 		    boolean sendemail = settings.getBoolean("sendemail", false);
+		    boolean showcountdown=settings.getBoolean("showcountdown", false);
 
 		    
 		    String lastfmusername = settings.getString("lastfmusername", "");
@@ -76,6 +77,7 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 		    int remindersubtract = settings.getInt("remindersubtract", 8);
 		    String remindertext = settings.getString("remindertext", "");
 		    
+		    int countdownseconds = settings.getInt("countDownSeconds", 3000);
 		    int snoozetime = settings.getInt("snoozetime", 5);
 		    boolean showSnooze = settings.getBoolean("showsnooze", true);
 		    int station = settings.getInt("radiostation", 0);
@@ -267,10 +269,6 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 		    }
 		    adapter.notifyDataSetChanged();
 		    
-		    
-		    		
-
-		    
 		    final EditText editText500 = (EditText) findViewById(R.id.editText500);
 		    editText500.setText(""+remindersubtract);
 		    editText500.addTextChangedListener(new TextWatcher()
@@ -438,8 +436,35 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 		          public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
 		          public void onTextChanged(CharSequence s, int start, int before, int count) {}
+		    });    
+		    CheckBox countdown = (CheckBox) findViewById(R.id.showcountdown);
+		    countdown.setChecked(showcountdown);
+		    countdown.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+
+				@Override
+				public void onCheckedChanged(CompoundButton arg0, boolean arg1) 
+				{
+					if(arg1)
+					{
+						
+						saveall();
+					}
+				}
+		    });
+		    EditText countdownSec = (EditText) findViewById(R.id.countdowntime);
+		    countdownSec.setText(""+countdownseconds);
+		    countdownSec.addTextChangedListener(new TextWatcher() 
+		    {
+
+		          public void afterTextChanged(Editable s) 
+		          {
+		        	  saveall();
+		          }
+
+		          public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+		          public void onTextChanged(CharSequence s, int start, int before, int count) {}
 		       });
-		    
 		    
 		    EditText snoozetimeText = (EditText) findViewById(R.id.snoozetime);
 		    snoozetimeText.setText(""+snoozetime);
@@ -673,6 +698,7 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 		    CheckBox fadeInCheckBox = (CheckBox) findViewById(R.id.fadeInCheckBox);
 		    CheckBox showSnoozeCheckBox = (CheckBox) findViewById(R.id.showsnooze);
 		    CheckBox lastfmcheckbox = (CheckBox) findViewById(R.id.checkBox_lastfm);
+		    CheckBox countdown = (CheckBox) findViewById(R.id.showcountdown);
 		    		    
 		    EditText dropboxfolder = (EditText) findViewById(R.id.dropboxfolder);
 		    EditText localfolder = (EditText) findViewById(R.id.localfolder);
@@ -686,16 +712,32 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 		    RadioGroup radioradiogroup = (RadioGroup) findViewById(R.id.radioGroup1);
 		    EditText websiteaddressfield = (EditText) findViewById(R.id.websiteaddress);
 		    EditText snoozetime = (EditText) findViewById(R.id.snoozetime);
+		    EditText countdownSec = (EditText) findViewById(R.id.countdowntime);
 		    
 		    final Spinner dpfolderlist = (Spinner) findViewById(R.id.spinnerdpf); 
 		    
 		    //get content
+		    try
+		    {
 		    Editable st = snoozetime.getEditableText();
 		    String sts = st.toString();
 		    int time = Integer.parseInt(sts);
-		        		 
+		     	 
 		    //store content
 		    edit.putInt("snoozetime", time);
+		    }
+		    catch(Exception e)
+		    {
+		    	
+		    }
+		    try
+		    {
+		    	edit.putInt("countDownSeconds", Integer.parseInt(countdownSec.getEditableText().toString()));
+		    }
+		    catch(Exception e)
+		    {
+		    	//some dope might write something other than numbers in here
+		    }
 		    edit.putString("lastfmusername", lastfmusernamefield.getEditableText().toString());
 		    edit.putString("lastfmpassword", lastfmpasswordfield.getEditableText().toString());
 		    edit.putString("websiteaddress", websiteaddressfield.getEditableText().toString());
@@ -704,6 +746,7 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 		    edit.putString("gmailpsw", gmailpsw.getEditableText().toString());
 		    edit.putString("dropboxfolder", dropboxfolder.getEditableText().toString());
 		    edit.putString("localfolder", localfolder.getEditableText().toString());
+
 		    
 		    edit.putBoolean("uselocal", use_local.isChecked());
 		    edit.putBoolean("usedropbox", use_dropbox.isChecked());
@@ -711,6 +754,7 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 		    edit.putBoolean("showsnooze",  showSnoozeCheckBox.isChecked());
 		    edit.putBoolean("fadein", fadeInCheckBox.isChecked());
 		    edit.putBoolean("scrobble", lastfmcheckbox.isChecked());
+		    edit.putBoolean("showcountdown", countdown.isChecked());
 		    
 		    edit.putInt("selectedfolder", dpfolderlist.getSelectedItemPosition());
 		    
