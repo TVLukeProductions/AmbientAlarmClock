@@ -858,7 +858,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 				    		try
 			        		{
 			        			Log.d(TAG, "try to connect");
-								tmp = device.createRfcommSocketToServiceRecord(uuid);
+								tmp = device.createRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"));//TODO: This is wrong
 					    		mSocket=tmp;
 			        		} 
 			        		catch (IOException connectException) 
@@ -912,7 +912,7 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 	        		try
 	        		{
 	        			Log.d(TAG, "try to connect");
-						mSocket = device.createRfcommSocketToServiceRecord(uuid);
+						mSocket = device.createRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"));//TODO: This is wrong
 	        			mSocket.connect();
 	        		} 
 	        		catch (Exception exception) 
@@ -944,12 +944,17 @@ public class ClockService extends Service implements Runnable, OnPreparedListene
 		    		{
 			    		Log.d(TAG, "ITS A SPEAKER");
 			    		Log.d(TAG, ""+device.getAddress());
+			    		
 			    		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 			    		Editor edit = settings.edit();
 			    		edit.putString("BluetoothDeviceAddress", device.getAddress());
 			    		edit.commit();
 		    		}
 
+	        }
+	        else if(BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action))
+	        {
+	        	Log.e(TAG, "Disocnnected!");
 	        }
 	    }
 	};
