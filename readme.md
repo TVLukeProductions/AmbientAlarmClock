@@ -4,8 +4,7 @@
 <img src="https://raw.github.com/TVLuke/AmbientAlarmClock/master/res/drawable-mdpi/icon.png" alt="Logo"/>
 </p>
 
-The simple but effective alarm clock that plays you some music, offers you the news, turns on the light and more. [Download here](https://www.dropbox.com/s/v3vs0jy7vfgblh
-f/AmbientAlarmClock_5_1_7.apk)
+The simple but effective alarm clock that plays you some music, offers you the news, turns on the light and more. [Download here](http://tinyurl.com/nwtxw8x)
 
 <p align="center">
 <img src="https://raw.github.com/TVLukeProductions/AmbientAlarmClock/master/pics/overview.png" alt="UI"/>
