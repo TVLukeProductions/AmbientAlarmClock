@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:yourapp="http://schemas.android.com/apk/res-auto" >
+    <item android:id="@+id/action_lastfm"
+          android:title="Last.fm"
+          android:icon="@drawable/lastfmlogoyes"
+          android:showAsAction="ifRoom"/>
+    <item android:id="@+id/action_dropbox"
+          android:icon="@drawable/dropbox2"
+          android:title="Dropbox"
+          android:showAsAction="ifRoom"/>
+    <item android:id="@+id/action_settings"
+        android:title="@string/settings"
+        android:icon="@drawable/main_icon"
+        android:showAsAction="never"/>
+</menu>
