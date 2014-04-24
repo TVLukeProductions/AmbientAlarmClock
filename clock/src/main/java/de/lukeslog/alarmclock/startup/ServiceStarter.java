@@ -9,10 +9,12 @@ import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 
+import de.lukeslog.alarmclock.actions.ActionManager;
 import de.lukeslog.alarmclock.actions.CountdownAction;
 import de.lukeslog.alarmclock.actions.SendMailAction;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarmManager;
+import de.lukeslog.alarmclock.datatabse.AmbientAlarmDatabase;
 import de.lukeslog.alarmclock.dropbox.DropBox;
 import de.lukeslog.alarmclock.main.ClockWorkService;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
@@ -32,8 +34,11 @@ public class ServiceStarter
     public static void start(Context context) throws NullPointerException
     {
         ctx=context;
+
+        AmbientAlarmDatabase.createDataBase(context);
+        AmbientAlarmManager.updateListFromDataBase();
+
         setupBootClassArray();
-        setUpTestData();
         startServices();
 
         DropBox.getDropboxAPI();
@@ -69,6 +74,7 @@ public class ServiceStarter
         classesToBoot.add(ClockWorkService.class);
         //classesToBoot.add(AmbientAlarmManager.class);
         classesToBoot.add(NotificationService.class);
+        classesToBoot.add(ActionManager.class);
     }
 
     /*

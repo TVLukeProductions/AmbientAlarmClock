@@ -30,16 +30,14 @@ public abstract class AmbientAction
     {
         this.actionName=actionName;
         DateTime now = new DateTime();
-        actionID = "action_"+actionName+"_"+now.getMillis();
+        actionID = "action"+actionName+""+now.getMillis();
         ambientActions.put(actionID, this);
     }
 
-    protected AmbientAction(Bundle configBundle)
+    public AmbientAction(ActionConfigBundle configBundle)
     {
         this.actionName = configBundle.getString("actionName");
     }
-
-    public abstract AmbientAction createFromBundle(Bundle configBundle);
 
     public String getActionName()
     {
@@ -59,9 +57,9 @@ public abstract class AmbientAction
 
     public abstract void defineSettingsView(LinearLayout configurationActivity);
 
-    public Bundle getConfigurationData()
+    public ActionConfigBundle getConfigurationData()
     {
-        Bundle configBundle = setConfigurationData();
+        ActionConfigBundle configBundle = setConfigurationData();
         configBundle.putString("actionName", actionName);
         return configBundle;
     }
@@ -71,7 +69,7 @@ public abstract class AmbientAction
         return ambientActions.get(actionID);
     }
 
-    protected abstract Bundle setConfigurationData();
+    protected abstract ActionConfigBundle setConfigurationData();
 
     public void openConfigurationActivity(Context ctx)
     {
@@ -83,4 +81,9 @@ public abstract class AmbientAction
     public abstract Class getConfigActivity();
 
     public abstract void updateUI(AmbientAlarm ambientAlarm, AmbientAlarmActivity alarmActivity);
+
+    public String getActionID()
+    {
+        return actionID;
+    }
 }

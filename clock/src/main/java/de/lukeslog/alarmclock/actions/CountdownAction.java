@@ -32,15 +32,10 @@ public class CountdownAction extends AmbientAction
         this.durationInSeconds=durationInSeconds;
     }
 
-    private CountdownAction(Bundle configBundle)
+    public CountdownAction(ActionConfigBundle configBundle)
     {
         super(configBundle);
         this.durationInSeconds  = Integer.parseInt(configBundle.getString("durationInSeconds"));
-    }
-
-    public CountdownAction createFromBundle(Bundle configBundle)
-    {
-        return new CountdownAction(configBundle);
     }
 
     public void setDurationInSeconds(int seconds)
@@ -120,9 +115,9 @@ public class CountdownAction extends AmbientAction
     }
 
     @Override
-    protected Bundle setConfigurationData()
+    protected ActionConfigBundle setConfigurationData()
     {
-        Bundle configBundle = new Bundle();
+        ActionConfigBundle configBundle = new ActionConfigBundle();
         configBundle.putString("durationInSeconds", ""+this.durationInSeconds);
         return configBundle;
     }

@@ -5,7 +5,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import de.lukeslog.alarmclock.support.DatabaseConstants;
 
 /**
  * Created by lukas on 03.04.14.

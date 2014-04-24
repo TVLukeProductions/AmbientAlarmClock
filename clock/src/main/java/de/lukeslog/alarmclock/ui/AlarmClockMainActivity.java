@@ -324,6 +324,7 @@ public class AlarmClockMainActivity extends Activity
         @Override
         public void run()
         {
+            //Log.d(TAG, "run");
             adapter.notifyDataSetChanged();
             handler.removeCallbacks(this); // remove the old callback
             handler.postDelayed(this, delay); // register a new one

@@ -9,6 +9,7 @@ import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 
+import de.lukeslog.alarmclock.datatabse.AmbientAlarmDatabase;
 import de.lukeslog.alarmclock.main.ClockWorkService;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
 
@@ -52,11 +53,22 @@ public class AmbientAlarmManager
     public static void addNewAmbientAlarm(AmbientAlarm ambientAlarm)
     {
         registeredAlarms.add(ambientAlarm);
+        AmbientAlarmDatabase.updateAmbientAlarm(ambientAlarm);
+    }
+
+    public static void updateDataBaseEntry(AmbientAlarm ambientAlarm)
+    {
+        AmbientAlarmDatabase.updateAmbientAlarm(ambientAlarm);
     }
 
     public static ArrayList<AmbientAlarm> getListOfAmbientAlarms()
     {
         return registeredAlarms;
+    }
+
+    public static void updateListFromDataBase()
+    {
+        registeredAlarms = AmbientAlarmDatabase.getAllAlarmsFromDatabase();
     }
 
     public static void startAlarmActivity(AmbientAlarm ambientAlarm)
@@ -87,6 +99,7 @@ public class AmbientAlarmManager
 
     public static void deleteAmbientAlarm(int position)
     {
+        AmbientAlarmDatabase.removeAmbientAlarm(registeredAlarms.get(position));
         registeredAlarms.remove(position);
     }
 }

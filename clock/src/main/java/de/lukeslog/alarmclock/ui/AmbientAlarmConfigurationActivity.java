@@ -2,6 +2,7 @@ package de.lukeslog.alarmclock.ui;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -103,7 +104,31 @@ public class AmbientAlarmConfigurationActivity extends Activity
         mainLayout.addView(addButton);
         mainLayout.addView(addNewActionText);
 
+        addButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View arg0)
+            {
+                openNewActionActivity();
+            }
+        });
+        addNewActionText.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                openNewActionActivity();
+            }
+        });
         configView.addView(mainLayout);
+    }
+
+    private void openNewActionActivity()
+    {
+        Intent intent = new Intent(this, NewAmbientAction.class);
+        intent.putExtra("ambientAlarmID", alarm.getAlarmID());
+        startActivity(intent);
+
     }
 
     private void configureBasicUI()
@@ -189,6 +214,7 @@ public class AmbientAlarmConfigurationActivity extends Activity
             {
                 alarm.setAlarmStateForDay(Day.MONDAY, !alarm.getActiveForDayOfTheWeek(Day.MONDAY));
                 configureUIDaysOfTheWeek();
+                updateDB();
             }
         });
         tuesday.setOnClickListener(new View.OnClickListener()
@@ -198,6 +224,7 @@ public class AmbientAlarmConfigurationActivity extends Activity
             {
                 alarm.setAlarmStateForDay(Day.TUESDAY, !alarm.getActiveForDayOfTheWeek(Day.TUESDAY));
                 configureUIDaysOfTheWeek();
+                updateDB();
             }
         });
         wednesday.setOnClickListener(new View.OnClickListener()
@@ -207,6 +234,7 @@ public class AmbientAlarmConfigurationActivity extends Activity
             {
                 alarm.setAlarmStateForDay(Day.WEDNESDAY, !alarm.getActiveForDayOfTheWeek(Day.WEDNESDAY));
                 configureUIDaysOfTheWeek();
+                updateDB();
             }
         });
         thursday.setOnClickListener(new View.OnClickListener()
@@ -216,6 +244,7 @@ public class AmbientAlarmConfigurationActivity extends Activity
             {
                 alarm.setAlarmStateForDay(Day.THURSDAY, !alarm.getActiveForDayOfTheWeek(Day.THURSDAY));
                 configureUIDaysOfTheWeek();
+                updateDB();
             }
         });
         friday.setOnClickListener(new View.OnClickListener()
@@ -225,6 +254,7 @@ public class AmbientAlarmConfigurationActivity extends Activity
             {
                 alarm.setAlarmStateForDay(Day.FRIDAY, !alarm.getActiveForDayOfTheWeek(Day.FRIDAY));
                 configureUIDaysOfTheWeek();
+                updateDB();
             }
         });
         saturday.setOnClickListener(new View.OnClickListener()
@@ -234,6 +264,7 @@ public class AmbientAlarmConfigurationActivity extends Activity
             {
                 alarm.setAlarmStateForDay(Day.SATURDAY, !alarm.getActiveForDayOfTheWeek(Day.SATURDAY));
                 configureUIDaysOfTheWeek();
+                updateDB();
             }
         });
         sunday.setOnClickListener(new View.OnClickListener()
@@ -243,6 +274,7 @@ public class AmbientAlarmConfigurationActivity extends Activity
             {
                 alarm.setAlarmStateForDay(Day.SUNDAY, !alarm.getActiveForDayOfTheWeek(Day.SUNDAY));
                 configureUIDaysOfTheWeek();
+                updateDB();
             }
         });
     }
@@ -257,6 +289,7 @@ public class AmbientAlarmConfigurationActivity extends Activity
             public void onCheckedChanged(CompoundButton compoundButton, boolean b)
             {
                 alarm.setSnoozing(b);
+                updateDB();
             }
         });
         EditText snoozetime = (EditText)findViewById(R.id.snoozetimeinseconds);
@@ -278,7 +311,16 @@ public class AmbientAlarmConfigurationActivity extends Activity
             @Override
             public void afterTextChanged(Editable editable)
             {
-                alarm.setSnoozeTimeInSeconds(Integer.parseInt(editable.toString()));
+                String secs = editable.toString();
+                if(secs.equals(""))
+                {
+
+                }
+                else
+                {
+                    alarm.setSnoozeTimeInSeconds(Integer.parseInt(editable.toString()));
+                }
+                updateDB();
             }
         });
     }
@@ -299,6 +341,7 @@ public class AmbientAlarmConfigurationActivity extends Activity
                 alarmDateTime = alarmDateTime.withMinuteOfHour(i2);
                 Log.d(TAG, "set this new alarm to "+alarmDateTime);
                 alarm.setAlarmTime(alarmDateTime);
+                updateDB();
             }
         });
     }
@@ -313,6 +356,7 @@ public class AmbientAlarmConfigurationActivity extends Activity
             public void onCheckedChanged(CompoundButton compoundButton, boolean b)
             {
                 alarm.setActive(b);
+                updateDB();
             }
         });
     }
@@ -320,5 +364,10 @@ public class AmbientAlarmConfigurationActivity extends Activity
     private void fillinActions(LinearLayout scrollView)
     {
         alarm.fillInActionView(scrollView);
+    }
+
+    private void updateDB()
+    {
+        AmbientAlarmManager.updateDataBaseEntry(alarm);
     }
 }

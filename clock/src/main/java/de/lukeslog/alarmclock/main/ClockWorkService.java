@@ -51,7 +51,7 @@ public class ClockWorkService extends IntentService
     {
         super.onStartCommand(intent, flags, startId);
         //Log.d(TAG, "ClockWorkService onStartCommand()");
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     @Override

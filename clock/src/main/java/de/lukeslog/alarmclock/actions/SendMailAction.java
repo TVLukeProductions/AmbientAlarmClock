@@ -38,18 +38,13 @@ public class SendMailAction extends AmbientAction
         this.text=text;
     }
 
-    private SendMailAction(Bundle configBundle)
+    public SendMailAction(ActionConfigBundle configBundle)
     {
         super(configBundle);
         this.sendTo = configBundle.getString("sendTo");
         this.subject = configBundle.getString("subject");
         this.text = configBundle.getString("text");
 
-    }
-
-    public SendMailAction createFromBundle(Bundle configBundle)
-    {
-        return new SendMailAction(configBundle);
     }
 
     public String getSendTo()
@@ -134,9 +129,9 @@ public class SendMailAction extends AmbientAction
     }
 
     @Override
-    public Bundle setConfigurationData()
+    protected ActionConfigBundle setConfigurationData()
     {
-        Bundle configBundle = new Bundle();
+        ActionConfigBundle configBundle = new ActionConfigBundle();
         configBundle.putString("sendTo", sendTo);
         configBundle.putString("subject", subject);
         configBundle.putString("text", text);

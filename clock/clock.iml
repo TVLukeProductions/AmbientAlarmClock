@@ -76,6 +76,7 @@
     <orderEntry type="library" exported="" name="dropbox-sync-sdk-android" level="project" />
     <orderEntry type="library" exported="" name="additionnal" level="project" />
     <orderEntry type="library" exported="" name="support-v4-18.0.0" level="project" />
+    <orderEntry type="library" exported="" name="framework_compact" level="project" />
     <orderEntry type="library" exported="" name="httpclient-4.0.3" level="project" />
     <orderEntry type="library" exported="" name="httpcore-4.0.1" level="project" />
     <orderEntry type="library" exported="" name="dropbox-android-sdk-1.5.4" level="project" />

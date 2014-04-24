@@ -15,6 +15,7 @@ import java.util.Set;
 
 import de.lukeslog.alarmclock.actions.AmbientAction;
 import de.lukeslog.alarmclock.alarmactivity.AmbientAlarmActivity;
+import de.lukeslog.alarmclock.datatabse.AmbientAlarmDatabase;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
 import de.lukeslog.alarmclock.support.AlarmState;
 
@@ -29,7 +30,6 @@ import de.lukeslog.alarmclock.support.AlarmState;
  */
 public class AmbientAlarm
 {
-    private static final String PREFS_NAME = AlarmClockConstants.PREFS_NAME;
     private static String TAG = AlarmClockConstants.TAG;
 
     private boolean active=false;
@@ -39,6 +39,7 @@ public class AmbientAlarm
     private DateTime alarmTime = new DateTime();
     private DateTime lastAlarmTime = new DateTime();
     private boolean[] weekdays = new boolean[7];
+    private String alarmID="";
 
     private int alarmState = AlarmState.WAITING;
     private HashMap<String, ArrayList<AmbientAction>> registeredActions = new HashMap<String, ArrayList<AmbientAction>>();
@@ -49,6 +50,24 @@ public class AmbientAlarm
         return active;
     }
 
+    public AmbientAlarm()
+    {
+        DateTime now = new DateTime();
+        long milis = now.getMillis();
+        this.alarmID = "ambientalarm"+milis;
+        Log.d(TAG, "ALARM ID="+alarmID);
+    }
+
+    public AmbientAlarm(String alarmID)
+    {
+        this.alarmID=alarmID;
+    }
+
+    public String getAlarmID()
+    {
+        return this.alarmID;
+    }
+
     //activate the alarm
     public void setActive(boolean active)
     {
@@ -56,7 +75,7 @@ public class AmbientAlarm
         setAlarmTime(alarmTime);
     }
 
-    public boolean getActiveForDayOfTheWeek(int weekday)
+    public boolean getActiveForDayOfTheWeek(int weekday)  throws ArrayIndexOutOfBoundsException
     {
         return weekdays[weekday];
     }
@@ -112,7 +131,6 @@ public class AmbientAlarm
         }
         setToNextAlarmTime();
         this.lastAlarmTime = this.alarmTime;
-
     }
 
     public int secondsSinceAlertTime(DateTime currentTime)
@@ -148,12 +166,10 @@ public class AmbientAlarm
         }
     }
     //activate or deactivate the alarm on a day
-    public void setAlarmStateForDay(int day, boolean state)
+    public void setAlarmStateForDay(int day, boolean state) throws ArrayIndexOutOfBoundsException
     {
-        if(day<weekdays.length && day>=0)
-        {
-            weekdays[day]=state;
-        }
+        Log.d(TAG, "update AlarmforDay "+day);
+        weekdays[day]=state;
         setAlarmTime(alarmTime);
     }
 
@@ -162,6 +178,7 @@ public class AmbientAlarm
         Log.d(TAG, "snoozeButton");
         alarmState=AlarmState.SNOOZING;
         //TODO: go through registered actions and deactivate those that deactivate on snooze
+        incrementSnoozeButtonCounter();
     }
 
     public void notifyOfCurrentTime(DateTime currentTime)
@@ -176,6 +193,11 @@ public class AmbientAlarm
         Log.d(TAG, "" + alarmTime.getDayOfWeek());
         Log.d(TAG, alarmTime.toString());
         //TODO: Check if any Service has registered to be started on that distance.
+    }
+
+    public HashMap<String, ArrayList<AmbientAction>> getRegisteredActions()
+    {
+        return registeredActions;
     }
 
     private void performActionIfActionIsRequired(DateTime currentTime)
@@ -279,8 +301,6 @@ public class AmbientAlarm
     {
         snoozeButtonPressedCounter=0;
     }
-
-
 
     private void setToNextAlarmTime()
     {
