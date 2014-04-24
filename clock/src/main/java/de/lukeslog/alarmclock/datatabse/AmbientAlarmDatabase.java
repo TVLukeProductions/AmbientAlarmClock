@@ -26,6 +26,7 @@ import de.lukeslog.alarmclock.support.Day;
 public class AmbientAlarmDatabase
 {
     private static SQLiteDatabase database;
+    private static OpenHelper openHelper;
     public static String TAG = AlarmClockConstants.TAG;
 
     public static final String TABLE_ALARM="ambientalarm";
@@ -93,7 +94,7 @@ public class AmbientAlarmDatabase
 
     public static void createDataBase(Context context)
     {
-        OpenHelper openHelper = new OpenHelper(context);
+        openHelper = new OpenHelper(context);
         database = openHelper.getWritableDatabase();
 
     }
@@ -157,20 +158,8 @@ public class AmbientAlarmDatabase
         String configString = c.getString(c.getColumnIndex(TABLE_ACTION_CONFIG_BUNDLE_VALUES));
         String className = c.getString(c.getColumnIndex(TABLE_ACTION_TYPE));
         ActionConfigBundle acb = new ActionConfigBundle(configString);
-
-        if(className.equals("CountdownAction"))
-        {
-            CountdownAction ca = new CountdownAction(acb);
-            return ca;
-        }
-        if(className.equals("SendMailAction"))
-        {
-            SendMailAction sma = new SendMailAction(acb);
-            return sma;
-        }
-
-
-        return null;
+        AmbientAction aa = ActionManager.createActionFromConfigBundle(acb, className);
+        return aa;
     }
 
     private static Cursor queryDatabaseForAllActions()
@@ -327,26 +316,38 @@ public class AmbientAlarmDatabase
 
     private static Cursor queryDatabaseForAllAlarms()
     {
-        Cursor c= database.query(TABLE_ALARM, new String[] {
-                        TABLE_ALARM_ALARMID,
-                        TABLE_ALARM_ACTIVE,
-                        TABLE_ALARM_SNOOZING,
-                        TABLE_ALARM_SNOOZE_TIME,
-                        TABLE_ALARM_TIME_HOUR,
-                        TABLE_ALARM_TIME_MINUTE,
-                        TABLE_ALARM_DAY_MONDAY,
-                        TABLE_ALARM_DAY_TUESDAY,
-                        TABLE_ALARM_DAY_WEDNESDAY,
-                        TABLE_ALARM_DAY_THURSDAY,
-                        TABLE_ALARM_DAY_FRIDAY,
-                        TABLE_ALARM_DAY_SATURDAY,
-                        TABLE_ALARM_DAY_SUNDAY},
-                null,
-                null,
-                null,
-                null,
-                null);
-        return c;
+        Log.d(TAG, "querry Database for All Alarms");
+        Log.d(TAG, "database!=null => "+(database!=null));
+        if(database!=null)
+        {
+            Cursor c = database.query(TABLE_ALARM, new String[]{
+                            TABLE_ALARM_ALARMID,
+                            TABLE_ALARM_ACTIVE,
+                            TABLE_ALARM_SNOOZING,
+                            TABLE_ALARM_SNOOZE_TIME,
+                            TABLE_ALARM_TIME_HOUR,
+                            TABLE_ALARM_TIME_MINUTE,
+                            TABLE_ALARM_DAY_MONDAY,
+                            TABLE_ALARM_DAY_TUESDAY,
+                            TABLE_ALARM_DAY_WEDNESDAY,
+                            TABLE_ALARM_DAY_THURSDAY,
+                            TABLE_ALARM_DAY_FRIDAY,
+                            TABLE_ALARM_DAY_SATURDAY,
+                            TABLE_ALARM_DAY_SUNDAY},
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+            );
+            return c;
+        }
+        else
+        {
+            database = openHelper.getWritableDatabase();
+            return queryDatabaseForAllAlarms();
+
+        }
     }
 
     private static int boolToInt(boolean b)

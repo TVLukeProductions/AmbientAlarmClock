@@ -28,7 +28,7 @@ public class SendMailActionActivity extends ActionActivity
         ctx = this;
 
         String actionID = getIntent().getStringExtra("ambientActionID");
-        final SendMailAction action = (SendMailAction) AmbientAction.getActionByID(actionID);
+        final SendMailAction action = (SendMailAction) ActionManager.getActionByID(actionID);
 
         final EditText sendTo = (EditText) findViewById(R.id.sendto);
         final EditText subject = (EditText) findViewById(R.id.subject);

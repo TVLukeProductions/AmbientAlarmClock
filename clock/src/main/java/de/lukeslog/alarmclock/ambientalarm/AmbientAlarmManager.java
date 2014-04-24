@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 
 import org.joda.time.DateTime;
 
@@ -21,7 +22,7 @@ import de.lukeslog.alarmclock.support.AlarmClockConstants;
 public class AmbientAlarmManager
 {
 
-    private static ArrayList<AmbientAlarm> registeredAlarms = new ArrayList<AmbientAlarm>();
+    private static ArrayList<AmbientAlarm> registeredAlarms;
 
     public static final String PREFS_NAME = AlarmClockConstants.PREFS_NAME;
     public static String TAG = AlarmClockConstants.TAG;
@@ -36,12 +37,20 @@ public class AmbientAlarmManager
      */
     public static void notifyActiveAlerts(DateTime currentTime)
     {
-        for(AmbientAlarm alarm : registeredAlarms)
+        if(registeredAlarms!=null)
         {
-            if(alarm.isActive())
+            Log.d(TAG, "--tick--" + registeredAlarms.size());
+            for (AmbientAlarm alarm : registeredAlarms)
             {
-                alarm.notifyOfCurrentTime(currentTime);
+                if (alarm.isActive())
+                {
+                    alarm.notifyOfCurrentTime(currentTime);
+                }
             }
+        }
+        else
+        {
+            updateListFromDataBase();
         }
     }
 
@@ -52,28 +61,44 @@ public class AmbientAlarmManager
      */
     public static void addNewAmbientAlarm(AmbientAlarm ambientAlarm)
     {
-        registeredAlarms.add(ambientAlarm);
+        Log.d(TAG, "  addNewAmbientAlarm(AmbientAlarm)");
+        if(registeredAlarms!=null)
+        {
+            registeredAlarms.add(ambientAlarm);
+        }
+        else
+        {
+            updateListFromDataBase();
+            registeredAlarms.add(ambientAlarm);
+        }
         AmbientAlarmDatabase.updateAmbientAlarm(ambientAlarm);
     }
 
     public static void updateDataBaseEntry(AmbientAlarm ambientAlarm)
     {
+        Log.d(TAG, "  updateDatabaseEntry(AmbientAlarm)");
         AmbientAlarmDatabase.updateAmbientAlarm(ambientAlarm);
     }
 
     public static ArrayList<AmbientAlarm> getListOfAmbientAlarms()
     {
+        Log.d(TAG, "  getListOfAmbientAlarms()");
         return registeredAlarms;
     }
 
     public static void updateListFromDataBase()
     {
+        Log.d(TAG, "  update Alarm List from Database");
+        //Log.d(TAG, "  Listsize="+registeredAlarms.size());
         registeredAlarms = AmbientAlarmDatabase.getAllAlarmsFromDatabase();
+        Log.d(TAG, "  Listsize="+registeredAlarms.size());
     }
 
     public static void startAlarmActivity(AmbientAlarm ambientAlarm)
     {
+        Log.d(TAG, "  startAlarmActivity!");
         Context ctx = ClockWorkService.getClockworkContext();
+        //TODO: change to alarmID
         int alarmNumber = getAlarmNumber(ambientAlarm);
         if(alarmNumber>-1 && ctx != null)
         {
@@ -87,19 +112,53 @@ public class AmbientAlarmManager
 
     public static int getAlarmNumber(AmbientAlarm ambientAlarm)
     {
-        for(int i=0; i<registeredAlarms.size(); i++)
+        Log.d(TAG, "  getAlarmNumber---");
+        if(registeredAlarms!=null)
         {
-            if(registeredAlarms.get(i).equals(ambientAlarm))
+            for (int i = 0; i < registeredAlarms.size(); i++)
             {
-                return i;
+                if (registeredAlarms.get(i).equals(ambientAlarm))
+                {
+                    return i;
+                }
             }
+
+            return -1;
         }
-        return -1;
+        updateListFromDataBase();
+        return getAlarmNumber(ambientAlarm);
     }
 
     public static void deleteAmbientAlarm(int position)
     {
-        AmbientAlarmDatabase.removeAmbientAlarm(registeredAlarms.get(position));
-        registeredAlarms.remove(position);
+        Log.d(TAG, "  delete Ambient Alarm!");
+        if(registeredAlarms!=null)
+        {
+            AmbientAlarmDatabase.removeAmbientAlarm(registeredAlarms.get(position));
+            registeredAlarms.remove(position);
+        }
+    }
+
+    public static AmbientAlarm getAlarmById(String alarmID)
+    {
+        if(registeredAlarms!=null)
+        {
+            Log.d(TAG, "  getAlarmByID " + alarmID);
+            Log.d(TAG, "  size of AlarmList " + registeredAlarms.size());
+            for (AmbientAlarm alarm : registeredAlarms)
+            {
+                Log.d(TAG, "    -->" + alarm.getAlarmID());
+                if (alarm.getAlarmID().equals(alarmID))
+                {
+                    return alarm;
+                }
+            }
+            return null;
+        }
+        else
+        {
+            updateListFromDataBase();
+            return getAlarmById(alarmID);
+        }
     }
 }

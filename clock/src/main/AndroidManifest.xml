@@ -42,8 +42,7 @@
             android:theme="@android:style/Theme.Dialog"
             android:name=".ui.NewAmbientAction">
         </activity>
-        <activity android:name=".actions.SendMailActionActivity"></activity>
-        <activity android:name=".actions.CountdownActionActivity"></activity>
+        <activity android:name=".actions.ActionActivity"></activity>
         <activity android:name="com.dropbox.sync.android.DbxAuthActivity" />
         <activity
             android:name="com.dropbox.client2.android.AuthActivity"
@@ -61,7 +60,6 @@
         </activity>
         <activity android:name=".main.SettingsActivity" />
         <service android:name=".main.ClockWorkService" />
-        <service android:name=".actions.ActionManager" />
         <service android:name=".startup.NotificationService" />
         <service
             android:name="com.dropbox.sync.android.DbxSyncService"

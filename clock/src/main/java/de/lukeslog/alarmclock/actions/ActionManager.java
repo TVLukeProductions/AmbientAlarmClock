@@ -1,242 +1,100 @@
 package de.lukeslog.alarmclock.actions;
 
-import android.app.Service;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.IBinder;
-import android.util.Log;
-
-import org.knopflerfish.framework.FrameworkFactoryImpl;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleException;
-import org.osgi.framework.ServiceReference;
-import org.osgi.framework.launch.Framework;
-import org.osgi.framework.launch.FrameworkFactory;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
+import java.util.ArrayList;
 
-import de.lukeslog.alarmclock.main.ClockWorkService;
-import de.lukeslog.alarmclock.support.AlarmClockConstants;
+import de.lukeslog.alarmclock.datatabse.AmbientAlarmDatabase;
 
 /**
  * Created by lukas on 15.04.14.
  */
-public class ActionManager extends Service
+public class ActionManager
 {
 
-    ArrayList<String> actionTypes = new ArrayList<String>();
-    HashMap<String, Bundle> installedActions = new HashMap<String, Bundle>();
-    Context context;
+    private static ArrayList<AmbientAction> actionList = new ArrayList<AmbientAction>();
 
-    Framework mFramework;
-
-    String testName = "de.lukeslog.exampleplugin3";
-
-    SharedPreferences settings;
-    public static String TAG = AlarmClockConstants.TAG;
-
-    @Override
-    public IBinder onBind(Intent intent)
+    public static void updateActionList()
     {
+        actionList = AmbientAlarmDatabase.getAllActionsFromDatabase();
+    }
+
+    public static AmbientAction createActionFromConfigBundle(ActionConfigBundle configBundle, String className)
+    {
+        //This method is lame but I don't want to do reflection and building a plugin infrastructre is
+        // just a lot of work so the types are hardcoded... I'm sorry about that.
+        if(className.equals(AmbientAction.COUNTDOWN_ACTION))
+        {
+            CountdownAction ca = new CountdownAction(configBundle);
+            return ca;
+        }
+        if(className.equals(AmbientAction.SENDMAIL_ACTION))
+        {
+            SendMailAction sma = new SendMailAction(configBundle);
+            return sma;
+        }
         return null;
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId)
+    public static void addNewAction(AmbientAction ambientAction)
     {
-        super.onStartCommand(intent, flags, startId);
-        //Log.d(TAG, "ClockWorkService onStartCommand()");
-        return START_STICKY;
+        actionList.add(ambientAction);
     }
 
-    @Override
-    public void onCreate()
+    /**
+     *
+     * @return
+     */
+    public static ArrayList<HashMap<String, String>> getActionTypes()
     {
-        super.onCreate();
-        context = this;
-        //Log.d(TAG, "ClockWorkService onCreate()");
-        settings = ClockWorkService.settings;
+        ArrayList<HashMap<String, String>> actionInformation = new ArrayList<HashMap<String, String>>();
+       //CountDownAction
+        HashMap<String, String> descriptionCountdownAction = new HashMap<String, String>();
+        descriptionCountdownAction.put("actionType", AmbientAction.COUNTDOWN_ACTION);
+        descriptionCountdownAction.put("actionName", "Countdown Action");
+        descriptionCountdownAction.put("actionIcon", "countdown_action_icon");
+        descriptionCountdownAction.put("description", "ololroflcopter");
 
-        setupOSGi();
+        HashMap<String, String> descriptionSendMailAction = new HashMap<String, String>();
+        descriptionSendMailAction.put("actionType", AmbientAction.SENDMAIL_ACTION);
+        descriptionSendMailAction.put("actionName", "Send Mail Action");
+        descriptionSendMailAction.put("actionIcon", "send_mail_action_icon");
+        descriptionSendMailAction.put("description", "send a mail.");
 
-        clearinstalation();
+        actionInformation.add(descriptionCountdownAction);
+        actionInformation.add(descriptionSendMailAction);
 
-        installBundle("https://dl.dropbox.com/s/e6kn8harcsf7y17/de.lukeslog.exampleplugin3_1.0.0.jar");
+        return actionInformation;
+    }
 
-
-
-        for(int i=0; i<100; i++)
+    public static AmbientAction getActionByID(String actionID)
+    {
+        for(AmbientAction action : actionList)
         {
-            Bundle[] b = mFramework.getBundleContext().getBundles();
-            Log.d(TAG, "" + b.length);
-            for (int j = 0; j < b.length; j++)
+            if(action.getActionID().equals(actionID))
             {
-                Log.d(TAG, b[j].getLocation());
-                Log.d(TAG, b[j].getSymbolicName());
-                if (b[j].getSymbolicName().equals(testName))
-                {
-                    i = 106;
-                }
-            }
-            try
-            {
-                Thread.sleep(500);
-            } catch (InterruptedException e)
-            {
-                e.printStackTrace();
+                return action;
             }
         }
-
-        startBundles();
+        return null;
     }
 
-    private void clearinstalation()
+    public static ArrayList<AmbientAction> getActionList()
     {
-        Bundle[] b2 = mFramework.getBundleContext().getBundles();
-        for(int j=0; j<b2.length; j++)
-        {
-            if(b2[j].getSymbolicName().equals("System Bundle"))
-            {
-
-            }
-            else
-            {
-                try
-                {
-                    b2[j].uninstall();
-                }
-                catch (Exception e)
-                {
-
-                }
-            }
-        }
-
+        return actionList;
     }
 
-    private void startBundles()
+    public static AmbientAction createNewDefaultAction(String actionTypeName)
     {
-        //Log.d(TAG, "starting bundle " + bundle);
-
-        long bid = -1;
-        Bundle[] bl = mFramework.getBundleContext().getBundles();
-        for (int i = 0; bl != null && i < bl.length; i++)
+        if(actionTypeName.equals(AmbientAction.COUNTDOWN_ACTION))
         {
-            if (bl[i].getSymbolicName().equals(testName))
-            {
-                bid = bl[i].getBundleId();
-            }
+            CountdownAction cda = new CountdownAction("New Count Down Action", 3600);
+            return cda;
         }
-
-        Log.d(TAG, "Bundle ID="+bid);
-
-        Bundle b = mFramework.getBundleContext().getBundle(bid);
-        if (b == null)
+        if(actionTypeName.equals(AmbientAction.SENDMAIL_ACTION))
         {
-            Log.e(TAG, "can't start bundle cause its null");
-            return;
+            SendMailAction sma = new SendMailAction("New Send Mail Action", "", "Subject", "Content");
+            return sma;
         }
-
-        Log.d(TAG, b.toString());
-        //try
-        //{
-            b.start();
-
-            Log.d(TAG, "bundle " + b.getSymbolicName() + "/" + b.getBundleId() + "/"
-                    + b + " started");
-        //}
-        //catch (Exception be)
-        //{
-        //    Log.e(TAG, "<<<"+be.toString());
-        //}
-
-
-    }
-
-    private void setupOSGi()
-    {
-        Log.d(TAG, "set up OSGi");
-        Map<String, String> fwprops = new Hashtable<String, String>();
-
-        // add any framework properties to fwprops
-        fwprops.put("org.osgi.framework.storage", "sdcard/fwdir");
-
-        FrameworkFactory ff = new FrameworkFactoryImpl();
-        mFramework = ff.newFramework(fwprops);
-
-        try
-        {
-
-            mFramework.init();
-
-        }
-        catch (Exception e)
-        {
-            // framework initialization failed
-
-            Log.d(TAG, e.getStackTrace().toString());
-
-        }
-    }
-
-    private void installBundle(final String bundleURL)
-    {
-        new Thread(new Runnable()
-        {
-            public void run()
-            {
-                InputStream bundle = getBundlefromURL(bundleURL);
-                installBundle(bundleURL, bundle);
-                closeInputStream(bundle);
-            }
-        }).start();
-    }
-
-    private InputStream getBundlefromURL(String bundleURL)
-    {
-        InputStream bundle = null;
-        Log.d(TAG, "installing bundle " + bundleURL);
-
-        try
-        {
-            bundle = new URL(bundleURL).openStream();
-        }
-        catch (Exception e)
-        {
-            Log.e(TAG, e.toString());
-        }
-        return bundle;
-    }
-
-    private void installBundle(String bundleURL, InputStream bundle)
-    {
-        try
-        {
-            mFramework.getBundleContext().installBundle(bundleURL, bundle);
-            Log.d(TAG, "bundle " + bundleURL + " installed");
-        }
-        catch (Exception be)
-        {
-            Log.e(TAG, be.toString());
-        }
-    }
-
-    private void closeInputStream (InputStream bundle)
-    {
-        try
-        {
-            bundle.close();
-        }
-        catch (IOException e)
-        {
-            Log.e(TAG, e.toString());
-        }
+        return null;
     }
 }

@@ -38,8 +38,10 @@ public class AmbientAlarmConfigurationActivity extends Activity
     public static final String PREFS_NAME = AlarmClockConstants.PREFS_NAME;
     public static String TAG = AlarmClockConstants.TAG;
 
-    AmbientAlarm alarm;
-    Context ctx;
+    private static AmbientAlarm alarm;
+    private static Context ctx;
+
+    private static String alarmID ="";
 
     /** Called when the activity is first created. */
     public void onCreate(Bundle savedInstanceState)
@@ -48,9 +50,11 @@ public class AmbientAlarmConfigurationActivity extends Activity
         setContentView(R.layout.ambient_alarm_configuration_activity);
 
         ctx = this;
-        int alarmID = getIntent().getIntExtra("ambientAlarmID", -1);
-        if(alarmID==-1)
+        alarmID = getIntent().getStringExtra("ambientAlarmID");
+        Log.d(TAG, "alarmID="+alarmID);
+        if(alarmID.equals(""))
         {
+            Log.d(TAG, "create new alarm");
             DateTime alarmtime = new DateTime();
             alarm = new AmbientAlarm();
             alarm.setAlarmTime(alarmtime.minusMinutes(1));
@@ -67,7 +71,10 @@ public class AmbientAlarmConfigurationActivity extends Activity
         }
         else
         {
-            alarm = AmbientAlarmManager.getListOfAmbientAlarms().get(alarmID);
+            Log.d(TAG, "get Alarm from the Alarm manager");
+            Log.d(TAG, "alarm!=null => "+ (alarm!=null));
+            alarm = AmbientAlarmManager.getAlarmById(alarmID);
+            Log.d(TAG, "alarm!=null => "+ (alarm!=null));
         }
         configureBasicUI();
 
@@ -87,6 +94,13 @@ public class AmbientAlarmConfigurationActivity extends Activity
 
         addAddActionButton((LinearLayout) findViewById(R.id.actionlist));
     }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+    }
+
 
     private void addAddActionButton(LinearLayout configView)
     {
@@ -349,6 +363,8 @@ public class AmbientAlarmConfigurationActivity extends Activity
     private void configureUIalarmSwritch()
     {
         Switch ambientalarmswitch = (Switch) findViewById(R.id.ambientalarmswitch);
+        Log.d(TAG, "alarmswitch!=null => "+(ambientalarmswitch!=null));
+        Log.d(TAG, "alarm !=null => "+(alarm!=null));
         ambientalarmswitch.setChecked(alarm.isActive());
         ambientalarmswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {

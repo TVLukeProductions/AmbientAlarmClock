@@ -74,7 +74,6 @@ public class ServiceStarter
         classesToBoot.add(ClockWorkService.class);
         //classesToBoot.add(AmbientAlarmManager.class);
         classesToBoot.add(NotificationService.class);
-        classesToBoot.add(ActionManager.class);
     }
 
     /*

@@ -22,16 +22,18 @@ public abstract class AmbientAction
 {
     protected String actionName;
     protected String actionID;
-    public static String TAG = AlarmClockConstants.TAG;
 
-    private static HashMap<String, AmbientAction> ambientActions = new HashMap<String, AmbientAction>();
+    public static final String COUNTDOWN_ACTION = CountdownAction.class.toString();
+    public static final String SENDMAIL_ACTION = SendMailAction.class.toString();
+
+    public static String TAG = AlarmClockConstants.TAG;
 
     AmbientAction(String actionName)
     {
         this.actionName=actionName;
         DateTime now = new DateTime();
         actionID = "action"+actionName+""+now.getMillis();
-        ambientActions.put(actionID, this);
+        ActionManager.addNewAction(this);
     }
 
     public AmbientAction(ActionConfigBundle configBundle)
@@ -62,11 +64,6 @@ public abstract class AmbientAction
         ActionConfigBundle configBundle = setConfigurationData();
         configBundle.putString("actionName", actionName);
         return configBundle;
-    }
-
-    public static AmbientAction getActionByID(String actionID)
-    {
-        return ambientActions.get(actionID);
     }
 
     protected abstract ActionConfigBundle setConfigurationData();

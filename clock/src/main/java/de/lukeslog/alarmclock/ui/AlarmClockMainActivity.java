@@ -23,8 +23,6 @@ import com.dropbox.client2.session.AccessTokenPair;
 
 import java.util.ArrayList;
 
-import javax.xml.datatype.Duration;
-
 import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarmManager;
@@ -232,6 +230,7 @@ public class AlarmClockMainActivity extends Activity
     private void openNewAlarmActivity()
     {
         Intent i = new Intent(ctx, AmbientAlarmConfigurationActivity.class);
+        i.putExtra("ambientAlarmID", "");
         ctx.startActivity(i);
     }
 
@@ -284,7 +283,7 @@ public class AlarmClockMainActivity extends Activity
             {
                 Log.d(TAG, "click");
                 Intent i = new Intent(ctx, AmbientAlarmConfigurationActivity.class);
-                i.putExtra("ambientAlarmID", posi);
+                i.putExtra("ambientAlarmID", ambientalarms.get(posi).getAlarmID());
                 ctx.startActivity(i);
             }
 

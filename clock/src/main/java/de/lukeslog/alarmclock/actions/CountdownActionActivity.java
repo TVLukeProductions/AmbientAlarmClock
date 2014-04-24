@@ -28,7 +28,7 @@ public class CountdownActionActivity extends ActionActivity
         ctx = this;
 
         String actionID = getIntent().getStringExtra("ambientActionID");
-        final CountdownAction action = (CountdownAction) AmbientAction.getActionByID(actionID);
+        final CountdownAction action = (CountdownAction) ActionManager.getActionByID(actionID);
 
         int seconds =action.getCountDownDuration();
 
