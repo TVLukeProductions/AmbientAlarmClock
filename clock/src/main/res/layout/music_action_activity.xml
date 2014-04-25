@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/layout"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:weightSum="1">
+
+    <CheckBox
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Fade In On Alarm"
+        android:id="@+id/fade"
+        android:checked="false"/>
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="All files have to be .mp3 files!"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <CheckBox
+        android:id="@+id/use_local"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Use Local File System" />
+
+    <TextView
+        android:id="@+id/textView634231"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Folder Name (has To be Top Level)"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <EditText
+        android:id="@+id/localfolder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10" />
+
+    <Spinner
+        android:id="@+id/spinnerlocalf"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:prompt="@string/chooselocalfolder" />
+
+    <CheckBox
+        android:id="@+id/use_dropbox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Use DropBox" />
+
+    <TextView
+        android:id="@+id/textView4534"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Folder Name (has To be Top Level)"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <EditText
+        android:id="@+id/dropboxfolder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10" />
+
+    <Spinner
+        android:id="@+id/spinnerdpf"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:prompt="@string/choosefolder" />
+
+
+</LinearLayout>
