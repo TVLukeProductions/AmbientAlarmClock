@@ -2,11 +2,9 @@ package de.lukeslog.alarmclock.ambientalarm;
 
 import android.util.Log;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 
 import org.joda.time.DateTime;
 import org.joda.time.Seconds;
-import de.lukeslog.alarmclock.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +13,6 @@ import java.util.Set;
 
 import de.lukeslog.alarmclock.actions.AmbientAction;
 import de.lukeslog.alarmclock.alarmactivity.AmbientAlarmActivity;
-import de.lukeslog.alarmclock.datatabse.AmbientAlarmDatabase;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
 import de.lukeslog.alarmclock.support.AlarmState;
 
@@ -34,6 +31,7 @@ public class AmbientAlarm
 
     private boolean active=false;
     private boolean snoozing = false;
+    private boolean lock = false;
     private int snoozeTimeInSeconds = 500;
     private int snoozeButtonPressedCounter=0;
     private DateTime alarmTime = new DateTime();
@@ -85,6 +83,15 @@ public class AmbientAlarm
         return snoozing;
     }
 
+    public boolean islocked()
+    {
+        return lock;
+    }
+
+    public void setLocked(boolean l)
+    {
+        lock=l;
+    }
     // activate or deactivate snoozing
     public void setSnoozing(boolean snoozing)
     {
@@ -149,7 +156,8 @@ public class AmbientAlarm
 
     public void registerAction(String relativeTime, AmbientAction action)
     {
-        Log.d(TAG, "register action...");
+        Log.d(TAG, "register action... "+relativeTime);
+        unregisterAction(action); //delete from its old timing if it exists...
         if(registeredActions.containsKey(relativeTime))
         {
             Log.d(TAG, "old relative time...");
@@ -177,21 +185,31 @@ public class AmbientAlarm
     {
         Log.d(TAG, "snoozeButton");
         alarmState=AlarmState.SNOOZING;
-        //TODO: go through registered actions and deactivate those that deactivate on snooze
+        Set<String> keys = registeredActions.keySet();
+        Iterator<String> iterator = keys.iterator();
+        while (iterator.hasNext())
+        {
+            String actiontime = iterator.next();
+            ArrayList<AmbientAction> actions = registeredActions.get(actiontime);
+            for (AmbientAction action : actions)
+            {
+                action.snooze();
+            }
+        }
         incrementSnoozeButtonCounter();
     }
 
     public void notifyOfCurrentTime(DateTime currentTime)
     {
-        Log.d(TAG, "Seconds since last Alert: "+secondsSinceAlertTime(currentTime));
-        Log.d(TAG, "Seconds to next Alert: "+secondsToAlertTime(currentTime));
+        //Log.d(TAG, "Seconds since last Alert: "+secondsSinceAlertTime(currentTime));
+        //Log.d(TAG, "Seconds to next Alert: "+secondsToAlertTime(currentTime));
         performActionIfActionIsRequired(currentTime);
-        if(secondsToAlertTime(currentTime)==0)
+        if(secondsToAlertTime(currentTime)<=0)
         {
             setToNextAlarmTime();
         }
-        Log.d(TAG, "" + alarmTime.getDayOfWeek());
-        Log.d(TAG, alarmTime.toString());
+        //Log.d(TAG, "" + alarmTime.getDayOfWeek());
+        //Log.d(TAG, alarmTime.toString());
         //TODO: Check if any Service has registered to be started on that distance.
     }
 
@@ -217,12 +235,12 @@ public class AmbientAlarm
         //action registered on alert
         if(secondsSinceAlertTime(currentTime)==snoozeTimeInSeconds*snoozeButtonPressedCounter)
         {
-            alert();
             Log.d(TAG, "ALAAAAAARRM");
             if(registeredActions.containsKey("0"))
             {
                 performActions("0");
             }
+            alert();
         }
     }
 
@@ -230,20 +248,25 @@ public class AmbientAlarm
     {
         Log.d(TAG, "performactions..."+s);
         ArrayList<AmbientAction> actions = registeredActions.get(s);
-        Log.d(TAG, ""+actions.size());
-        for(AmbientAction action : actions)
+        if(s.equals("0") && alarmState!=AlarmState.ALARM || !s.equals("0"))
         {
-            Log.d(TAG, "...");
-            if(isFirstAlert())
+            Log.d(TAG, ""+actions.size());
+            for(AmbientAction action : actions)
             {
-                Log.d(TAG, "is first action...");
-                action.action();
-            }
-            else
-            {
-
+                Log.d(TAG, "...");
+                if(isFirstAlert())
+                {
+                    Log.d(TAG, "is first action...");
+                    action.action(true);
+                }
+                else
+                {
+                    Log.d(TAG, "is later action");
+                    action.action(false);
+                }
             }
         }
+
     }
 
     private boolean isFirstAlert()
@@ -256,7 +279,17 @@ public class AmbientAlarm
         Log.d(TAG, "awakeButton");
         alarmState = AlarmState.WAITING;
         resetSnoozeButtonCounter();
-        //TODO: go through registered actions and deactivate those that deactivate on awake
+        Set<String> keys = registeredActions.keySet();
+        Iterator<String> iterator = keys.iterator();
+        while (iterator.hasNext())
+        {
+            String actiontime = iterator.next();
+            ArrayList<AmbientAction> actions = registeredActions.get(actiontime);
+            for (AmbientAction action : actions)
+            {
+                action.awake();
+            }
+        }
     }
 
     /**
@@ -266,6 +299,7 @@ public class AmbientAlarm
     {
         if(alarmState == AlarmState.WAITING || alarmState == AlarmState.SNOOZING )
         {
+            Log.d(TAG, "set AlarmState to ALARM!");
             alarmState=AlarmState.ALARM;
             if (isFirstAlert())
             {
@@ -281,14 +315,13 @@ public class AmbientAlarm
 
     private void reAltert()
     {
-        if(alarmState == AlarmState.SNOOZING)
-        {
-            AmbientAlarmManager.startAlarmActivity(this);
-        }
+        Log.d(TAG, "realert()");
+        AmbientAlarmManager.startAlarmActivity(this);
     }
 
     private void firstAlert()
     {
+        Log.d(TAG, "first Alert");
         AmbientAlarmManager.startAlarmActivity(this);
     }
 
@@ -323,17 +356,19 @@ public class AmbientAlarm
 
     public void fillInActionView(LinearLayout scrollView)
     {
+        Log.d(TAG, "registered Actions Child Count = "+scrollView.getChildCount());
+        scrollView.removeAllViews();
         Set<String> keys = registeredActions.keySet();
-        Iterator<String> iterator = keys.iterator();
-        while(iterator.hasNext())
-        {
-            String actiontime = iterator.next();
-            ArrayList<AmbientAction> actions = registeredActions.get(actiontime);
-            for(AmbientAction action: actions)
+            Iterator<String> iterator = keys.iterator();
+            while (iterator.hasNext())
             {
-                action.defineSettingsView(scrollView);
+                String actiontime = iterator.next();
+                ArrayList<AmbientAction> actions = registeredActions.get(actiontime);
+                for (AmbientAction action : actions)
+                {
+                    action.defineSettingsView(scrollView, this);
+                }
             }
-        }
    }
 
     public Class<AmbientAlarmActivity> getAlarmActivity()
@@ -366,5 +401,48 @@ public class AmbientAlarm
     public int getStatus()
     {
         return alarmState;
+    }
+
+    public void unregisterAction(AmbientAction actionToDelete)
+    {
+        Set<String> keys = registeredActions.keySet();
+        Iterator<String> iterator = keys.iterator();
+        while(iterator.hasNext())
+        {
+            String actiontime = iterator.next();
+            ArrayList<AmbientAction> actions = registeredActions.get(actiontime);
+            for(int i=actions.size()-1; i>=0; i--)
+            {
+                AmbientAction action = actions.get(i);
+                Log.d(TAG, action.getActionID());
+                if(action.getActionID().equals(actionToDelete.getActionID()))
+                {
+                    Log.d(TAG, "  --> remove action.");
+                    actions.remove(i);
+                    break;
+                }
+            }
+        }
+    }
+
+    public boolean iscurrentlylocked()
+    {
+        DateTime now = new DateTime();
+        if(islocked())
+        {
+            if(secondsSinceAlertTime(now)>-1 && secondsSinceAlertTime(now)<10)
+            {
+                return true;
+            }
+            if(secondsToAlertTime(now)>-1 && secondsToAlertTime(now)<10)
+            {
+                return true;
+            }
+        }
+        else
+        {
+            return false;
+        }
+        return false;
     }
 }

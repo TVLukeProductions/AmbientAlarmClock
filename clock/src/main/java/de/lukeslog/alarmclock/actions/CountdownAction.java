@@ -1,8 +1,6 @@
 package de.lukeslog.alarmclock.actions;
 
-import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -13,10 +11,10 @@ import android.widget.TextView;
 import org.joda.time.DateTime;
 import org.joda.time.Seconds;
 
-import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.alarmactivity.AmbientAlarmActivity;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
 import de.lukeslog.alarmclock.support.UISupport;
+import de.lukeslog.alarmclock.R;
 
 /**
  * Created by lukas on 04.04.14.
@@ -36,6 +34,7 @@ public class CountdownAction extends AmbientAction
     {
         super(configBundle);
         this.durationInSeconds  = Integer.parseInt(configBundle.getString("durationInSeconds"));
+        Log.d(TAG, "new Countdownaction from config bunlde");
     }
 
     public void setDurationInSeconds(int seconds)
@@ -49,7 +48,7 @@ public class CountdownAction extends AmbientAction
     }
 
     @Override
-    public void action()
+    public void action(boolean isFirstAlert)
     {
 
     }
@@ -67,9 +66,15 @@ public class CountdownAction extends AmbientAction
     }
 
     @Override
-    public void defineSettingsView(final LinearLayout configView)
+    public void tick(DateTime now)
     {
-        LinearLayout mainLayout = createLayout(configView);
+
+    }
+
+    @Override
+    public void defineSettingsView(final LinearLayout configView, AmbientAlarm alarm)
+    {
+        LinearLayout mainLayout = createLayout(configView, alarm);
 
 
         TextView name = createNameTextView(configView);
@@ -79,23 +84,6 @@ public class CountdownAction extends AmbientAction
         mainLayout.addView(icon);
         mainLayout.addView(name);
         configView.addView(mainLayout);
-    }
-
-    private LinearLayout createLayout(final LinearLayout configView)
-    {
-        LinearLayout mainLayout = new LinearLayout(configView.getContext());
-        mainLayout.setOrientation(LinearLayout.HORIZONTAL);
-        mainLayout.setMinimumHeight(40);
-        mainLayout.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                Log.d(TAG, "click");
-                openConfigurationActivity(configView.getContext());
-            }
-        });
-        return mainLayout;
     }
 
     private TextView createNameTextView(LinearLayout configView)
@@ -125,7 +113,7 @@ public class CountdownAction extends AmbientAction
     @Override
     public Class getConfigActivity()
     {
-        return CountdownActionActivity.class;
+        return CountdownActionConfigurationFragment.class;
     }
 
     @Override

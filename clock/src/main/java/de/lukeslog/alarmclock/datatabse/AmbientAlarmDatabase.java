@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Bundle;
 import android.util.Log;
 
 import org.joda.time.DateTime;
@@ -15,10 +14,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
-import de.lukeslog.alarmclock.actions.*;
+import de.lukeslog.alarmclock.actions.ActionConfigBundle;
+import de.lukeslog.alarmclock.actions.ActionManager;
+import de.lukeslog.alarmclock.actions.AmbientAction;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
-import de.lukeslog.alarmclock.support.AlarmClockConstants;
 import de.lukeslog.alarmclock.support.Day;
+import de.lukeslog.alarmclock.support.AlarmClockConstants;
 
 /**
  * Created by lukas on 31.03.14.
@@ -38,6 +39,7 @@ public class AmbientAlarmDatabase
     public static final String TABLE_ALARM_ACTIVE = "isactive";
     public static final String TABLE_ALARM_SNOOZING = "issnoozing";
     public static final String TABLE_ALARM_SNOOZE_TIME = "snoozetime";
+    public static final String TABLE_ALARM_LOCK = "lock";
     public static final String TABLE_ALARM_TIME_HOUR = "alarmhour";
     public static final String TABLE_ALARM_TIME_MINUTE = "alarmminute";
     public static final String TABLE_ALARM_DAY_MONDAY = "alarmmonday";
@@ -81,6 +83,7 @@ public class AmbientAlarmDatabase
                     ""+TABLE_ALARM_ACTIVE+" integer, " +
                     ""+TABLE_ALARM_SNOOZING+" integer, " +
                     ""+TABLE_ALARM_SNOOZE_TIME+" integer, " +
+                    ""+TABLE_ALARM_LOCK+" integer, "+
                     ""+TABLE_ALARM_TIME_HOUR+" integer, " +
                     ""+TABLE_ALARM_TIME_MINUTE+" integer, " +
                     ""+TABLE_ALARM_DAY_MONDAY+" integer, " +
@@ -166,6 +169,7 @@ public class AmbientAlarmDatabase
     {
          Cursor c= database.query(TABLE_ACTION, new String[] {
                             TABLE_ACTION_ACTIONID,
+                            TABLE_ACTION_TYPE,
                             TABLE_ACTION_NAME,
                             TABLE_ACTION_CONFIG_BUNDLE_VALUES},
                     null,
@@ -194,6 +198,7 @@ public class AmbientAlarmDatabase
         cValues.put(TABLE_ALARM_ACTIVE, boolToInt(ambientAlarm.isActive()));
         cValues.put(TABLE_ALARM_SNOOZING, boolToInt(ambientAlarm.isActive()));
         cValues.put(TABLE_ALARM_SNOOZE_TIME, ambientAlarm.getSnoozeTimeInSeconds());
+        cValues.put(TABLE_ALARM_LOCK, boolToInt(ambientAlarm.islocked()));
         cValues.put(TABLE_ALARM_TIME_HOUR, ambientAlarm.getAlarmTime().getHourOfDay());
         cValues.put(TABLE_ALARM_TIME_MINUTE, ambientAlarm.getAlarmTime().getMinuteOfHour());
         cValues.put(TABLE_ALARM_DAY_MONDAY, boolToInt(ambientAlarm.getActiveForDayOfTheWeek(Day.MONDAY)));
@@ -215,6 +220,18 @@ public class AmbientAlarmDatabase
             Log.d(TAG, "we create a new entry");
             database.insert(TABLE_ALARM, null, cValues);
         }
+        Set<String> keys = ambientAlarm.getRegisteredActions().keySet();
+        Iterator<String> iterator = keys.iterator();
+        while(iterator.hasNext())
+        {
+            String actiontime = iterator.next();
+            ArrayList<AmbientAction> actions = ambientAlarm.getRegisteredActions().get(actiontime);
+            for(AmbientAction action: actions)
+            {
+                updateAmbientAction(action);
+            }
+        }
+        updateActionsForAmbientAlarm(ambientAlarm);
     }
 
     public static ArrayList<AmbientAlarm> getAllAlarmsFromDatabase()
@@ -235,12 +252,13 @@ public class AmbientAlarmDatabase
 
     public static void removeAmbientAlarm(AmbientAlarm ambientAlarm)
     {
-        database.delete(TABLE_ALARM, TABLE_ALARM_ALARMID+" = '"+ambientAlarm.getAlarmID()+"'", null);
+        database.delete(TABLE_ALARM, TABLE_ALARM_ALARMID + " = '" + ambientAlarm.getAlarmID() + "'", null);
         removeActionsRelatedToAlarm(ambientAlarm);
     }
 
-    private void updateActionsForAmbientAlarm(AmbientAlarm alarm)
+    private static void updateActionsForAmbientAlarm(AmbientAlarm alarm)
     {
+        Log.d(TAG, "updateActionsforAmbietAlarm");
         removeActionsRelatedToAlarm(alarm);
         HashMap<String, ArrayList<AmbientAction>> actions = alarm.getRegisteredActions();
         Set<String> keyset = actions.keySet();
@@ -257,10 +275,41 @@ public class AmbientAlarmDatabase
 
     private static void removeActionsRelatedToAlarm(AmbientAlarm alarm)
     {
-        database.delete(TABLE_ALARMTOACTION, TABLE_ALARM_ALARMID+" = '"+alarm.getAlarmID()+"'", null);
+        Log.d(TAG, "remove all related Actions");
+        database.delete(TABLE_ALARMTOACTION, TABLE_ALARM_ALARMID + " = '" + alarm.getAlarmID() + "'", null);
     }
 
-    private void addToAlarmToActionDatabase(String alarmID, String s, String actionID)
+    private static ArrayList<String> registerActionsToAlarm(AmbientAlarm alarm)
+    {
+        ArrayList<String> relatedActions = new ArrayList<String>();
+        String[] args={alarm.getAlarmID()};
+        Cursor cursor = database.rawQuery("SELECT * FROM "+TABLE_ALARMTOACTION+" WHERE "+TABLE_ALARM_ALARMID+" = ? ", args);
+
+        ActionManager.updateActionList();
+
+        ArrayList<AmbientAction> actions = ActionManager.getActionList();
+        Log.d(TAG, "    actions list size() => "+actions.size());
+        while(cursor.moveToNext())
+        {
+            Log.d(TAG, "    next");
+            String actionID = cursor.getString(cursor.getColumnIndex(TABLE_ACTION_ACTIONID));
+            Log.d(TAG, "actionID = "+actionID);
+            String actionTiming = cursor.getString(cursor.getColumnIndex(TABLE_ALARMTOACTION_TIMING));
+
+            for(AmbientAction action : actions)
+            {
+                Log.d(TAG, "action!=null"+(action!=null));
+                if(action.getActionID().equals(actionID))
+                {
+                    alarm.registerAction(actionTiming, action);
+                }
+            }
+
+        }
+        return relatedActions;
+    }
+
+    private static void addToAlarmToActionDatabase(String alarmID, String s, String actionID)
     {
         ContentValues cValues = new ContentValues();
         cValues.put(TABLE_ALARM_ALARMID, alarmID);
@@ -272,7 +321,7 @@ public class AmbientAlarmDatabase
     private static boolean alarmEntryExists(AmbientAlarm ambientAlarm)
     {
         String[] args={ambientAlarm.getAlarmID()};
-        Log.d(TAG, "alarmID="+ambientAlarm.getAlarmID());
+        Log.d(TAG, "alarmID=" + ambientAlarm.getAlarmID());
         Cursor cursor = database.rawQuery("SELECT * FROM "+TABLE_ALARM+" WHERE "+TABLE_ALARM_ALARMID+" = ? ", args);
         boolean exists = (cursor.getCount() > 0);
         cursor.close();
@@ -304,6 +353,7 @@ public class AmbientAlarmDatabase
         Log.d(TAG, "" + ambientAlarm.isSnoozing());
         ambientAlarm.setSnoozeTimeInSeconds(c.getInt(c.getColumnIndex(TABLE_ALARM_SNOOZE_TIME)));
         Log.d(TAG, "olol");
+        ambientAlarm.setLocked(intToBool(c.getInt(c.getColumnIndex(TABLE_ALARM_LOCK))));
         ambientAlarm.setAlarmStateForDay(Day.MONDAY, intToBool(c.getInt(c.getColumnIndex(TABLE_ALARM_DAY_MONDAY))));
         ambientAlarm.setAlarmStateForDay(Day.TUESDAY, intToBool(c.getInt(c.getColumnIndex(TABLE_ALARM_DAY_TUESDAY))));
         ambientAlarm.setAlarmStateForDay(Day.WEDNESDAY, intToBool(c.getInt(c.getColumnIndex(TABLE_ALARM_DAY_WEDNESDAY))));
@@ -311,6 +361,9 @@ public class AmbientAlarmDatabase
         ambientAlarm.setAlarmStateForDay(Day.FRIDAY, intToBool(c.getInt(c.getColumnIndex(TABLE_ALARM_DAY_FRIDAY))));
         ambientAlarm.setAlarmStateForDay(Day.SATURDAY, intToBool(c.getInt(c.getColumnIndex(TABLE_ALARM_DAY_SATURDAY))));
         ambientAlarm.setAlarmStateForDay(Day.SUNDAY, intToBool(c.getInt(c.getColumnIndex(TABLE_ALARM_DAY_SUNDAY))));
+
+        registerActionsToAlarm(ambientAlarm);
+
         return ambientAlarm;
     }
 
@@ -325,6 +378,7 @@ public class AmbientAlarmDatabase
                             TABLE_ALARM_ACTIVE,
                             TABLE_ALARM_SNOOZING,
                             TABLE_ALARM_SNOOZE_TIME,
+                            TABLE_ALARM_LOCK,
                             TABLE_ALARM_TIME_HOUR,
                             TABLE_ALARM_TIME_MINUTE,
                             TABLE_ALARM_DAY_MONDAY,

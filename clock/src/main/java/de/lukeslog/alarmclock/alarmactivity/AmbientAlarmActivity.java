@@ -12,9 +12,9 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 
-import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarmManager;
+import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
 
 /**
@@ -27,7 +27,7 @@ public class AmbientAlarmActivity extends Activity
     public static String TAG = AlarmClockConstants.TAG;
 
     PowerManager.WakeLock wakeLock;
-    AmbientAlarmActivity alarmactivity;
+    AmbientAlarmActivity alarmActivity;
 
     AmbientAlarm alarm;
 
@@ -42,7 +42,7 @@ public class AmbientAlarmActivity extends Activity
         int alarmID = getIntent().getIntExtra("ambientAlarmID", -1);
         alarm = AmbientAlarmManager.getListOfAmbientAlarms().get(alarmID);
 
-        alarmactivity = this;
+        alarmActivity = this;
 
         configureSnoozeButton();
         configureAwakeButton();
@@ -181,7 +181,7 @@ public class AmbientAlarmActivity extends Activity
             //Log.d(TAG, "countdown");
             SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
             //TODO: configureUI of the alert is called which in tern calls this method on all registered actions
-            alarm.updateAlarmUI(alarmactivity);
+            alarm.updateAlarmUI(alarmActivity);
 
             handler.removeCallbacks(this); // remove the old callback
             handler.postDelayed(this, delay); // register a new one

@@ -12,7 +12,9 @@ import org.joda.time.DateTime;
 
 import java.util.Calendar;
 
+import de.lukeslog.alarmclock.actions.ActionManager;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarmManager;
+import de.lukeslog.alarmclock.service.dropbox.DropBox;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
 
 /**
@@ -85,6 +87,7 @@ public class ClockWorkService extends IntentService
             //Log.d(TAG, "tick");
             DateTime currentTime = new DateTime();
             AmbientAlarmManager.notifyActiveAlerts(currentTime);
+            ActionManager.notifyOfCurrentTime(currentTime);
         }
         scheduleNextTick();
     }
@@ -111,7 +114,7 @@ public class ClockWorkService extends IntentService
     private void scheduleNextTick()
     {
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.MILLISECOND, 100); //since timing is not all that reliable on most machines we call this more than once per second.
+        cal.add(Calendar.MILLISECOND, 900); //since timing is not all that reliable on most machines we call this more than once per second.
         Intent intent = new Intent(this, ClockWorkService.class);
         PendingIntent pendingIntent = PendingIntent.getService(this, AlarmClockConstants.TICK, intent, 0);
         AlarmManager am = (AlarmManager)getSystemService(Context.ALARM_SERVICE);

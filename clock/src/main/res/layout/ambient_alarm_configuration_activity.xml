@@ -62,6 +62,13 @@
                 android:ems="10"
                 android:id="@+id/snoozetimeinseconds"/>
 
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Lock on Alarm"
+                android:id="@+id/lockcheck"
+                android:checked="false"/>
+
         </LinearLayout>
 
 
@@ -144,9 +151,33 @@
             android:textColor="#000"
             android:id="@+id/actionsheader"/>
 
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:id="@+id/addnew_layout">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:id="@+id/addactionimage"
+                android:src="@drawable/addnewalarm2"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Add Action"
+                android:id="@+id/addactiontext"
+                android:layout_gravity="center_horizontal"/>
+        </LinearLayout>
+
+
+
+
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="229dp"
             android:layout_gravity="center_horizontal"
             android:fillViewport="false">
 
@@ -158,5 +189,6 @@
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
+
 
 </LinearLayout>

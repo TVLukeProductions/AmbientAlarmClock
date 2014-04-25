@@ -1,25 +1,18 @@
 package de.lukeslog.alarmclock.actions;
 
-import android.app.Activity;
-import android.graphics.Color;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import de.lukeslog.alarmclock.R;
+import org.joda.time.DateTime;
+
 import de.lukeslog.alarmclock.alarmactivity.AmbientAlarmActivity;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
-import de.lukeslog.alarmclock.mail.Mail;
+import de.lukeslog.alarmclock.service.mail.Mail;
+import de.lukeslog.alarmclock.R;
 
 /**
  * Created by lukas on 31.03.14.
@@ -78,7 +71,7 @@ public class SendMailAction extends AmbientAction
     }
 
     @Override
-    public void action()
+    public void action(boolean isFirstAction)
     {
         Log.d(TAG, "mail action");
         Mail.sendMail(sendTo, subject, text);
@@ -97,35 +90,40 @@ public class SendMailAction extends AmbientAction
     }
 
     @Override
-    public void defineSettingsView(final LinearLayout configView)
+    public void tick(DateTime now)
     {
-        LinearLayout mainLayout = new LinearLayout(configView.getContext());
-        mainLayout.setOrientation(LinearLayout.HORIZONTAL);
-        mainLayout.setMinimumHeight(40);
-        mainLayout.setBackgroundColor(0xfff00000);
-        mainLayout.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                Log.d(TAG, "click");
-                openConfigurationActivity(configView.getContext());
-            }
-        });
 
-        ImageView icon = new ImageView(configView.getContext());
-        icon.setImageResource(R.drawable.send_mail_action_icon);
-        TableRow.LayoutParams params = new TableRow.LayoutParams(100, TableLayout.LayoutParams.WRAP_CONTENT);
-        icon.setLayoutParams(params);
+    }
 
-        TextView name = new TextView(configView.getContext());
-        name.setText(getActionName());
-        TableRow.LayoutParams params2 = new TableRow.LayoutParams(400, TableLayout.LayoutParams.WRAP_CONTENT);
-        name.setLayoutParams(params2);
+    @Override
+    public void defineSettingsView(final LinearLayout configView, AmbientAlarm alarm)
+    {
+        LinearLayout mainLayout = createLayout(configView, alarm);
+
+
+        TextView name = createNameTextView(configView);
+
+        ImageView icon = createActionIcon(configView);
 
         mainLayout.addView(icon);
         mainLayout.addView(name);
         configView.addView(mainLayout);
+    }
+
+    private TextView createNameTextView(LinearLayout configView)
+    {
+        TextView name = new TextView(configView.getContext());
+        name.setText(getActionName());
+        return name;
+    }
+
+    private ImageView createActionIcon(LinearLayout configView)
+    {
+        ImageView icon = new ImageView(configView.getContext());
+        icon.setImageResource(R.drawable.send_mail_action_icon);
+        TableRow.LayoutParams params = new TableRow.LayoutParams(100, TableLayout.LayoutParams.WRAP_CONTENT);
+        icon.setLayoutParams(params);
+        return icon;
     }
 
     @Override
@@ -141,7 +139,7 @@ public class SendMailAction extends AmbientAction
     @Override
     public Class getConfigActivity()
     {
-        return SendMailActionActivity.class;
+        return SendMailActionFragment.class;
     }
 
     @Override

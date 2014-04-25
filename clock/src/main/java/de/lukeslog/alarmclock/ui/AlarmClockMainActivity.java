@@ -23,13 +23,13 @@ import com.dropbox.client2.session.AccessTokenPair;
 
 import java.util.ArrayList;
 
-import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarmManager;
-import de.lukeslog.alarmclock.dropbox.DropBox;
-import de.lukeslog.alarmclock.lastfm.Scrobbler;
-import de.lukeslog.alarmclock.main.SettingsActivity;
+import de.lukeslog.alarmclock.service.dropbox.DropBox;
+import de.lukeslog.alarmclock.service.lastfm.Scrobbler;
 import de.lukeslog.alarmclock.startup.ServiceStarter;
+import de.lukeslog.alarmclock.support.AlarmState;
+import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
 
 /**
@@ -71,6 +71,7 @@ public class AlarmClockMainActivity extends Activity
     @Override
     protected void onPause()
     {
+        updater.onPause();
         super.onPause();
     }
 
@@ -78,6 +79,7 @@ public class AlarmClockMainActivity extends Activity
     protected void onResume()
     {
         adapter.notifyDataSetChanged();
+        updater.onResume();
         authenticateDropBox();
         redrawMenu();
         super.onResume();
@@ -249,29 +251,33 @@ public class AlarmClockMainActivity extends Activity
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id)
             {
                 Log.d(TAG, "longclock");
-                AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-                builder.setMessage(R.string.deletealarm)
-                        .setTitle(R.string.deletealarm);
-                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener()
+                if (!ambientalarms.get(position).iscurrentlylocked())
                 {
-                    public void onClick(DialogInterface dialog, int id)
+                    AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+                    builder.setMessage(R.string.deletealarm)
+                            .setTitle(R.string.deletealarm);
+                    builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener()
                     {
-                        Log.d(TAG, "delete " + position);
-                        AmbientAlarmManager.deleteAmbientAlarm(position);
-                        adapter.notifyDataSetChanged();
-                    }
-                });
-                //builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener()
-                //{
-                //    public void onClick(DialogInterface dialog, int id)
-                //    {
-                        // User cancelled the dialog
-                //    }
-                //});
-                Log.d(TAG, "was geht?");
-                AlertDialog dialog = builder.create();
-                dialog.show();
-                return true;
+                        public void onClick(DialogInterface dialog, int id)
+                        {
+                            Log.d(TAG, "delete " + position);
+                            AmbientAlarmManager.deleteAmbientAlarm(position);
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+                    //builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener()
+                    //{
+                    //    public void onClick(DialogInterface dialog, int id)
+                    //    {
+                    // User cancelled the dialog
+                    //    }
+                    //});
+                    Log.d(TAG, "was geht?");
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                    return true;
+                }
+                return false;
             }
         });
 
@@ -282,9 +288,12 @@ public class AlarmClockMainActivity extends Activity
             public void onItemClick(AdapterView<?> parent, View view, int posi, long id)
             {
                 Log.d(TAG, "click");
-                Intent i = new Intent(ctx, AmbientAlarmConfigurationActivity.class);
-                i.putExtra("ambientAlarmID", ambientalarms.get(posi).getAlarmID());
-                ctx.startActivity(i);
+                if(!ambientalarms.get(posi).iscurrentlylocked())
+                {
+                    Intent i = new Intent(ctx, AmbientAlarmConfigurationActivity.class);
+                    i.putExtra("ambientAlarmID", ambientalarms.get(posi).getAlarmID());
+                    ctx.startActivity(i);
+                }
             }
 
         });
@@ -325,6 +334,13 @@ public class AlarmClockMainActivity extends Activity
         {
             //Log.d(TAG, "run");
             adapter.notifyDataSetChanged();
+            for(AmbientAlarm alarm : ambientalarms)
+            {
+                if(alarm.getStatus()== AlarmState.ALARM)
+                {
+                    alarm.awakeButtonPressed();
+                }
+            }
             handler.removeCallbacks(this); // remove the old callback
             handler.postDelayed(this, delay); // register a new one
         }

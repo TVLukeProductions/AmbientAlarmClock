@@ -1,9 +1,7 @@
 package de.lukeslog.alarmclock.ambientalarm;
 
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.os.IBinder;
 import android.util.Log;
 
 import org.joda.time.DateTime;
@@ -39,7 +37,7 @@ public class AmbientAlarmManager
     {
         if(registeredAlarms!=null)
         {
-            Log.d(TAG, "--tick--" + registeredAlarms.size());
+            //Log.d(TAG, "--tick--" + registeredAlarms.size());
             for (AmbientAlarm alarm : registeredAlarms)
             {
                 if (alarm.isActive())

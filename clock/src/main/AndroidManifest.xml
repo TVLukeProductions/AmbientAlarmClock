@@ -26,7 +26,7 @@
         <activity
             android:label="@string/app_name"
             android:theme="@android:style/Theme.DeviceDefault"
-            android:name=".ui.AlarmClockMainActivity">
+            android:name="de.lukeslog.alarmclock.ui.AlarmClockMainActivity">
             <intent-filter >
                 <action android:name="android.intent.action.MAIN" />
 
@@ -35,14 +35,14 @@
         </activity>
         <activity
             android:theme="@android:style/Theme.DeviceDefault.NoActionBar"
-            android:name=".ui.AmbientAlarmConfigurationActivity">
+            android:name="de.lukeslog.alarmclock.ui.AmbientAlarmConfigurationActivity">
 
         </activity>
         <activity
             android:theme="@android:style/Theme.Dialog"
-            android:name=".ui.NewAmbientAction">
+            android:name="de.lukeslog.alarmclock.ui.NewAmbientAction">
         </activity>
-        <activity android:name=".actions.ActionActivity"></activity>
+        <activity android:name="de.lukeslog.alarmclock.actions.ActionActivity"></activity>
         <activity android:name="com.dropbox.sync.android.DbxAuthActivity" />
         <activity
             android:name="com.dropbox.client2.android.AuthActivity"
@@ -58,15 +58,16 @@
             android:theme="@android:style/Theme.DeviceDefault.NoActionBar"
             android:name="de.lukeslog.alarmclock.alarmactivity.AmbientAlarmActivity">
         </activity>
-        <activity android:name=".main.SettingsActivity" />
-        <service android:name=".main.ClockWorkService" />
-        <service android:name=".startup.NotificationService" />
+        <activity android:name=".ui.SettingsActivity" />
+        <service android:name="de.lukeslog.alarmclock.main.ClockWorkService" />
+        <service android:name="de.lukeslog.alarmclock.startup.NotificationService" />
+        <service android:name="de.lukeslog.alarmclock.MediaPlayer.MediaPlayerService"/>
         <service
             android:name="com.dropbox.sync.android.DbxSyncService"
             android:enabled="true"
             android:exported="false"
             android:label="Dropbox Sync" />
-        <receiver android:name=".startup.StartUp">
+        <receiver android:name="de.lukeslog.alarmclock.startup.StartUp">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>

@@ -1,5 +1,7 @@
 package de.lukeslog.alarmclock.actions;
 
+import org.joda.time.DateTime;
+
 import java.util.HashMap;
 import java.util.ArrayList;
 
@@ -32,7 +34,25 @@ public class ActionManager
             SendMailAction sma = new SendMailAction(configBundle);
             return sma;
         }
+        if(className.equals(AmbientAction.PHILIPSHUE_ACTION))
+        {
+            PhilipsHueAction pha = new PhilipsHueAction(configBundle);
+            return pha;
+        }
+        if(className.equals(AmbientAction.MUSIC_ACTION))
+        {
+            MusicAction ma = new MusicAction(configBundle);
+            return ma;
+        }
         return null;
+    }
+
+    public static void notifyOfCurrentTime(DateTime currentTime)
+    {
+        for(AmbientAction action: actionList)
+        {
+            action.tick(currentTime);
+        }
     }
 
     public static void addNewAction(AmbientAction ambientAction)
@@ -49,21 +69,31 @@ public class ActionManager
         ArrayList<HashMap<String, String>> actionInformation = new ArrayList<HashMap<String, String>>();
        //CountDownAction
         HashMap<String, String> descriptionCountdownAction = new HashMap<String, String>();
-        descriptionCountdownAction.put("actionType", AmbientAction.COUNTDOWN_ACTION);
-        descriptionCountdownAction.put("actionName", "Countdown Action");
-        descriptionCountdownAction.put("actionIcon", "countdown_action_icon");
-        descriptionCountdownAction.put("description", "ololroflcopter");
+        fillDescription(descriptionCountdownAction, AmbientAction.COUNTDOWN_ACTION, "Countdown Action", "countdown_action_icon", "Showing you a countdown when the alarm rings.");
 
         HashMap<String, String> descriptionSendMailAction = new HashMap<String, String>();
-        descriptionSendMailAction.put("actionType", AmbientAction.SENDMAIL_ACTION);
-        descriptionSendMailAction.put("actionName", "Send Mail Action");
-        descriptionSendMailAction.put("actionIcon", "send_mail_action_icon");
-        descriptionSendMailAction.put("description", "send a mail.");
+        fillDescription(descriptionSendMailAction, AmbientAction.SENDMAIL_ACTION, "Send Mail Action", "send_mail_action_icon", "sending an email at a specified time");
+
+        HashMap<String, String> descriptionPhilipsHueAction = new HashMap<String, String>();
+        fillDescription(descriptionPhilipsHueAction, AmbientAction.PHILIPSHUE_ACTION, "Philips Hue Action", "light_action_icon", "turning on the light when you wake up");
+
+        HashMap<String, String> descriptionMusicAction = new HashMap<String, String>();
+        fillDescription(descriptionMusicAction, AmbientAction.MUSIC_ACTION, "Music Action", "music_action_icon", "Playing Music on Wakeup.");
 
         actionInformation.add(descriptionCountdownAction);
         actionInformation.add(descriptionSendMailAction);
+        actionInformation.add(descriptionPhilipsHueAction);
+        actionInformation.add(descriptionMusicAction);
 
         return actionInformation;
+    }
+
+    private static void fillDescription(HashMap<String, String> map, String type, String name, String icon, String desc)
+    {
+        map.put("actionType", type);
+        map.put("actionName", name);
+        map.put("actionIcon", icon);
+        map.put("description", desc);
     }
 
     public static AmbientAction getActionByID(String actionID)
@@ -94,6 +124,16 @@ public class ActionManager
         {
             SendMailAction sma = new SendMailAction("New Send Mail Action", "", "Subject", "Content");
             return sma;
+        }
+        if(actionTypeName.equals(AmbientAction.PHILIPSHUE_ACTION))
+        {
+            PhilipsHueAction pha = new PhilipsHueAction("New Philips Hue Action");
+            return pha;
+        }
+        if(actionTypeName.equals(AmbientAction.MUSIC_ACTION))
+        {
+            MusicAction ma = new MusicAction("New Music Action");
+            return ma;
         }
         return null;
     }

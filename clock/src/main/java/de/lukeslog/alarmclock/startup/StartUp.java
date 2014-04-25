@@ -1,18 +1,11 @@
 package de.lukeslog.alarmclock.startup;
 
-import de.lukeslog.alarmclock.actions.SendMailAction;
-import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
-import de.lukeslog.alarmclock.ambientalarm.AmbientAlarmManager;
-import de.lukeslog.alarmclock.dropbox.DropBox;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
-import de.lukeslog.alarmclock.support.Day;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-
-import org.joda.time.DateTime;
 
 /**
  * This Receiver is registered to be started on boot to start the alarm clock when the systems is

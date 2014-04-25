@@ -10,13 +10,12 @@ import android.widget.TextView;
 
 import org.joda.time.DateTime;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
-import de.lukeslog.alarmclock.support.Day;
 import de.lukeslog.alarmclock.support.UISupport;
+import de.lukeslog.alarmclock.R;
+import de.lukeslog.alarmclock.support.Day;
 
 /**
  * Created by lukas on 02.04.14.
@@ -103,10 +102,18 @@ public class AlarmListAdapter extends BaseAdapter
             if(ambientAlarm.isSnoozing())
             {
                 alarmicon.setImageResource(R.drawable.alarmicon_a_s);
+                if(ambientAlarm.iscurrentlylocked())
+                {
+                    alarmicon.setImageResource(R.drawable.alarmicon_a_s_l);
+                }
             }
             else
             {
                 alarmicon.setImageResource(R.drawable.alarmicon_a);
+                if(ambientAlarm.iscurrentlylocked())
+                {
+                    alarmicon.setImageResource(R.drawable.alarmicon_a_l);
+                }
             }
         }
         else

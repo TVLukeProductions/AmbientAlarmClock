@@ -4,27 +4,26 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.Switch;
-import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
 import org.joda.time.DateTime;
 
-import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
+import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarmManager;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
 import de.lukeslog.alarmclock.support.Day;
@@ -42,6 +41,8 @@ public class AmbientAlarmConfigurationActivity extends Activity
     private static Context ctx;
 
     private static String alarmID ="";
+
+    private UIUpdater updater;
 
     /** Called when the activity is first created. */
     public void onCreate(Bundle savedInstanceState)
@@ -76,6 +77,12 @@ public class AmbientAlarmConfigurationActivity extends Activity
             alarm = AmbientAlarmManager.getAlarmById(alarmID);
             Log.d(TAG, "alarm!=null => "+ (alarm!=null));
         }
+
+        if(alarm.iscurrentlylocked())
+        {
+            AmbientAlarmConfigurationActivity.this.finish();
+        }
+
         configureBasicUI();
 
         fillinActions((LinearLayout) findViewById(R.id.actionlist));
@@ -92,31 +99,36 @@ public class AmbientAlarmConfigurationActivity extends Activity
             }
         }
 
-        addAddActionButton((LinearLayout) findViewById(R.id.actionlist));
+        addAddActionButton((LinearLayout) findViewById(R.id.addnew_layout));
+
+        startUIUpdater();
+    }
+
+    private void startUIUpdater()
+    {
+        updater= new UIUpdater();
+        updater.run();
     }
 
     @Override
     protected void onResume()
     {
+        updater.onResume();
         super.onResume();
+    }
+
+    @Override
+    protected void onPause()
+    {
+        updater.onPause();
+        super.onPause();
     }
 
 
     private void addAddActionButton(LinearLayout configView)
     {
-        LinearLayout mainLayout = new LinearLayout(configView.getContext());
-        mainLayout.setOrientation(LinearLayout.HORIZONTAL);
-        ImageView addButton = new ImageView(configView.getContext());
-        addButton.setImageResource(R.drawable.addnewalarm2);
-        TableRow.LayoutParams params = new TableRow.LayoutParams(120, 120);
-        addButton.setLayoutParams(params);
-
-        TextView addNewActionText = new TextView(configView.getContext());
-        addNewActionText.setTextSize(27);
-        addNewActionText.setText("Add New Action");
-
-        mainLayout.addView(addButton);
-        mainLayout.addView(addNewActionText);
+       ImageView addButton = (ImageView) findViewById(R.id.addactionimage);
+       TextView addNewActionText = (TextView) findViewById(R.id.addactiontext);
 
         addButton.setOnClickListener(new View.OnClickListener()
         {
@@ -134,7 +146,6 @@ public class AmbientAlarmConfigurationActivity extends Activity
                 openNewActionActivity();
             }
         });
-        configView.addView(mainLayout);
     }
 
     private void openNewActionActivity()
@@ -149,11 +160,28 @@ public class AmbientAlarmConfigurationActivity extends Activity
     {
         configureUIalarmSwritch();
 
+        configureLock();
+
         configureUItimePicker();
 
         configureUIDaysOfTheWeek();
 
         configureUISnoozing();
+    }
+
+    private void configureLock()
+    {
+        CheckBox locking = (CheckBox) findViewById(R.id.lockcheck);
+        locking.setChecked(alarm.islocked());
+        locking.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b)
+            {
+                alarm.setLocked(b);
+                updateDB();
+            }
+        });
     }
 
     private void configureUIDaysOfTheWeek()
@@ -385,5 +413,37 @@ public class AmbientAlarmConfigurationActivity extends Activity
     private void updateDB()
     {
         AmbientAlarmManager.updateDataBaseEntry(alarm);
+    }
+
+    private class  UIUpdater implements Runnable
+    {
+        private Handler handler = new Handler();
+        public static final int delay= 1000;
+
+        @Override
+        public void run()
+        {
+            //Log.d(TAG, "run");
+            fillinActions((LinearLayout) findViewById(R.id.actionlist));
+            if(alarm.iscurrentlylocked())
+            {
+                AmbientAlarmConfigurationActivity.this.finish();
+            }
+            handler.removeCallbacks(this); // remove the old callback
+            handler.postDelayed(this, delay); // register a new one
+        }
+
+        public void onPause()
+        {
+            Log.d(TAG, "Activity update on Pause ");
+            handler.removeCallbacks(this); // stop the map from updating
+        }
+
+        public void onResume()
+        {
+            handler.removeCallbacks(this); // remove the old callback
+            handler.postDelayed(this, delay); // register a new one
+        }
+
     }
 }
