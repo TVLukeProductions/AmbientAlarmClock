@@ -276,7 +276,7 @@ public class AmbientAlarm implements TimingObject
         ArrayList<AmbientAction> actions = registeredActions.get(s);
         if(s.equals("0") && alarmState!=AlarmState.ALARM || !s.equals("0"))
         {
-            Log.d(TAG, ""+actions.size());
+            //Log.d(TAG, ""+actions.size());
             for(AmbientAction action : actions)
             {
                 Log.d(TAG, "...");
@@ -326,7 +326,7 @@ public class AmbientAlarm implements TimingObject
     {
         if(alarmState == AlarmState.WAITING || alarmState == AlarmState.SNOOZING )
         {
-            Log.d(TAG, "set AlarmState to ALARM!");
+            //Log.d(TAG, "set AlarmState to ALARM!");
             alarmState=AlarmState.ALARM;
             if (isFirstAlert())
             {
@@ -454,7 +454,7 @@ public class AmbientAlarm implements TimingObject
             for(int i=actions.size()-1; i>=0; i--)
             {
                 AmbientAction action = actions.get(i);
-                Log.d(TAG, action.getActionID());
+                //Log.d(TAG, action.getActionID());
                 if(action.getActionID().equals(actionToDelete.getActionID()))
                 {
                     Log.d(TAG, "  --> remove action.");

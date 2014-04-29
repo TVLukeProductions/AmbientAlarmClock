@@ -483,20 +483,20 @@ public class PhilipsHueAction extends AmbientAction
                 try
                 {
 
-                    Log.d(TAG, "1");
+                    //Log.d(TAG, "1");
                     bulb.setOn(true);
-                    Log.d(TAG, "12");
+                    //Log.d(TAG, "12");
                     bulb.setBrightness(0);
-                    Log.d(TAG, "3");
+                    //Log.d(TAG, "3");
                     bulb.setCieXY(ch_x , ch_y);
-                    Log.d(TAG, "4");
+                    //Log.d(TAG, "4");
                     if(fadein>0)
                     {
                         int steps = 255/fadein;
                         for(int i=0; i<=255; i=i+steps)
                         {
                             bulb.setBrightness(i);
-                            Log.d(TAG, ""+i);
+                            //Log.d(TAG, ""+i);
                             try
                             {
                                 Thread.sleep(5000);

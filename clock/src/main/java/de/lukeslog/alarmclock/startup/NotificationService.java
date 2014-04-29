@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 
 import de.lukeslog.alarmclock.main.NotificationManagement;
 
@@ -66,5 +67,14 @@ public class NotificationService extends Service
     {
         stopPermanentNotification();
         stopSelf();
+    }
+
+    public static NotificationService getContext()
+    {
+        if(ctx!=null)
+        {
+            return ctx;
+        }
+        return null;
     }
 }

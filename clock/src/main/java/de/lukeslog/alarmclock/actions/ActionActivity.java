@@ -335,7 +335,7 @@ public class ActionActivity extends Activity
             {
                 if(action.getActionID().equals(this.action.getActionID()))
                 {
-                    Log.d(TAG, "found the action at: "+actiontime);
+                    //Log.d(TAG, "found the action at: "+actiontime);
                     return actiontime;
                 }
             }

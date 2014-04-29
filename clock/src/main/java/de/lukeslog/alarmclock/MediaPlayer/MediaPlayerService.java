@@ -127,16 +127,16 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
         }
         if (mExternalStorageAvailable)
         {
-            Log.i(TAG, Environment.getExternalStorageState());
+            //Log.i(TAG, Environment.getExternalStorageState());
             File filesystem = Environment.getExternalStorageDirectory();
             if (usedropboxchecked)
             {
                 localfolderstring = filesystem.getPath() + "/Music/WakeUpSongs/";
             }
             File file = new File(localfolderstring);
-            Log.d(TAG, "wakeupsongsX");
+            //Log.d(TAG, "wakeupsongsX");
             File[] filelist3 = new File[0];
-            Log.d(TAG, "--1");
+            //Log.d(TAG, "--1");
             try
             {
                 filelist3 = file.listFiles();
@@ -144,7 +144,7 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
             {
                 Log.d(TAG, "Could not get Filelist");
             }
-            Log.d(TAG, "--2");
+            //Log.d(TAG, "--2");
             //count mp3s
             int numberOfMp3 = 0;
             String musicpath = "";
@@ -152,14 +152,14 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
             {
                 for (int i = 0; i < filelist3.length; i++)
                 {
-                    Log.d(TAG, "--2b");
+                    //Log.d(TAG, "--2b");
                     if (filelist3[i].getName().endsWith("mp3"))
                     {
-                        Log.d(TAG, "Number of MP3s");
+                        //Log.d(TAG, "Number of MP3s");
                         numberOfMp3++;
                     }
                 }
-                Log.d(TAG, "FILELIST LENGTH " + numberOfMp3);
+                //Log.d(TAG, "FILELIST LENGTH " + numberOfMp3);
                 if (numberOfMp3 > 0)
                 {
                     int randomsongnumber = (int) (Math.random() * (filelist3.length));
@@ -172,9 +172,9 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
                         MP3File mp3 = new MP3File(f);
                         ID3v1 id3 = mp3.getID3v1Tag();
                         artist = id3.getArtist();
-                        Log.d(TAG, "----------->ARTIST:" + artist);
+                        //Log.d(TAG, "----------->ARTIST:" + artist);
                         song = id3.getSongTitle();
-                        Log.d(TAG, "----------->SONG:" + song);
+                        //Log.d(TAG, "----------->SONG:" + song);
                         Scrobbler.scrobble(artist, song);
                     } catch (IOException e1)
                     {
@@ -184,7 +184,7 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
                         e1.printStackTrace();
                     } catch (Exception ex)
                     {
-                        Log.e(TAG, "There has been an exception while extracting ID3 Tag Information from the MP3");
+                        //Log.e(TAG, "There has been an exception while extracting ID3 Tag Information from the MP3");
                     }
                 }
             }

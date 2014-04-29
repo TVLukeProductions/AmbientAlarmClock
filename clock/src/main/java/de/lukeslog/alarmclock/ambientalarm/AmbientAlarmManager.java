@@ -3,6 +3,7 @@ package de.lukeslog.alarmclock.ambientalarm;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.view.WindowManager;
 
 import org.joda.time.DateTime;
 
@@ -10,6 +11,8 @@ import java.util.ArrayList;
 
 import de.lukeslog.alarmclock.datatabse.AmbientAlarmDatabase;
 import de.lukeslog.alarmclock.main.ClockWorkService;
+import de.lukeslog.alarmclock.main.NotificationManagement;
+import de.lukeslog.alarmclock.startup.NotificationService;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
 
 /**
@@ -95,16 +98,24 @@ public class AmbientAlarmManager
     public static void startAlarmActivity(AmbientAlarm ambientAlarm)
     {
         Log.d(TAG, "  startAlarmActivity!");
-        Context ctx = ClockWorkService.getClockworkContext();
-        //TODO: change to alarmID
-        String alarmID = ambientAlarm.getAlarmID();
-        if(ctx != null)
+        Context ctx = NotificationService.getContext();
+        if(ctx!=null)
         {
+            Log.d(TAG, "  ctx is not null");
+            String alarmID = ambientAlarm.getAlarmID();
+            Log.d(TAG, "  alarmid is "+alarmID);
             Intent intent = new Intent(ctx, ambientAlarm.getAlarmActivity());
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            Log.d(TAG, "  Intent created....");
+           // intent.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+            Log.d(TAG, "  strage stuff...");
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            Log.d(TAG, "  now start stuff....");
             intent.putExtra("ambientAlarmID", alarmID);
             ctx.startActivity(intent);
+        }
+        else
+        {
+            Log.e(TAG, "CONTEXT WAS NULL!!!!! ALARMACTIVITY COULD NOT BE STARTED!");
         }
     }
 

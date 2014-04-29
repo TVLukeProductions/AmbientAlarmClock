@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.PowerManager;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 
@@ -37,7 +38,7 @@ public class AmbientAlarmActivity extends Activity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ambient_alarm_base_activity);
-
+        Log.d(TAG, "AmbientAlarmActivity: onCreate");
         String alarmID = getIntent().getStringExtra("ambientAlarmID");
         alarm = AmbientAlarmManager.getAlarmById(alarmID);
 
@@ -131,23 +132,53 @@ public class AmbientAlarmActivity extends Activity
 
     private void turnScreenOnAndBright()
     {
+        Log.d(TAG, "turnscreenonandbright");
         try
         {
-            KeyguardManager km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
-            final KeyguardManager.KeyguardLock kl = km.newKeyguardLock("MyKeyguardLock");
+            Log.e(TAG, "1");
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+            Log.e(TAG, "2");
+            Log.e(TAG, "3");
 
-            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-            wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK| PowerManager.ACQUIRE_CAUSES_WAKEUP
-                    | PowerManager.ON_AFTER_RELEASE, "MyWakeLock");
-            wakeLock.acquire();
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-            kl.disableKeyguard();
         }
         catch(Exception e)
         {
             Log.e(TAG, "The Problem seems to be to turn on or unlock the screen");
+        }
+        Log.e(TAG, "a");
+        final Window win = getWindow();
+        Log.e(TAG, "b");
+        win.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+        try
+        {
+            Log.e(TAG, "c");
+            // API 8+
+            win.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                        | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+                        | WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON);
+            Log.e(TAG, "d");
+            }
+            catch (final Throwable whocares)
+            {
+                // API 7+
+                Log.e(TAG, "c2");
+                win.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                        | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+                Log.e(TAG, "d2");
+            }
+        try
+        {
+            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            Log.e(TAG, "4");
+            wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "MyWakeLock");
+            Log.e(TAG, "5");
+            wakeLock.acquire();
+        }
+        catch(Exception e)
+        {
+            Log.d(TAG, "The power manager stuff does not work...");
+            Log.e(TAG, e.getLocalizedMessage());
         }
         try
         {
@@ -160,6 +191,7 @@ public class AmbientAlarmActivity extends Activity
         {
 
         }
+        Log.e(TAG, ""+7);
     }
 
     private class  UIUpdater implements Runnable

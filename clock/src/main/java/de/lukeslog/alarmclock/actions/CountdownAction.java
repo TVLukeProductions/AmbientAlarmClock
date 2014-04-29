@@ -133,9 +133,9 @@ public class CountdownAction extends AmbientAction
 
         DateTime alarmTime = ambientAlarm.getLastAlarmTime();
         alarmTime = alarmTime.plusSeconds(this.durationInSeconds);
-        Log.d(TAG, alarmTime.toString());
+        //Log.d(TAG, alarmTime.toString());
         int seconds = Seconds.secondsBetween(now, alarmTime).getSeconds();
-        Log.d(TAG, "SECONDS: "+seconds);
+        //Log.d(TAG, "SECONDS: "+seconds);
         TextView textview;
         if(content.findViewById(17493)!=null)
         {

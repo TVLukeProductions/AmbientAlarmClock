@@ -1,6 +1,7 @@
 package de.lukeslog.alarmclock.ui;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -349,7 +350,7 @@ public class AlarmClockMainActivity extends Activity
             {
                 if(alarm.getStatus()== AlarmState.ALARM)
                 {
-                    alarm.awakeButtonPressed();
+                    AmbientAlarmManager.startAlarmActivity(alarm);
                 }
             }
             handler.removeCallbacks(this); // remove the old callback

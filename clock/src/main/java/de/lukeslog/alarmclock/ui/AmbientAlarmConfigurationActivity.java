@@ -371,9 +371,9 @@ public class AmbientAlarmConfigurationActivity extends Activity
     private void configureUItimePicker()
     {
         TimePicker ambientAlarmTime = (TimePicker) findViewById(R.id.ambientalarmtimepicker);
+        ambientAlarmTime.setIs24HourView(true);
         ambientAlarmTime.setCurrentHour(alarm.getAlarmTime().getHourOfDay());
         ambientAlarmTime.setCurrentMinute(alarm.getAlarmTime().getMinuteOfHour());
-        ambientAlarmTime.setIs24HourView(true);
         ambientAlarmTime.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener()
         {
             @Override
@@ -431,11 +431,10 @@ public class AmbientAlarmConfigurationActivity extends Activity
             {
                 actions=alarm.numberOfRegisteredActions();
                 fillinActions((LinearLayout) findViewById(R.id.actionlist));
+                TextView x = new TextView(ctx);
+                LinearLayout theView = (LinearLayout) findViewById(R.id.actionlist);
+                theView.addView(x);
             }
-            //if(alarm.isCurrentlyLocked())
-            //{
-            //    AmbientAlarmConfigurationActivity.this.finish();
-            //}
             handler.removeCallbacks(this); // remove the old callback
             handler.postDelayed(this, delay); // register a new one
         }
