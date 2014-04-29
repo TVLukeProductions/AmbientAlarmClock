@@ -97,34 +97,15 @@ public class AmbientAlarmManager
         Log.d(TAG, "  startAlarmActivity!");
         Context ctx = ClockWorkService.getClockworkContext();
         //TODO: change to alarmID
-        int alarmNumber = getAlarmNumber(ambientAlarm);
-        if(alarmNumber>-1 && ctx != null)
+        String alarmID = ambientAlarm.getAlarmID();
+        if(ctx != null)
         {
             Intent intent = new Intent(ctx, ambientAlarm.getAlarmActivity());
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            intent.putExtra("ambientAlarmID", alarmNumber);
+            intent.putExtra("ambientAlarmID", alarmID);
             ctx.startActivity(intent);
         }
-    }
-
-    public static int getAlarmNumber(AmbientAlarm ambientAlarm)
-    {
-        Log.d(TAG, "  getAlarmNumber---");
-        if(registeredAlarms!=null)
-        {
-            for (int i = 0; i < registeredAlarms.size(); i++)
-            {
-                if (registeredAlarms.get(i).equals(ambientAlarm))
-                {
-                    return i;
-                }
-            }
-
-            return -1;
-        }
-        updateListFromDataBase();
-        return getAlarmNumber(ambientAlarm);
     }
 
     public static void deleteAmbientAlarm(int position)

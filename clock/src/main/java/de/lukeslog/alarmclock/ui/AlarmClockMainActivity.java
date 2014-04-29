@@ -27,10 +27,12 @@ import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarmManager;
 import de.lukeslog.alarmclock.ambientService.dropbox.DropBox;
 import de.lukeslog.alarmclock.ambientService.lastfm.Scrobbler;
+import de.lukeslog.alarmclock.main.ClockWorkService;
 import de.lukeslog.alarmclock.startup.ServiceStarter;
 import de.lukeslog.alarmclock.support.AlarmState;
 import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
+import de.lukeslog.alarmclock.teardown.Teardown;
 
 /**
  * Created by lukas on 31.03.14.
@@ -117,8 +119,17 @@ public class AlarmClockMainActivity extends Activity
             case R.id.action_settings:
                 startSettingsActivity();
                 break;
+            case R.id.action_deactivate:
+                turnalarmclockoff();
+                break;
         }
         return true;
+    }
+
+    private void turnalarmclockoff()
+    {
+        Teardown.stopAll(this);
+        AlarmClockMainActivity.this.finish();
     }
 
     private void startSettingsActivity()

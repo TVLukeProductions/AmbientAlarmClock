@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import org.joda.time.DateTime;
 
 import de.lukeslog.alarmclock.R;
+import de.lukeslog.alarmclock.main.TimingObject;
 import de.lukeslog.alarmclock.ui.AmbientAlarmActivity;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarmManager;

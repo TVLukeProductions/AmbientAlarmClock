@@ -12,7 +12,7 @@ import de.lukeslog.alarmclock.main.NotificationManagement;
  */
 public class NotificationService extends Service
 {
-    private static Context ctx;
+    private static NotificationService ctx;
 
 
     private static void startPermanentNotification()
@@ -39,12 +39,32 @@ public class NotificationService extends Service
     @Override
     public void onDestroy()
     {
+        stopPermanentNotification();
         super.onDestroy();
+    }
+
+    private void stopPermanentNotification()
+    {
+        NotificationManagement.stopAlarmClockIcon(ctx);
     }
 
     @Override
     public IBinder onBind(Intent intent)
     {
         return null;
+    }
+
+    public static void stop()
+    {
+        if(ctx!=null)
+        {
+            ctx.stopEverything();
+        }
+    }
+
+    private void stopEverything()
+    {
+        stopPermanentNotification();
+        stopSelf();
     }
 }

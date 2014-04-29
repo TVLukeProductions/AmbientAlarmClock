@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import de.lukeslog.alarmclock.actions.AmbientAction;
+import de.lukeslog.alarmclock.main.TimingObject;
 import de.lukeslog.alarmclock.ui.AmbientAlarmActivity;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
 import de.lukeslog.alarmclock.support.AlarmState;
@@ -25,7 +26,7 @@ import de.lukeslog.alarmclock.support.AlarmState;
  * Every alert has its own settings, which contains information about the services to be released
  * depending on the alert time.
  */
-public class AmbientAlarm
+public class AmbientAlarm implements TimingObject
 {
     private static String TAG = AlarmClockConstants.TAG;
 

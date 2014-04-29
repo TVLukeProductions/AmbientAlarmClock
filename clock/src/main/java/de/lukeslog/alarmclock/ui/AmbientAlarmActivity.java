@@ -38,8 +38,8 @@ public class AmbientAlarmActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ambient_alarm_base_activity);
 
-        int alarmID = getIntent().getIntExtra("ambientAlarmID", -1);
-        alarm = AmbientAlarmManager.getListOfAmbientAlarms().get(alarmID);
+        String alarmID = getIntent().getStringExtra("ambientAlarmID");
+        alarm = AmbientAlarmManager.getAlarmById(alarmID);
 
         alarmActivity = this;
 

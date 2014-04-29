@@ -38,6 +38,7 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
     public static final String ACTION_START_MUSIC = "startmusic";
     public static final String ACTION_STOP_MUSIC = "stopmusic";
     public static final String ACTION_SWITCH_TO_RADIO = "switchtoradio";
+    public static final String ACTION_TURN_MEDIA_OFF = "turnitalloff";
 
     public static String TAG = AlarmClockConstants.TAG;
 
@@ -333,6 +334,17 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
         return true;
     }
 
+    private void stopeverything()
+    {
+        if(mp!=null)
+        {
+            mp.stop();
+            mp.release();
+            mp=null;
+        }
+        this.stopSelf();
+    }
+
     // Create a BroadcastReceiver for ACTION_FOUND
     private final BroadcastReceiver mReceiver = new BroadcastReceiver()
     {
@@ -358,6 +370,11 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
                 MusicAction ma = (MusicAction) ActionManager.getActionByID(actionID);
                 String station = Radiostations.stations.get(ma.getRadiourl());
                 turnOnRadio(station);
+            }
+            if(action.equals(ACTION_TURN_MEDIA_OFF))
+            {
+                Log.d(TAG, "turneverythingoff");
+                stopeverything();
             }
         }
     };

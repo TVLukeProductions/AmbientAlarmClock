@@ -42,4 +42,11 @@ public class NotificationManagement
         mNotificationManager.notify(1337, note);
         //ctx.startForeground(1337, note);
     }
+
+    public static void stopAlarmClockIcon(Context ctx)
+    {
+
+        NotificationManager mNotificationManager = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.cancel(1337);
+    }
 }

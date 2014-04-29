@@ -24,4 +24,5 @@
     <string name="turnonorof">Turn On or Off on alarm</string>
     <string name="source">Select Source</string>
     <string name="radioselect">Select Radio Station</string>
+    <string name="off">Turn Off</string>
 </resources>

@@ -10,6 +10,7 @@ import android.os.IBinder;
 
 import org.joda.time.DateTime;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import de.lukeslog.alarmclock.actions.ActionManager;
@@ -29,6 +30,9 @@ public class ClockWorkService extends IntentService
 
     private static int currentSecond=-1;
     private static Context context=null;
+    private static boolean running = true;
+
+    private static ArrayList<TimingObject> notifications = new ArrayList<TimingObject>();
 
     public ClockWorkService()
     {
@@ -37,6 +41,7 @@ public class ClockWorkService extends IntentService
 
     public static Context getClockworkContext()
     {
+        running=true;
         if(context!=null)
         {
             return context;
@@ -45,6 +50,11 @@ public class ClockWorkService extends IntentService
         {
             return null;
         }
+    }
+
+    public static void registerForNotofication(TimingObject x)
+    {
+        notifications.add(x);
     }
 
     @Override
@@ -58,6 +68,7 @@ public class ClockWorkService extends IntentService
     @Override
     public void onCreate()
     {
+        running=true;
         super.onCreate();
         context=this;
         //Log.d(TAG, "ClockWorkService onCreate()");
@@ -81,14 +92,17 @@ public class ClockWorkService extends IntentService
      */
     private void tick()
     {
-        if(newSecondHasStarted())
+        if(running)
         {
-            //Log.d(TAG, "tick");
-            DateTime currentTime = new DateTime();
-            AmbientAlarmManager.notifyActiveAlerts(currentTime);
-            ActionManager.notifyOfCurrentTime(currentTime);
+            if(newSecondHasStarted())
+            {
+                //Log.d(TAG, "tick");
+                DateTime currentTime = new DateTime();
+                AmbientAlarmManager.notifyActiveAlerts(currentTime);
+                ActionManager.notifyOfCurrentTime(currentTime);
+            }
+            scheduleNextTick();
         }
-        scheduleNextTick();
     }
 
     /**
@@ -118,5 +132,10 @@ public class ClockWorkService extends IntentService
         PendingIntent pendingIntent = PendingIntent.getService(this, AlarmClockConstants.TICK, intent, 0);
         AlarmManager am = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingIntent);
+    }
+
+    public static void stopService()
+    {
+        running=false;
     }
 }
