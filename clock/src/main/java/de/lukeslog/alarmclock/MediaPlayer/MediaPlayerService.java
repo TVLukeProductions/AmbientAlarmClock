@@ -11,11 +11,9 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Environment;
-import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.farng.mp3.MP3File;
 import org.farng.mp3.TagException;
@@ -23,17 +21,13 @@ import org.farng.mp3.id3.ID3v1;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.Provider;
 
 import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.actions.ActionManager;
-import de.lukeslog.alarmclock.actions.AmbientAction;
 import de.lukeslog.alarmclock.actions.MusicAction;
-import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
 import de.lukeslog.alarmclock.main.ClockWorkService;
-import de.lukeslog.alarmclock.service.lastfm.Scrobbler;
+import de.lukeslog.alarmclock.ambientService.lastfm.Scrobbler;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
-import de.lukeslog.alarmclock.support.AlarmState;
 
 /**
  * Created by lukas on 25.04.14.
@@ -68,7 +62,7 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
     public void onCreate()
     {
         super.onCreate();
-
+        mp=null;
         registerIntentFilters();
     }
 
@@ -86,24 +80,28 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
     public void onDestroy()
     {
         super.onDestroy();
-        Toast.makeText(this, "w00t", Toast.LENGTH_SHORT).show(); //if this doesn't show up, I know the service was not destroyed
+        mp=null;
     }
 
     public void play(MusicAction action)
     {
-        if (action.isFadein())
+        if(mp==null)
         {
-            fadein();
-        } else
-        {
-            AudioManager audio;
-            audio = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
-            audio.setStreamVolume(AudioManager.STREAM_MUSIC, 15, AudioManager.FLAG_VIBRATE);
+            if (action.isFadein())
+            {
+                fadein();
+            }
+            else
+            {
+                AudioManager audio;
+                audio = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+                audio.setStreamVolume(AudioManager.STREAM_MUSIC, 15, AudioManager.FLAG_VIBRATE);
+            }
+            localfolderstring = action.getLocalFolder();
+            uselocalchecked = action.isUseLocal();
+            usedropboxchecked = action.isUseDropbox();
+            playmp3();
         }
-        localfolderstring = action.getLocalFolder();
-        uselocalchecked = action.isUseLocal();
-        usedropboxchecked = action.isUseDropbox();
-        playmp3();
     }
 
     private void playmp3()
@@ -236,6 +234,7 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
         Log.d(TAG, "stop Media Player Service");
         mp.stop();
         mp.release();
+        mp=null;
     }
 
     private void fadein()

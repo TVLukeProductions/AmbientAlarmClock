@@ -23,9 +23,8 @@ import java.util.List;
 
 import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
-import de.lukeslog.alarmclock.ambientalarm.AmbientAlarmManager;
 import de.lukeslog.alarmclock.main.ClockWorkService;
-import de.lukeslog.alarmclock.service.dropbox.DropBox;
+import de.lukeslog.alarmclock.ambientService.dropbox.DropBox;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
 
 /**
@@ -68,7 +67,6 @@ public class MusicActionConfigurationFragment extends Fragment
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
             {
                 action.setFadein(isChecked);
-                saveall();
             }
         });
         fadeinbox.setChecked(action.isFadein());
@@ -83,7 +81,6 @@ public class MusicActionConfigurationFragment extends Fragment
             public void afterTextChanged(Editable s)
             {
                 action.setDropBoxFolder(s.toString());
-                saveall();
             }
 
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -98,7 +95,6 @@ public class MusicActionConfigurationFragment extends Fragment
             public void afterTextChanged(Editable s)
             {
                 action.setLocalFolder(s.toString());
-                saveall();
             }
 
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -147,7 +143,6 @@ public class MusicActionConfigurationFragment extends Fragment
                 localfolder.setText(localfolderspinerArray.get(arg2));
                 action.setLocalFolder(localfolderspinerArray.get(arg2));
                 //use_local.setChecked(true);
-                saveall();
             }
 
             @Override
@@ -196,7 +191,6 @@ public class MusicActionConfigurationFragment extends Fragment
                 dropboxfolder.setText(spinnerArray.get(arg2));
                 //use_dropbox.setChecked(true);
                 action.setDropBoxFolder(spinnerArray.get(arg2));
-                saveall();
                 DropBox.syncFiles(action.getDropboxFolder());
             }
 
@@ -234,7 +228,6 @@ public class MusicActionConfigurationFragment extends Fragment
                     use_dropbox.setChecked(false);
 
                     action.setUseDropbox(false);
-                    saveall();
                 }
             }
         });
@@ -268,7 +261,6 @@ public class MusicActionConfigurationFragment extends Fragment
                         action.setUseDropbox(false);
                         action.setUselocal(true);
                     }
-                    saveall();
                 }
             }
         });
@@ -279,11 +271,6 @@ public class MusicActionConfigurationFragment extends Fragment
         action.setUseDropbox(usedropboxchecked);
         action.setUselocal(uselocalchecked);
         return fragment;
-    }
-
-    private void saveall()
-    {
-        AmbientAlarmManager.updateDataBaseEntry(alarm);
     }
 
     private void createFolderList(File f, int depth)

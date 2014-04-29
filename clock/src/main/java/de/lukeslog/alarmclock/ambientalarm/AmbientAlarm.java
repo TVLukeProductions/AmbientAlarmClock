@@ -12,7 +12,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import de.lukeslog.alarmclock.actions.AmbientAction;
-import de.lukeslog.alarmclock.alarmactivity.AmbientAlarmActivity;
+import de.lukeslog.alarmclock.ui.AmbientAlarmActivity;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
 import de.lukeslog.alarmclock.support.AlarmState;
 
@@ -35,6 +35,7 @@ public class AmbientAlarm
     private int snoozeTimeInSeconds = 500;
     private int snoozeButtonPressedCounter=0;
     private DateTime alarmTime = new DateTime();
+    private DateTime snoozealert;
     private DateTime lastAlarmTime = new DateTime();
     private boolean[] weekdays = new boolean[7];
     private String alarmID="";
@@ -151,7 +152,29 @@ public class AmbientAlarm
 
     public int secondsToAlertTime(DateTime currentTime)
     {
+
         return (Seconds.secondsBetween(currentTime, alarmTime).getSeconds());
+    }
+
+    private int secondsToSnoozeAlertTime(DateTime currentTime)
+    {
+        if(snoozealert!=null)
+        {
+            //Log.d(TAG, "secondstonooze->"+Seconds.secondsBetween(currentTime, snoozealert).getSeconds());
+            int x = Seconds.secondsBetween(snoozealert, currentTime).getSeconds();
+            return x;
+        }
+        else
+        {
+            return -1; //TODO: should throw error
+        }
+    }
+
+    private void setSnoozeAlertTime()
+    {
+        DateTime now = new DateTime();
+        Log.d(TAG, "alarmtime + "+(secondsSinceAlertTime(now)+snoozeTimeInSeconds));
+        snoozealert = lastAlarmTime.plusSeconds(secondsSinceAlertTime(now)+snoozeTimeInSeconds);
     }
 
     public void registerAction(String relativeTime, AmbientAction action)
@@ -197,6 +220,7 @@ public class AmbientAlarm
             }
         }
         incrementSnoozeButtonCounter();
+        setSnoozeAlertTime();
     }
 
     public void notifyOfCurrentTime(DateTime currentTime)
@@ -233,7 +257,7 @@ public class AmbientAlarm
             performActions("+"+secondsSinceAlertTime(currentTime));
         }
         //action registered on alert
-        if(secondsSinceAlertTime(currentTime)==snoozeTimeInSeconds*snoozeButtonPressedCounter)
+        if(secondsSinceAlertTime(currentTime)==0 || secondsToSnoozeAlertTime(currentTime)==0)
         {
             Log.d(TAG, "ALAAAAAARRM");
             if(registeredActions.containsKey("0"))
@@ -279,6 +303,7 @@ public class AmbientAlarm
         Log.d(TAG, "awakeButton");
         alarmState = AlarmState.WAITING;
         resetSnoozeButtonCounter();
+        snoozealert=null;
         Set<String> keys = registeredActions.keySet();
         Iterator<String> iterator = keys.iterator();
         while (iterator.hasNext())
@@ -444,5 +469,22 @@ public class AmbientAlarm
             return false;
         }
         return false;
+    }
+
+    public int numberOfRegisteredActions()
+    {
+        Set<String> keys = registeredActions.keySet();
+        Iterator<String> iterator = keys.iterator();
+        int number=0;
+        while(iterator.hasNext())
+        {
+            String actiontime = iterator.next();
+            ArrayList<AmbientAction> actions = registeredActions.get(actiontime);
+            for(int i=0; i<actions.size(); i++)
+            {
+               number++;
+            }
+        }
+        return number;
     }
 }

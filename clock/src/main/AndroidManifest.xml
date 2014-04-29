@@ -56,7 +56,7 @@
         </activity>
         <activity
             android:theme="@android:style/Theme.DeviceDefault.NoActionBar"
-            android:name="de.lukeslog.alarmclock.alarmactivity.AmbientAlarmActivity">
+            android:name=".ui.AmbientAlarmActivity">
         </activity>
         <activity android:name=".ui.SettingsActivity" />
         <service android:name="de.lukeslog.alarmclock.main.ClockWorkService" />

@@ -11,7 +11,7 @@ import android.widget.TextView;
 import org.joda.time.DateTime;
 import org.joda.time.Seconds;
 
-import de.lukeslog.alarmclock.alarmactivity.AmbientAlarmActivity;
+import de.lukeslog.alarmclock.ui.AmbientAlarmActivity;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
 import de.lukeslog.alarmclock.support.UISupport;
 import de.lukeslog.alarmclock.R;

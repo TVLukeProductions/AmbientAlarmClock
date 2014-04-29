@@ -25,8 +25,8 @@ import java.util.ArrayList;
 
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarmManager;
-import de.lukeslog.alarmclock.service.dropbox.DropBox;
-import de.lukeslog.alarmclock.service.lastfm.Scrobbler;
+import de.lukeslog.alarmclock.ambientService.dropbox.DropBox;
+import de.lukeslog.alarmclock.ambientService.lastfm.Scrobbler;
 import de.lukeslog.alarmclock.startup.ServiceStarter;
 import de.lukeslog.alarmclock.support.AlarmState;
 import de.lukeslog.alarmclock.R;

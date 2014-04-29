@@ -196,7 +196,7 @@ public class AmbientAlarmDatabase
         Log.d(TAG, "update Database");
         ContentValues cValues = new ContentValues();
         cValues.put(TABLE_ALARM_ACTIVE, boolToInt(ambientAlarm.isActive()));
-        cValues.put(TABLE_ALARM_SNOOZING, boolToInt(ambientAlarm.isActive()));
+        cValues.put(TABLE_ALARM_SNOOZING, boolToInt(ambientAlarm.isSnoozing()));
         cValues.put(TABLE_ALARM_SNOOZE_TIME, ambientAlarm.getSnoozeTimeInSeconds());
         cValues.put(TABLE_ALARM_LOCK, boolToInt(ambientAlarm.islocked()));
         cValues.put(TABLE_ALARM_TIME_HOUR, ambientAlarm.getAlarmTime().getHourOfDay());

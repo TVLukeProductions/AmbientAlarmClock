@@ -44,6 +44,11 @@ public class ActionManager
             MusicAction ma = new MusicAction(configBundle);
             return ma;
         }
+        if(className.equals(AmbientAction.EZCONTROLPLUG_ACTION))
+        {
+            EZControlPlugAction ezpa = new EZControlPlugAction(configBundle);
+            return ezpa;
+        }
         return null;
     }
 
@@ -80,10 +85,14 @@ public class ActionManager
         HashMap<String, String> descriptionMusicAction = new HashMap<String, String>();
         fillDescription(descriptionMusicAction, AmbientAction.MUSIC_ACTION, "Music Action", "music_action_icon", "Playing Music on Wakeup.");
 
+        HashMap <String, String> descriptionEZControlPlugAction = new HashMap<String, String>();
+        fillDescription(descriptionEZControlPlugAction, AmbientAction.EZCONTROLPLUG_ACTION, "ezControl Plug Action", "action_icon", "Switching a plug using the ezControl Home Automation System.");
+
         actionInformation.add(descriptionCountdownAction);
         actionInformation.add(descriptionSendMailAction);
         actionInformation.add(descriptionPhilipsHueAction);
         actionInformation.add(descriptionMusicAction);
+        actionInformation.add(descriptionEZControlPlugAction);
 
         return actionInformation;
     }
@@ -134,6 +143,11 @@ public class ActionManager
         {
             MusicAction ma = new MusicAction("New Music Action");
             return ma;
+        }
+        if(actionTypeName.equals(AmbientAction.EZCONTROLPLUG_ACTION))
+        {
+            EZControlPlugAction ezpa = new EZControlPlugAction("new ezControl Plug Action");
+            return ezpa;
         }
         return null;
     }

@@ -67,6 +67,20 @@ public class ActionActivity extends Activity
         insertActionConfigrationFRagment();
     }
 
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        ActionActivity.this.finish();
+    }
+
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        AmbientAlarmManager.updateDataBaseEntry(alarm);
+    }
+
     private void setJoinSnoozingCheckBox()
     {
         final CheckBox joinSnoozing = (CheckBox) findViewById(R.id.joinsnooze);
@@ -77,7 +91,6 @@ public class ActionActivity extends Activity
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
             {
                 action.setJoinSnoozing(isChecked);
-                AmbientAlarmManager.updateDataBaseEntry(alarm);
             }
         });
     }
@@ -104,7 +117,6 @@ public class ActionActivity extends Activity
             public void afterTextChanged(Editable editable)
             {
                 action.setActionName(actionname.getEditableText().toString());
-                AmbientAlarmManager.updateDataBaseEntry(alarm);
             }
         });
     }
@@ -264,7 +276,6 @@ public class ActionActivity extends Activity
             }
             Log.d(TAG, "s = "+s);
             alarm.registerAction(s, action);
-            AmbientAlarmManager.updateDataBaseEntry(alarm);
         }
         catch (Exception e)
         {

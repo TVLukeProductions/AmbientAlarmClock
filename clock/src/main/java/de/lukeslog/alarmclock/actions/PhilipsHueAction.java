@@ -15,7 +15,7 @@ import java.util.List;
 import de.jaetzold.philips.hue.ColorHelper;
 import de.jaetzold.philips.hue.HueBridge;
 import de.jaetzold.philips.hue.HueLightBulb;
-import de.lukeslog.alarmclock.alarmactivity.AmbientAlarmActivity;
+import de.lukeslog.alarmclock.ui.AmbientAlarmActivity;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
 import de.lukeslog.alarmclock.R;
 
@@ -114,7 +114,7 @@ public class PhilipsHueAction extends AmbientAction
     @Override
     public Class getConfigActivity()
     {
-        return PhilipsHueActionConfigurationActivity.class;
+        return PhilipsHueActionConfigurationFragment.class;
     }
 
     @Override

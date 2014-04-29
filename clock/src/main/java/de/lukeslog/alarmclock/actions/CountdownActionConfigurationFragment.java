@@ -44,17 +44,6 @@ public class CountdownActionConfigurationFragment extends Fragment
         final EditText countdownTextEdit = (EditText) fragment.findViewById(R.id.countdownlengthtext);
         countdownTextEdit.setText("" + (seconds / 60));
 
-        Button button = (Button) fragment.findViewById(R.id.countdownsave);
-        button.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                int s = Integer.parseInt(countdownTextEdit.getEditableText().toString());
-                action.setDurationInSeconds(s * 60);
-                AmbientAlarmManager.updateDataBaseEntry(alarm);
-            }
-        });
         return fragment;
     }
 }

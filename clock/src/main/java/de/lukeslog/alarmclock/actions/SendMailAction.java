@@ -9,9 +9,9 @@ import android.widget.TextView;
 
 import org.joda.time.DateTime;
 
-import de.lukeslog.alarmclock.alarmactivity.AmbientAlarmActivity;
+import de.lukeslog.alarmclock.ui.AmbientAlarmActivity;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
-import de.lukeslog.alarmclock.service.mail.Mail;
+import de.lukeslog.alarmclock.ambientService.mail.Mail;
 import de.lukeslog.alarmclock.R;
 
 /**

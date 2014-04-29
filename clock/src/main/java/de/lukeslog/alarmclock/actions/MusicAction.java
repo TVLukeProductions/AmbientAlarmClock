@@ -16,11 +16,11 @@ import android.widget.TextView;
 import org.joda.time.DateTime;
 
 import de.lukeslog.alarmclock.MediaPlayer.MediaPlayerService;
-import de.lukeslog.alarmclock.alarmactivity.AmbientAlarmActivity;
+import de.lukeslog.alarmclock.ui.AmbientAlarmActivity;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
 import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.main.ClockWorkService;
-import de.lukeslog.alarmclock.service.dropbox.DropBox;
+import de.lukeslog.alarmclock.ambientService.dropbox.DropBox;
 
 /**
  * Created by lukas on 24.04.14.
@@ -32,12 +32,12 @@ public class MusicAction extends AmbientAction
     private boolean useDropbox=false;
     private String dropboxFolder="";
     private boolean fadein = false;
-    private static boolean switched=false;
+    private static boolean switchedToRadio =false;
 
     public MusicAction(String actionName)
     {
         super(actionName);
-        switched=false;
+        switchedToRadio =false;
     }
 
     public MusicAction(ActionConfigBundle configBundle)
@@ -50,7 +50,7 @@ public class MusicAction extends AmbientAction
             useLocal = configBundle.getString("uselocal").equals("1");
             useDropbox = configBundle.getString("usedropbox").equals("1");
             fadein = configBundle.getString("fadein").equals("1");
-            switched=false;
+            switchedToRadio =false;
         }
         catch(Exception e)
         {
@@ -61,7 +61,7 @@ public class MusicAction extends AmbientAction
     @Override
     public void action(boolean isFirstAlert)
     {
-        switched=false;
+        switchedToRadio =false;
         playmusic();
     }
 
@@ -96,13 +96,15 @@ public class MusicAction extends AmbientAction
     @Override
     public void snooze()
     {
-        stopMusic();
+        if(isJoinSnoozing())
+        {
+            stopMusic();
+        }
     }
 
     @Override
     public void awake()
     {
-        Log.d(TAG, "Music Action is been toled you pressed Awake...");
         stopMusic();
     }
 
@@ -182,12 +184,12 @@ public class MusicAction extends AmbientAction
                     switchtoRadio.putExtra("AmbientActionID", getActionID());
                     ClockWorkService.getClockworkContext().sendBroadcast(switchtoRadio);
                     b.setVisibility(View.GONE);
-                    switched = true;
+                    switchedToRadio = true;
                 }
             });
             b.setText("Switch To Radio");
             b.setId(89543);
-            if(switched)
+            if(switchedToRadio)
             {
                 b.setVisibility(View.GONE);
             }
@@ -210,7 +212,7 @@ public class MusicAction extends AmbientAction
         stopmusic.setAction(MediaPlayerService.ACTION_STOP_MUSIC);
         stopmusic.putExtra("AmbientActionID", getActionID());
         ClockWorkService.getClockworkContext().sendBroadcast(stopmusic);
-        switched=false;
+        switchedToRadio =false;
     }
 
     public boolean isUseLocal()

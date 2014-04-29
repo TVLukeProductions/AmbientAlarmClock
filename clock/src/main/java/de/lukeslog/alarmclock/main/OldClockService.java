@@ -1,7 +1,6 @@
 package de.lukeslog.alarmclock.main;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -12,18 +11,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import org.farng.mp3.MP3File;
-import org.farng.mp3.TagException;
-import org.farng.mp3.id3.ID3v1;
-
-import de.lukeslog.alarmclock.service.dropbox.DropBox;
-import de.lukeslog.alarmclock.service.lastfm.Scrobbler;
+import de.lukeslog.alarmclock.ambientService.dropbox.DropBox;
+import de.lukeslog.alarmclock.ambientService.mail.BackgroundMail;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
-import de.lukeslog.alarmclock.R;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothClass;
@@ -34,14 +25,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnCompletionListener;
-import android.media.MediaPlayer.OnPreparedListener;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Binder;
-import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -551,28 +535,7 @@ public class OldClockService extends Service implements Runnable
 			{
 			//Turn on my Coffe machine
 			//http://192.168.1.242/control?cmd=set_state_actuator&number=3&function=1&page=control.html	
-			new Thread(new Runnable()
-			{
-				public void run()
-				{
-					int function=1;
-					if(!x)
-					{
-						function=2;
-					}
-					try
-					{
-				        URL oracle = new URL("http://"+ezcontrolIP+"/control?cmd=set_state_actuator&number=3&function="+function+"&page=control.html");
-				        URLConnection yc = oracle.openConnection();
-				        BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
-						Log.d(TAG, "command->coffee");
-					}
-					catch(Exception e)
-					{
-						Log.e(TAG, "there was an error while setting the coffe machine");
-					}
-				}
-		 	}).start();
+
 		}
 	}
 	
@@ -604,7 +567,7 @@ public class OldClockService extends Service implements Runnable
 	    String gmailpswString= settings.getString("gmailpsw", "");
 	    Log.i(TAG, "gmailacc="+gmailaccString);
 	    Log.i(TAG, "newmail");
-		final de.lukeslog.mail.BackgroundMail m = new de.lukeslog.mail.BackgroundMail(gmailaccString, gmailpswString);
+		final BackgroundMail m = new BackgroundMail(gmailaccString, gmailpswString);
 		Log.i(TAG, "setTo");
 		String t[] = new String[1];
 		t[0]= gmailaccString;

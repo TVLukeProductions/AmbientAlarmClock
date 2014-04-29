@@ -14,7 +14,6 @@ import java.util.Calendar;
 
 import de.lukeslog.alarmclock.actions.ActionManager;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarmManager;
-import de.lukeslog.alarmclock.service.dropbox.DropBox;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
 
 /**

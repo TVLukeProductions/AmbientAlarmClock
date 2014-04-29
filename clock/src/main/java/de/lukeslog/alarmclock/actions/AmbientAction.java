@@ -11,7 +11,7 @@ import android.widget.LinearLayout;
 import org.joda.time.DateTime;
 
 import de.lukeslog.alarmclock.R;
-import de.lukeslog.alarmclock.alarmactivity.AmbientAlarmActivity;
+import de.lukeslog.alarmclock.ui.AmbientAlarmActivity;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarmManager;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
@@ -29,6 +29,7 @@ public abstract class AmbientAction
     public static final String SENDMAIL_ACTION = SendMailAction.class.toString();
     public static final String PHILIPSHUE_ACTION = PhilipsHueAction.class.toString();
     public static final String MUSIC_ACTION = MusicAction.class.toString();
+    public static final String EZCONTROLPLUG_ACTION = EZControlPlugAction.class.toString();
 
     public static String TAG = AlarmClockConstants.TAG;
 

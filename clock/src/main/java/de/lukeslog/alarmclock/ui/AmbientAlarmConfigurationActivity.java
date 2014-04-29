@@ -114,6 +114,7 @@ public class AmbientAlarmConfigurationActivity extends Activity
     protected void onResume()
     {
         updater.onResume();
+        fillinActions((LinearLayout) findViewById(R.id.actionlist));
         super.onResume();
     }
 
@@ -167,6 +168,8 @@ public class AmbientAlarmConfigurationActivity extends Activity
         configureUIDaysOfTheWeek();
 
         configureUISnoozing();
+
+        fillinActions((LinearLayout) findViewById(R.id.actionlist));
     }
 
     private void configureLock()
@@ -419,16 +422,22 @@ public class AmbientAlarmConfigurationActivity extends Activity
     {
         private Handler handler = new Handler();
         public static final int delay= 1000;
+        int actions=0;
 
         @Override
         public void run()
         {
             //Log.d(TAG, "run");
-            fillinActions((LinearLayout) findViewById(R.id.actionlist));
-            if(alarm.iscurrentlylocked())
+            //if the number of registered actions has changed, redraw the list of actions
+            if(actions!=alarm.numberOfRegisteredActions())
             {
-                AmbientAlarmConfigurationActivity.this.finish();
+                actions=alarm.numberOfRegisteredActions();
+                fillinActions((LinearLayout) findViewById(R.id.actionlist));
             }
+            //if(alarm.iscurrentlylocked())
+            //{
+            //    AmbientAlarmConfigurationActivity.this.finish();
+            //}
             handler.removeCallbacks(this); // remove the old callback
             handler.postDelayed(this, delay); // register a new one
         }

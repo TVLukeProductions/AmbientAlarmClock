@@ -1,11 +1,7 @@
 package de.lukeslog.alarmclock.ui;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import de.lukeslog.alarmclock.R;
-import de.lukeslog.alarmclock.service.dropbox.DropBox;
+import de.lukeslog.alarmclock.ambientService.dropbox.DropBox;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
 
 import android.accounts.Account;
@@ -16,17 +12,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
-import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.Spinner;
 

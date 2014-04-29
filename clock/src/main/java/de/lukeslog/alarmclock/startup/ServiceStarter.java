@@ -4,20 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import org.joda.time.DateTime;
-
 import java.util.ArrayList;
 
 import de.lukeslog.alarmclock.MediaPlayer.MediaPlayerService;
-import de.lukeslog.alarmclock.actions.CountdownAction;
-import de.lukeslog.alarmclock.actions.SendMailAction;
-import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarmManager;
 import de.lukeslog.alarmclock.datatabse.AmbientAlarmDatabase;
-import de.lukeslog.alarmclock.service.dropbox.DropBox;
+import de.lukeslog.alarmclock.ambientService.dropbox.DropBox;
 import de.lukeslog.alarmclock.main.ClockWorkService;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
-import de.lukeslog.alarmclock.support.Day;
 
 /**
  * Created by lukas on 31.03.14.
