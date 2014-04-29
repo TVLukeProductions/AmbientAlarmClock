@@ -3,6 +3,7 @@ package de.lukeslog.alarmclock.ui;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -112,7 +113,7 @@ public class AmbientAlarmConfigurationActivity extends Activity
     protected void onResume()
     {
         updater.onResume();
-        fillinActions((LinearLayout) findViewById(R.id.actionlist));
+        updateActionsList();
         super.onResume();
     }
 
@@ -408,6 +409,7 @@ public class AmbientAlarmConfigurationActivity extends Activity
 
     private void fillinActions(LinearLayout scrollView)
     {
+        Log.d(TAG, "Fill in Actions");
         alarm.fillInActionView(scrollView);
     }
 
@@ -420,7 +422,7 @@ public class AmbientAlarmConfigurationActivity extends Activity
     {
         private Handler handler = new Handler();
         public static final int delay= 1000;
-        int actions=0;
+        int actions=-1;
 
         @Override
         public void run()
@@ -429,11 +431,10 @@ public class AmbientAlarmConfigurationActivity extends Activity
             //if the number of registered actions has changed, redraw the list of actions
             if(actions!=alarm.numberOfRegisteredActions())
             {
+                Log.d(TAG, ""+actions);
+                Log.d(TAG, ""+alarm.numberOfRegisteredActions());
                 actions=alarm.numberOfRegisteredActions();
-                fillinActions((LinearLayout) findViewById(R.id.actionlist));
-                TextView x = new TextView(ctx);
-                LinearLayout theView = (LinearLayout) findViewById(R.id.actionlist);
-                theView.addView(x);
+                updateActionsList();
             }
             handler.removeCallbacks(this); // remove the old callback
             handler.postDelayed(this, delay); // register a new one
@@ -451,5 +452,21 @@ public class AmbientAlarmConfigurationActivity extends Activity
             handler.postDelayed(this, delay); // register a new one
         }
 
+    }
+
+    private void updateActionsList()
+    {
+        Log.d(TAG, ""+alarm.numberOfRegisteredActions());
+        fillinActions((LinearLayout) findViewById(R.id.actionlist));
+        TextView x = new TextView(ctx);
+        LinearLayout theView = (LinearLayout) findViewById(R.id.actionlist);
+        if(alarm.numberOfRegisteredActions()==0)
+        {
+            Log.d(TAG, "->add");
+            x.setText("You have not added any actions. This alarm will not do anything.");
+            x.setBackgroundColor(Color.RED);
+        }
+        theView.addView(x);
+        Log.d(TAG, "xxx");
     }
 }
