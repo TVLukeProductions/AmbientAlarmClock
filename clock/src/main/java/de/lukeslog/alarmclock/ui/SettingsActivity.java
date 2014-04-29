@@ -146,34 +146,16 @@ public class SettingsActivity extends Activity implements OnItemSelectedListener
         	//get all UI elements
         	EditText lastfmusernamefield = (EditText) findViewById(R.id.lastfm);
         	EditText lastfmpasswordfield = (EditText) findViewById(R.id.lastfmpassword);
-		    		    
-		    EditText dropboxfolder = (EditText) findViewById(R.id.dropboxfolder);
-		    EditText localfolder = (EditText) findViewById(R.id.localfolder);
+
 		    
 		    EditText  gmailacc = (EditText ) findViewById(R.id.gmailacc);
 		    EditText  gmailpsw = (EditText ) findViewById(R.id.gmailpsw);
-		    
-		    CheckBox use_local = (CheckBox) findViewById(R.id.use_local);
-		    CheckBox use_dropbox = (CheckBox) findViewById(R.id.use_dropbox);
-
-		    
-		    final Spinner dpfolderlist = (Spinner) findViewById(R.id.spinnerdpf);
-		    final Spinner localfolderlist = (Spinner) findViewById(R.id.spinnerlocalf); 
 
 
 		    edit.putString("lastfmusername", lastfmusernamefield.getEditableText().toString());
 		    edit.putString("lastfmpassword", lastfmpasswordfield.getEditableText().toString());
 		    edit.putString("gmailacc", gmailacc.getEditableText().toString());
 		    edit.putString("gmailpsw", gmailpsw.getEditableText().toString());
-		    edit.putString("dropboxfolder", dropboxfolder.getEditableText().toString());
-		    edit.putString("localfolder", localfolder.getEditableText().toString());
-
-		    
-		    edit.putBoolean("uselocal", use_local.isChecked());
-		    edit.putBoolean("usedropbox", use_dropbox.isChecked());
-		    
-		    edit.putInt("selectedfolder", dpfolderlist.getSelectedItemPosition());
-		    edit.putInt("selectedLocalFolder", localfolderlist.getSelectedItemPosition());
 
         	edit.commit();
 	    }

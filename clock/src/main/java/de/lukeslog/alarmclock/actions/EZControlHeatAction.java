@@ -1,9 +1,14 @@
 package de.lukeslog.alarmclock.actions;
 
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 
 import org.joda.time.DateTime;
 
+import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
 import de.lukeslog.alarmclock.ui.AmbientAlarmActivity;
 
@@ -51,9 +56,34 @@ public class EZControlHeatAction extends AmbientAction
     }
 
     @Override
-    public void defineSettingsView(LinearLayout configurationActivity, AmbientAlarm alarm)
+    public void defineSettingsView(LinearLayout configView, AmbientAlarm alarm)
     {
+        LinearLayout mainLayout = createLayout(configView, alarm);
 
+
+        TextView name = createNameTextView(configView);
+
+        ImageView icon = createActionIcon(configView);
+
+        mainLayout.addView(icon);
+        mainLayout.addView(name);
+        configView.addView(mainLayout);
+    }
+
+    private TextView createNameTextView(LinearLayout configView)
+    {
+        TextView name = new TextView(configView.getContext());
+        name.setText(getActionName());
+        return name;
+    }
+
+    private ImageView createActionIcon(LinearLayout configView)
+    {
+        ImageView icon = new ImageView(configView.getContext());
+        icon.setImageResource(R.drawable.action_icon);
+        TableRow.LayoutParams params = new TableRow.LayoutParams(100, TableLayout.LayoutParams.WRAP_CONTENT);
+        icon.setLayoutParams(params);
+        return icon;
     }
 
     @Override
