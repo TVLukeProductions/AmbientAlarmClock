@@ -35,6 +35,8 @@ public class MusicAction extends AmbientAction
     private String radiourl="DLF";
     private static boolean switchedToRadio =false;
 
+    public static int priority = AmbientAction.ACTION_UI_PRIORITY_HIGH;
+
     public MusicAction(String actionName)
     {
         super(actionName);
@@ -94,6 +96,12 @@ public class MusicAction extends AmbientAction
         configBundle.putString("fadein", fadeS);
         configBundle.putString("radiourl", radiourl);
         return configBundle;
+    }
+
+    @Override
+    public int getPriority()
+    {
+        return priority;
     }
 
     @Override

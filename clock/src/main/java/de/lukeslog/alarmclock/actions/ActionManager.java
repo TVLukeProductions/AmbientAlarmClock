@@ -49,6 +49,15 @@ public class ActionManager
             EZControlPlugAction ezpa = new EZControlPlugAction(configBundle);
             return ezpa;
         }
+        if(className.equals(AmbientAction.EZCONTROLHEAT_ACTION))
+        {
+
+        }
+        if(className.equals(AmbientAction.WEBSITE_ACTION))
+        {
+            WebsiteAction wa = new WebsiteAction(configBundle);
+            return wa;
+        }
         return null;
     }
 
@@ -88,11 +97,15 @@ public class ActionManager
         HashMap <String, String> descriptionEZControlPlugAction = new HashMap<String, String>();
         fillDescription(descriptionEZControlPlugAction, AmbientAction.EZCONTROLPLUG_ACTION, "ezControl Plug Action", "action_icon", "Switching a plug using the ezControl Home Automation System.");
 
+        HashMap<String, String> descriptionWebsiteAction = new HashMap<String, String>();
+        fillDescription(descriptionWebsiteAction, AmbientAction.WEBSITE_ACTION, "Website Action", "action_icon", "Show a website on the alarm-screen.");
+
         actionInformation.add(descriptionCountdownAction);
         actionInformation.add(descriptionSendMailAction);
         actionInformation.add(descriptionPhilipsHueAction);
         actionInformation.add(descriptionMusicAction);
         actionInformation.add(descriptionEZControlPlugAction);
+        actionInformation.add(descriptionWebsiteAction);
 
         return actionInformation;
     }
@@ -148,6 +161,11 @@ public class ActionManager
         {
             EZControlPlugAction ezpa = new EZControlPlugAction("new ezControl Plug Action");
             return ezpa;
+        }
+        if(actionTypeName.equals(AmbientAction.WEBSITE_ACTION))
+        {
+            WebsiteAction wa = new WebsiteAction("New Website Action", "http://www.tagesschau.de");
+            return wa;
         }
         return null;
     }

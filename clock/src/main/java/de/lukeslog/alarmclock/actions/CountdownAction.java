@@ -23,6 +23,7 @@ public class CountdownAction extends AmbientAction
 {
 
     int durationInSeconds=3600;
+    public static int priority = AmbientAction.ACTION_UI_PRIORITY_MEDIUM;
 
     public CountdownAction(String actionName, int durationInSeconds)
     {
@@ -69,6 +70,12 @@ public class CountdownAction extends AmbientAction
     public void tick(DateTime now)
     {
 
+    }
+
+    @Override
+    public int getPriority()
+    {
+        return priority;
     }
 
     @Override

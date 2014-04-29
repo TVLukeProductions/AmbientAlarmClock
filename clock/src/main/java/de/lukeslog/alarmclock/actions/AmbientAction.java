@@ -30,8 +30,18 @@ public abstract class AmbientAction
     public static final String PHILIPSHUE_ACTION = PhilipsHueAction.class.toString();
     public static final String MUSIC_ACTION = MusicAction.class.toString();
     public static final String EZCONTROLPLUG_ACTION = EZControlPlugAction.class.toString();
+    public static final String EZCONTROLHEAT_ACTION = EZControlHeatAction.class.toString();
+    public static final String WEBSITE_ACTION = WebsiteAction.class.toString();
+
+
+    public static final int ACTION_UI_PRIORITY_HIGH = 1;
+    public static final int ACTION_UI_PRIORITY_MEDIUM=2;
+    public static final int ACTION_UI_PRIORITY_LOW=3;
+    public static final int ACTION_UI_PRIORITY_NONE=0;
 
     public static String TAG = AlarmClockConstants.TAG;
+
+    public static int priority=ACTION_UI_PRIORITY_NONE;
 
     AmbientAction(String actionName)
     {
@@ -103,6 +113,8 @@ public abstract class AmbientAction
     public abstract void awake();
 
     public abstract void tick(DateTime currentTime);
+
+    public abstract int getPriority();
 
     public abstract void defineSettingsView(LinearLayout configurationActivity, AmbientAlarm alarm);
 

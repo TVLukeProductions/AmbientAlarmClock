@@ -110,6 +110,12 @@ public class EZControlPlugAction extends AmbientAction
     }
 
     @Override
+    public int getPriority()
+    {
+        return priority;
+    }
+
+    @Override
     public void defineSettingsView(LinearLayout configView, AmbientAlarm alarm)
     {
         LinearLayout mainLayout = createLayout(configView, alarm);

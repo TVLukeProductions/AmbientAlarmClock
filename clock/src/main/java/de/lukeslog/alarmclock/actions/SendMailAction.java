@@ -148,5 +148,12 @@ public class SendMailAction extends AmbientAction
         //nothing to do on this one
     }
 
+    @Override
+    public int getPriority()
+    {
+        return priority;
+    }
+
+
 
 }

@@ -42,6 +42,7 @@ public class AmbientAlarm
 
     private int alarmState = AlarmState.WAITING;
     private HashMap<String, ArrayList<AmbientAction>> registeredActions = new HashMap<String, ArrayList<AmbientAction>>();
+    private HashMap<String, AmbientAction> prioritylist = new HashMap<String, AmbientAction>();
 
     //is the alarm active
     public boolean isActive()
@@ -383,7 +384,9 @@ public class AmbientAlarm
     {
         Log.d(TAG, "registered Actions Child Count = "+scrollView.getChildCount());
         scrollView.removeAllViews();
-        Set<String> keys = registeredActions.keySet();
+        for(int i=0; i<4; i++)
+        {
+            Set<String> keys = registeredActions.keySet();
             Iterator<String> iterator = keys.iterator();
             while (iterator.hasNext())
             {
@@ -391,9 +394,14 @@ public class AmbientAlarm
                 ArrayList<AmbientAction> actions = registeredActions.get(actiontime);
                 for (AmbientAction action : actions)
                 {
-                    action.defineSettingsView(scrollView, this);
+                    if (action.getPriority() == i)
+                    {
+                        action.defineSettingsView(scrollView, this);
+                    }
                 }
             }
+        }
+
    }
 
     public Class<AmbientAlarmActivity> getAlarmActivity()
@@ -404,15 +412,21 @@ public class AmbientAlarm
 
     public void updateAlarmUI(AmbientAlarmActivity alarmActivity)
     {
-        Set<String> keys = registeredActions.keySet();
-        Iterator<String> iterator = keys.iterator();
-        while(iterator.hasNext())
+        for(int i=1; i<4; i++)
         {
-            String actiontime = iterator.next();
-            ArrayList<AmbientAction> actions = registeredActions.get(actiontime);
-            for(AmbientAction action: actions)
+            Set<String> keys = registeredActions.keySet();
+            Iterator<String> iterator = keys.iterator();
+            while (iterator.hasNext())
             {
-                action.updateUI(this, alarmActivity);
+                String actiontime = iterator.next();
+                ArrayList<AmbientAction> actions = registeredActions.get(actiontime);
+                for (AmbientAction action : actions)
+                {
+                    if (action.getPriority() == i)
+                    {
+                        action.updateUI(this, alarmActivity);
+                    }
+                }
             }
         }
     }

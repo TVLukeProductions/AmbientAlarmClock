@@ -87,6 +87,12 @@ public class PhilipsHueAction extends AmbientAction
     }
 
     @Override
+    public int getPriority()
+    {
+        return priority;
+    }
+
+    @Override
     public void defineSettingsView(final LinearLayout configView, AmbientAlarm alarm)
     {
         LinearLayout mainLayout = createLayout(configView, alarm);
