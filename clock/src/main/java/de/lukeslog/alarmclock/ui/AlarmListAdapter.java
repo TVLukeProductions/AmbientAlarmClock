@@ -102,7 +102,7 @@ public class AlarmListAdapter extends BaseAdapter
             if(ambientAlarm.isSnoozing())
             {
                 alarmicon.setImageResource(R.drawable.alarmicon_a_s);
-                if(ambientAlarm.iscurrentlylocked())
+                if(ambientAlarm.isCurrentlyLocked())
                 {
                     alarmicon.setImageResource(R.drawable.alarmicon_a_s_l);
                 }
@@ -110,7 +110,7 @@ public class AlarmListAdapter extends BaseAdapter
             else
             {
                 alarmicon.setImageResource(R.drawable.alarmicon_a);
-                if(ambientAlarm.iscurrentlylocked())
+                if(ambientAlarm.isCurrentlyLocked())
                 {
                     alarmicon.setImageResource(R.drawable.alarmicon_a_l);
                 }

@@ -9,14 +9,12 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
-import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -78,7 +76,7 @@ public class AmbientAlarmConfigurationActivity extends Activity
             Log.d(TAG, "alarm!=null => "+ (alarm!=null));
         }
 
-        if(alarm.iscurrentlylocked())
+        if(alarm.isCurrentlyLocked())
         {
             AmbientAlarmConfigurationActivity.this.finish();
         }
@@ -434,7 +432,7 @@ public class AmbientAlarmConfigurationActivity extends Activity
                 actions=alarm.numberOfRegisteredActions();
                 fillinActions((LinearLayout) findViewById(R.id.actionlist));
             }
-            //if(alarm.iscurrentlylocked())
+            //if(alarm.isCurrentlyLocked())
             //{
             //    AmbientAlarmConfigurationActivity.this.finish();
             //}

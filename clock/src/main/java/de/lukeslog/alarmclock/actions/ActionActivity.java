@@ -1,7 +1,6 @@
 package de.lukeslog.alarmclock.actions;
 
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -297,7 +296,7 @@ public class ActionActivity extends Activity
             if(alarm.isSnoozing())
             {
                 alarmicon.setImageResource(R.drawable.alarmicon_a_s);
-                if(alarm.iscurrentlylocked())
+                if(alarm.isCurrentlyLocked())
                 {
                     alarmicon.setImageResource(R.drawable.alarmicon_a_s_l);
                 }
@@ -305,7 +304,7 @@ public class ActionActivity extends Activity
             else
             {
                 alarmicon.setImageResource(R.drawable.alarmicon_a);
-                if(alarm.iscurrentlylocked())
+                if(alarm.isCurrentlyLocked())
                 {
                     alarmicon.setImageResource(R.drawable.alarmicon_a_l);
                 }

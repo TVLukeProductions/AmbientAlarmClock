@@ -464,16 +464,16 @@ public class AmbientAlarm
         }
     }
 
-    public boolean iscurrentlylocked()
+    public boolean isCurrentlyLocked()
     {
         DateTime now = new DateTime();
         if(islocked())
         {
-            if(secondsSinceAlertTime(now)>-1 && secondsSinceAlertTime(now)<10)
+            if(secondsSinceAlertTime(now)>-1 && secondsSinceAlertTime(now)<AlarmClockConstants.LOCKTIME)
             {
                 return true;
             }
-            if(secondsToAlertTime(now)>-1 && secondsToAlertTime(now)<10)
+            if(secondsToAlertTime(now)>-1 && secondsToAlertTime(now)<AlarmClockConstants.LOCKTIME)
             {
                 return true;
             }

@@ -251,7 +251,7 @@ public class AlarmClockMainActivity extends Activity
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id)
             {
                 Log.d(TAG, "longclock");
-                if (!ambientalarms.get(position).iscurrentlylocked())
+                if (!ambientalarms.get(position).isCurrentlyLocked())
                 {
                     AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
                     builder.setMessage(R.string.deletealarm)
@@ -288,7 +288,7 @@ public class AlarmClockMainActivity extends Activity
             public void onItemClick(AdapterView<?> parent, View view, int posi, long id)
             {
                 Log.d(TAG, "click");
-                if(!ambientalarms.get(posi).iscurrentlylocked())
+                if(!ambientalarms.get(posi).isCurrentlyLocked())
                 {
                     Intent i = new Intent(ctx, AmbientAlarmConfigurationActivity.class);
                     i.putExtra("ambientAlarmID", ambientalarms.get(posi).getAlarmID());
