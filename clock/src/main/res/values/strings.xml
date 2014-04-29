@@ -22,4 +22,6 @@
     <string name="ezcontrolip">IP Of your ezControl</string>
     <string name="numberoftheplug">Number of the Plug</string>
     <string name="turnonorof">Turn On or Off on alarm</string>
+    <string name="source">Select Source</string>
+    <string name="radioselect">Select Radio Station</string>
 </resources>

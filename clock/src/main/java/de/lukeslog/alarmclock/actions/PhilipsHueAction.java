@@ -28,6 +28,9 @@ public class PhilipsHueAction extends AmbientAction
     List<HueBridge> bridges;
     Collection<HueLightBulb> lights;
     boolean lightshowX=true;
+    int red=255;
+    int green=255;
+    int blue =255;
 
     public PhilipsHueAction(String actionName)
     {
@@ -39,6 +42,16 @@ public class PhilipsHueAction extends AmbientAction
     public PhilipsHueAction(ActionConfigBundle configBundle)
     {
         super(configBundle);
+        try
+        {
+            red = Integer.parseInt(configBundle.getString("red"));
+            green = Integer.parseInt(configBundle.getString("green"));
+            blue = Integer.parseInt(configBundle.getString("blue"));
+        }
+        catch(Exception e)
+        {
+
+        }
     }
 
     @Override
@@ -108,6 +121,9 @@ public class PhilipsHueAction extends AmbientAction
     protected ActionConfigBundle setConfigurationData()
     {
         ActionConfigBundle configBundle = new ActionConfigBundle();
+        configBundle.putString("red", ""+red);
+        configBundle.putString("green", ""+green);
+        configBundle.putString("blue", ""+blue);
         return configBundle;
     }
 
@@ -123,7 +139,37 @@ public class PhilipsHueAction extends AmbientAction
         //nothing to do;
     }
 
-    private void turnOnTheLights()
+    public int getRed()
+    {
+        return red;
+    }
+
+    public int getGreen()
+    {
+        return green;
+    }
+
+    public int getBlue()
+    {
+        return blue;
+    }
+
+    public void setRed(int red)
+    {
+        this.red = red;
+    }
+
+    public void setGreen(int green)
+    {
+        this.green = green;
+    }
+
+    public void setBlue(int blue)
+    {
+        this.blue = blue;
+    }
+
+    protected void turnOnTheLights()
     {
         try
         {
@@ -135,7 +181,7 @@ public class PhilipsHueAction extends AmbientAction
         }
     }
 
-    private void turnOnTheLightsSlowly()
+    protected void turnOnTheLightsSlowly()
     {
         try
         {
@@ -265,7 +311,7 @@ public class PhilipsHueAction extends AmbientAction
                         {
                             try
                             {
-                                setHueColor(bulb, 255.0, 255.0, 255.0, i);
+                                setHueColor(bulb, red, green, blue, i);
                                 Thread.sleep(500);
 
                             }

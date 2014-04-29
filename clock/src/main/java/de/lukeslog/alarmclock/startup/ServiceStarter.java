@@ -12,6 +12,7 @@ import de.lukeslog.alarmclock.datatabse.AmbientAlarmDatabase;
 import de.lukeslog.alarmclock.ambientService.dropbox.DropBox;
 import de.lukeslog.alarmclock.main.ClockWorkService;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
+import de.lukeslog.alarmclock.support.Radiostations;
 
 /**
  * Created by lukas on 31.03.14.
@@ -32,6 +33,7 @@ public class ServiceStarter
         AmbientAlarmManager.updateListFromDataBase();
 
         setupBootClassArray();
+        Radiostations.setUp();
         startServices();
 
         DropBox.getDropboxAPI();

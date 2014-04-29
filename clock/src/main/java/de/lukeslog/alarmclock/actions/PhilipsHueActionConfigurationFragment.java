@@ -1,6 +1,7 @@
 package de.lukeslog.alarmclock.actions;
 
 import android.app.Fragment;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,7 +11,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.util.Collection;
 import java.util.List;
@@ -18,6 +22,7 @@ import java.util.List;
 import de.jaetzold.philips.hue.HueBridge;
 import de.jaetzold.philips.hue.HueLightBulb;
 import de.lukeslog.alarmclock.R;
+import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
 
 /**
@@ -31,6 +36,8 @@ public class PhilipsHueActionConfigurationFragment extends Fragment
     ProgressBar connectbar;
     Button connectbutton;
     TextView text;
+    PhilipsHueAction action;
+    AmbientAlarm alarm;
 
     /** Called when the activity is first created. */
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -42,8 +49,10 @@ public class PhilipsHueActionConfigurationFragment extends Fragment
 
         //well... this is kinda evil.
         ActionActivity parent = (ActionActivity) getActivity();
-        final PhilipsHueAction action = (PhilipsHueAction) parent.getAction();
+        action = (PhilipsHueAction) parent.getAction();
+        alarm = parent.getAlarm();
 
+        collorpicker(fragment);
 
         connectbar = (ProgressBar) fragment.findViewById(R.id.progressBar1);
         connectbutton = (Button) fragment.findViewById(R.id.findhue);
@@ -107,6 +116,116 @@ public class PhilipsHueActionConfigurationFragment extends Fragment
 
         });
         return fragment;
+    }
+
+    private void collorpicker(final View fragment)
+    {
+        SeekBar red = (SeekBar) fragment.findViewById(R.id.red);
+        red.setMax(255);
+        red.setProgress(action.getRed());
+        SeekBar green = (SeekBar) fragment.findViewById(R.id.green);
+        green.setMax(255);
+        green.setProgress(action.getGreen());
+        SeekBar blue = (SeekBar) fragment.findViewById(R.id.blue);
+        blue.setMax(255);
+        blue.setProgress(action.getBlue());
+
+        setexamplecolor(fragment);
+
+        red.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
+        {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+            {
+                Log.d(TAG, ""+progress);
+                action.setRed(progress);
+                setexamplecolor(fragment);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar)
+            {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar)
+            {
+
+            }
+        });
+
+        green.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
+        {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+            {
+                Log.d(TAG, ""+progress);
+                action.setGreen(progress);
+                setexamplecolor(fragment);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar)
+            {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar)
+            {
+
+            }
+        });
+
+        blue.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
+        {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+            {
+                Log.d(TAG, ""+progress);
+                action.setBlue(progress);
+                setexamplecolor(fragment);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar)
+            {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar)
+            {
+
+            }
+        });
+
+        Button test = (Button) fragment.findViewById(R.id.huetestbutton);
+        test.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                action.turnOnTheLights();
+            }
+        });
+    }
+
+    private void setexamplecolor(View fragment)
+    {
+        TextView example = (TextView) fragment.findViewById(R.id.example);
+        int r=action.getRed();
+        int g=action.getGreen();
+        int b=action.getBlue();
+        example.setBackgroundColor(Color.rgb(r, g, b));
+
+        SeekBar red = (SeekBar) fragment.findViewById(R.id.red);
+        red.setBackgroundColor(Color.rgb(action.getRed(), 0, 0));
+        SeekBar green = (SeekBar) fragment.findViewById(R.id.green);
+        green.setBackgroundColor(Color.rgb(0, action.getGreen(), 0));
+        SeekBar blue = (SeekBar) fragment.findViewById(R.id.blue);
+        blue.setBackgroundColor(Color.rgb(0,0,action.getBlue()));
     }
 
     /**

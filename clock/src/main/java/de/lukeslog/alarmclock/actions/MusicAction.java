@@ -32,6 +32,7 @@ public class MusicAction extends AmbientAction
     private boolean useDropbox=false;
     private String dropboxFolder="";
     private boolean fadein = false;
+    private String radiourl="DLF";
     private static boolean switchedToRadio =false;
 
     public MusicAction(String actionName)
@@ -50,6 +51,7 @@ public class MusicAction extends AmbientAction
             useLocal = configBundle.getString("uselocal").equals("1");
             useDropbox = configBundle.getString("usedropbox").equals("1");
             fadein = configBundle.getString("fadein").equals("1");
+            radiourl = configBundle.getString("radiourl");
             switchedToRadio =false;
         }
         catch(Exception e)
@@ -90,6 +92,7 @@ public class MusicAction extends AmbientAction
             fadeS="1";
         }
         configBundle.putString("fadein", fadeS);
+        configBundle.putString("radiourl", radiourl);
         return configBundle;
     }
 
@@ -263,5 +266,25 @@ public class MusicAction extends AmbientAction
     public void setLocalFolder(String localFolder)
     {
         this.localFolder = localFolder;
+    }
+
+    public String getRadiourl()
+    {
+        return radiourl;
+    }
+
+    public void setUseLocal(boolean useLocal)
+    {
+        this.useLocal = useLocal;
+    }
+
+    public void setRadioStation(String radioStation)
+    {
+        this.radiourl = radioStation;
+    }
+
+    public String getRadioURL()
+    {
+        return radiourl;
     }
 }

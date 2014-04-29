@@ -1,5 +1,6 @@
 package de.lukeslog.alarmclock.actions;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -19,13 +21,18 @@ import android.widget.Spinner;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
+import de.lukeslog.alarmclock.MediaPlayer.MediaPlayerService;
 import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
 import de.lukeslog.alarmclock.main.ClockWorkService;
 import de.lukeslog.alarmclock.ambientService.dropbox.DropBox;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
+import de.lukeslog.alarmclock.support.Radiostations;
 
 /**
  * Created by lukas on 24.04.14.
@@ -51,6 +58,8 @@ public class MusicActionConfigurationFragment extends Fragment
         ActionActivity parent = (ActionActivity) this.getActivity();
         action = (MusicAction) parent.getAction();
         alarm = parent.getAlarm();
+
+        configureRadioSelection(fragment);
 
         boolean uselocalchecked = action.isUseLocal();
         boolean usedropboxchecked = action.isUseDropbox();
@@ -271,6 +280,70 @@ public class MusicActionConfigurationFragment extends Fragment
         action.setUseDropbox(usedropboxchecked);
         action.setUselocal(uselocalchecked);
         return fragment;
+    }
+
+    private void configureRadioSelection(View fragment)
+    {
+        final Spinner radioselect = (Spinner) fragment.findViewById(R.id.spinnerradio);
+        final List<String> list2 = new ArrayList<String>();
+        HashMap<String, String> stations = Radiostations.stations;
+        Set<String> stationnames = stations.keySet();
+        Iterator<String> it = stationnames.iterator();
+        while(it.hasNext())
+        {
+            String x = it.next();
+            Log.d(TAG, x);
+            list2.add(x);
+        }
+        ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, list2);
+        dataAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        radioselect.setAdapter(dataAdapter2);
+        radioselect.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
+                action.setRadioStation(list2.get(position));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent)
+            {
+
+            }
+        });
+        String selectedstation = action.getRadioURL();
+        for(int i=0; i<list2.size(); i++)
+        {
+            if(list2.get(i).equals(selectedstation))
+            {
+                radioselect.setSelection(i);
+            }
+        }
+        final Button testlisten = (Button) fragment.findViewById(R.id.testradio);
+        testlisten.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                if(testlisten.getText().equals("Stop"))
+                {
+                    Intent startmusic = new Intent();
+                    startmusic.setAction(MediaPlayerService.ACTION_STOP_MUSIC);
+                    startmusic.putExtra("AmbientActionID", action.getActionID());
+                    ClockWorkService.getClockworkContext().sendBroadcast(startmusic);
+                    testlisten.setText("Test");
+                }
+                else
+                {
+                    Intent startmusic = new Intent();
+                    startmusic.setAction(MediaPlayerService.ACTION_SWITCH_TO_RADIO);
+                    startmusic.putExtra("AmbientActionID", action.getActionID());
+                    ClockWorkService.getClockworkContext().sendBroadcast(startmusic);
+                    testlisten.setText("Stop");
+                }
+            }
+        });
     }
 
     private void createFolderList(File f, int depth)

@@ -28,6 +28,7 @@ import de.lukeslog.alarmclock.actions.MusicAction;
 import de.lukeslog.alarmclock.main.ClockWorkService;
 import de.lukeslog.alarmclock.ambientService.lastfm.Scrobbler;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
+import de.lukeslog.alarmclock.support.Radiostations;
 
 /**
  * Created by lukas on 25.04.14.
@@ -44,7 +45,7 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
 
     private int[] mediaarray = {R.raw.trance};
 
-    public static final String ADDR_DRADIO = "http://stream.dradio.de/7/249/142684/v1/gnl.akacast.akamaistream.net/dradio_mp3_dlf_m";
+    public static final String ADDR_DRADIO = "DLF";
 
     private String localfolderstring;
     private boolean uselocalchecked;
@@ -267,10 +268,13 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
         return null;
     }
 
-    public void turnOnRadio()
+    public void turnOnRadio(String station)
     {
-        mp.stop();
-        mp.release();
+        if(mp!=null)
+        {
+            mp.stop();
+            mp.release();
+        }
         Log.d("clock", "turnOnRadio");
         try
         {
@@ -278,35 +282,18 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
             mp = new MediaPlayer();
             mp.setScreenOnWhilePlaying(true);
             mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            SharedPreferences settings = ClockWorkService.settings;
-            int station = settings.getInt("radiostation", 0);
             Log.d(TAG, "Station---------------------" + station);
             try
             {
-                if (station == 0)
-                {
-                    mp.setDataSource(ADDR_DRADIO);
-                }
-                if (station == 1)
-                {
-                    mp.setDataSource("http://87.118.106.79:11006/ltop100.ogg");
-                }
-                if (station == 2)
-                {
-                    mp.setDataSource("http://revolutionradio.ru/live.ogg");
-                }
-                if (station == 3)
-                {
-                    //http://sc2.3wk.com/3wk-u-ogg-lo
-                    mp.setDataSource("http://sc2.3wk.com/3wk-u-ogg-lo");
-                }
+                mp.setDataSource(station);
             } catch (Exception e)
             {
                 Log.d(TAG, "default radio");
                 try
                 {
-                    mp.setDataSource(ADDR_DRADIO);
-                } catch (Exception ex)
+                    mp.setDataSource(Radiostations.stations.get("DLF"));
+                }
+                catch (Exception ex)
                 {
                     Log.d(TAG, "fuck this");
                 }
@@ -367,7 +354,10 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
             if(action.equals(ACTION_SWITCH_TO_RADIO))
             {
                 Log.d(TAG, "switchtoradio....");
-                turnOnRadio();
+                String actionID = intent.getStringExtra("AmbientActionID");
+                MusicAction ma = (MusicAction) ActionManager.getActionByID(actionID);
+                String station = Radiostations.stations.get(ma.getRadiourl());
+                turnOnRadio(station);
             }
         }
     };
