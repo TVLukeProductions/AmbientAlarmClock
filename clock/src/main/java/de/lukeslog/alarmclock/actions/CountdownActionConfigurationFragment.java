@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +45,22 @@ public class CountdownActionConfigurationFragment extends Fragment
 
         final EditText countdownTextEdit = (EditText) fragment.findViewById(R.id.countdownlengthtext);
         countdownTextEdit.setText("" + (seconds / 60));
+        countdownTextEdit.addTextChangedListener(new TextWatcher()
+        {
+
+            public void afterTextChanged(Editable s)
+            {
+                action.setDurationInSeconds(Integer.parseInt(countdownTextEdit.getEditableText().toString()));
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after)
+            {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
+            }
+        });
 
         return fragment;
     }
