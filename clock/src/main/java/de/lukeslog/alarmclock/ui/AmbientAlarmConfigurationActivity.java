@@ -121,6 +121,7 @@ public class AmbientAlarmConfigurationActivity extends Activity
     protected void onPause()
     {
         updater.onPause();
+        updateDB();
         super.onPause();
     }
 
@@ -181,7 +182,7 @@ public class AmbientAlarmConfigurationActivity extends Activity
             public void onCheckedChanged(CompoundButton compoundButton, boolean b)
             {
                 alarm.setLocked(b);
-                updateDB();
+
             }
         });
     }
@@ -258,7 +259,6 @@ public class AmbientAlarmConfigurationActivity extends Activity
             {
                 alarm.setAlarmStateForDay(Day.MONDAY, !alarm.getActiveForDayOfTheWeek(Day.MONDAY));
                 configureUIDaysOfTheWeek();
-                updateDB();
             }
         });
         tuesday.setOnClickListener(new View.OnClickListener()
@@ -268,7 +268,6 @@ public class AmbientAlarmConfigurationActivity extends Activity
             {
                 alarm.setAlarmStateForDay(Day.TUESDAY, !alarm.getActiveForDayOfTheWeek(Day.TUESDAY));
                 configureUIDaysOfTheWeek();
-                updateDB();
             }
         });
         wednesday.setOnClickListener(new View.OnClickListener()
@@ -278,7 +277,6 @@ public class AmbientAlarmConfigurationActivity extends Activity
             {
                 alarm.setAlarmStateForDay(Day.WEDNESDAY, !alarm.getActiveForDayOfTheWeek(Day.WEDNESDAY));
                 configureUIDaysOfTheWeek();
-                updateDB();
             }
         });
         thursday.setOnClickListener(new View.OnClickListener()
@@ -288,7 +286,6 @@ public class AmbientAlarmConfigurationActivity extends Activity
             {
                 alarm.setAlarmStateForDay(Day.THURSDAY, !alarm.getActiveForDayOfTheWeek(Day.THURSDAY));
                 configureUIDaysOfTheWeek();
-                updateDB();
             }
         });
         friday.setOnClickListener(new View.OnClickListener()
@@ -298,7 +295,6 @@ public class AmbientAlarmConfigurationActivity extends Activity
             {
                 alarm.setAlarmStateForDay(Day.FRIDAY, !alarm.getActiveForDayOfTheWeek(Day.FRIDAY));
                 configureUIDaysOfTheWeek();
-                updateDB();
             }
         });
         saturday.setOnClickListener(new View.OnClickListener()
@@ -308,7 +304,6 @@ public class AmbientAlarmConfigurationActivity extends Activity
             {
                 alarm.setAlarmStateForDay(Day.SATURDAY, !alarm.getActiveForDayOfTheWeek(Day.SATURDAY));
                 configureUIDaysOfTheWeek();
-                updateDB();
             }
         });
         sunday.setOnClickListener(new View.OnClickListener()
@@ -318,7 +313,6 @@ public class AmbientAlarmConfigurationActivity extends Activity
             {
                 alarm.setAlarmStateForDay(Day.SUNDAY, !alarm.getActiveForDayOfTheWeek(Day.SUNDAY));
                 configureUIDaysOfTheWeek();
-                updateDB();
             }
         });
     }
@@ -333,7 +327,6 @@ public class AmbientAlarmConfigurationActivity extends Activity
             public void onCheckedChanged(CompoundButton compoundButton, boolean b)
             {
                 alarm.setSnoozing(b);
-                updateDB();
             }
         });
         EditText snoozetime = (EditText)findViewById(R.id.snoozetimeinseconds);
@@ -364,7 +357,6 @@ public class AmbientAlarmConfigurationActivity extends Activity
                 {
                     alarm.setSnoozeTimeInSeconds(Integer.parseInt(editable.toString()));
                 }
-                updateDB();
             }
         });
     }
@@ -385,7 +377,6 @@ public class AmbientAlarmConfigurationActivity extends Activity
                 alarmDateTime = alarmDateTime.withMinuteOfHour(i2);
                 Log.d(TAG, "set this new alarm to "+alarmDateTime);
                 alarm.setAlarmTime(alarmDateTime);
-                updateDB();
             }
         });
     }
@@ -402,7 +393,6 @@ public class AmbientAlarmConfigurationActivity extends Activity
             public void onCheckedChanged(CompoundButton compoundButton, boolean b)
             {
                 alarm.setActive(b);
-                updateDB();
             }
         });
     }

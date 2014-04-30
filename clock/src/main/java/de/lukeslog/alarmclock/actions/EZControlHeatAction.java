@@ -35,12 +35,32 @@ public class EZControlHeatAction extends AmbientAction
     public EZControlHeatAction(ActionConfigBundle configBundle)
     {
         super(configBundle);
+        try
+        {
+            ezControlIP = configBundle.getString("ezControlIP");
+            heaternumber = configBundle.getString("heaternumber");
+            level = configBundle.getString("level");
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+
+    @Override
+    protected ActionConfigBundle setConfigurationData()
+    {
+        ActionConfigBundle bundle = new ActionConfigBundle();
+        bundle.putString("ezControlIP", ezControlIP);
+        bundle.putString("heaternumber", heaternumber);
+        bundle.putString("level", level);
+        return bundle;
     }
 
     @Override
     public void action(boolean isFirstAlert)
     {
-
+        controlheat();
     }
 
     @Override
@@ -99,12 +119,6 @@ public class EZControlHeatAction extends AmbientAction
     }
 
     @Override
-    protected ActionConfigBundle setConfigurationData()
-    {
-        return null;
-    }
-
-    @Override
     public Class getConfigActivity()
     {
         return EZControlHeatActionConfigurationFragment.class;
@@ -135,5 +149,35 @@ public class EZControlHeatAction extends AmbientAction
                 }
             }
         }).start();
+    }
+
+    public String getEzControlIP()
+    {
+        return ezControlIP;
+    }
+
+    public String getHeaternumber()
+    {
+        return heaternumber;
+    }
+
+    public String getLevel()
+    {
+        return level;
+    }
+
+    public void setEzControlIP(String ezControlIP)
+    {
+        this.ezControlIP = ezControlIP;
+    }
+
+    public void setHeaternumber(String heaternumber)
+    {
+        this.heaternumber = heaternumber;
+    }
+
+    public void setLevel(String level)
+    {
+        this.level = level;
     }
 }

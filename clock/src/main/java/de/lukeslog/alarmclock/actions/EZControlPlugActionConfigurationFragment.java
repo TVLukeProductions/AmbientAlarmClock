@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -24,7 +25,6 @@ import de.lukeslog.alarmclock.support.AlarmClockConstants;
  */
 public class EZControlPlugActionConfigurationFragment extends Fragment
 {
-    public static final String PREFS_NAME = AlarmClockConstants.PREFS_NAME;
     public static String TAG = AlarmClockConstants.TAG;
 
     EZControlPlugAction action;
@@ -77,7 +77,7 @@ public class EZControlPlugActionConfigurationFragment extends Fragment
 
     private void setIPTextView(View fragment)
     {
-        TextView ezcontrolip = (TextView) fragment.findViewById(R.id.ezcontrolip);
+        EditText ezcontrolip = (EditText) fragment.findViewById(R.id.ezcontrolip);
         ezcontrolip.setText(action.getEzControlIP());
         ezcontrolip.addTextChangedListener(new TextWatcher()
         {

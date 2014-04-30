@@ -51,7 +51,8 @@ public class ActionManager
         }
         if(className.equals(AmbientAction.EZCONTROLHEAT_ACTION))
         {
-
+            EZControlHeatAction ezha = new EZControlHeatAction(configBundle);
+            return ezha;
         }
         if(className.equals(AmbientAction.WEBSITE_ACTION))
         {
@@ -97,8 +98,12 @@ public class ActionManager
         HashMap <String, String> descriptionEZControlPlugAction = new HashMap<String, String>();
         fillDescription(descriptionEZControlPlugAction, AmbientAction.EZCONTROLPLUG_ACTION, "ezControl Plug Action", "action_icon", "Switching a plug using the ezControl Home Automation System.");
 
+        HashMap<String, String> descriptionEZControlHeatAction = new HashMap<String, String>();
+        fillDescription(descriptionEZControlHeatAction, AmbientAction.EZCONTROLHEAT_ACTION, "ezControl Radiator Action", "action_icon", "Controling The Radiator");
+
         HashMap<String, String> descriptionWebsiteAction = new HashMap<String, String>();
         fillDescription(descriptionWebsiteAction, AmbientAction.WEBSITE_ACTION, "Website Action", "action_icon", "Show a website on the alarm-screen.");
+
 
         actionInformation.add(descriptionCountdownAction);
         actionInformation.add(descriptionSendMailAction);
@@ -106,6 +111,7 @@ public class ActionManager
         actionInformation.add(descriptionMusicAction);
         actionInformation.add(descriptionEZControlPlugAction);
         actionInformation.add(descriptionWebsiteAction);
+        actionInformation.add(descriptionEZControlHeatAction);
 
         return actionInformation;
     }
@@ -161,6 +167,11 @@ public class ActionManager
         {
             EZControlPlugAction ezpa = new EZControlPlugAction("new ezControl Plug Action");
             return ezpa;
+        }
+        if(actionTypeName.equals((AmbientAction.EZCONTROLHEAT_ACTION)))
+        {
+            EZControlHeatAction ezha = new EZControlHeatAction("New ezControl Radiator Action");
+            return ezha;
         }
         if(actionTypeName.equals(AmbientAction.WEBSITE_ACTION))
         {

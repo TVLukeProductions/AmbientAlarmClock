@@ -25,4 +25,6 @@
     <string name="source">Select Source</string>
     <string name="radioselect">Select Radio Station</string>
     <string name="off">Turn Off</string>
+    <string name="numberoftheheater">Number of your radiator</string>
+    <string name="turntolevel">Turn to Level</string>
 </resources>
