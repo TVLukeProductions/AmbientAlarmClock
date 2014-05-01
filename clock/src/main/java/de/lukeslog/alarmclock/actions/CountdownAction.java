@@ -23,6 +23,7 @@ public class CountdownAction extends AmbientAction
 {
 
     int durationInSeconds=3600;
+    boolean offonend=false;
     public static int priority = AmbientAction.ACTION_UI_PRIORITY_MEDIUM;
 
     public CountdownAction(String actionName, int durationInSeconds)
@@ -34,8 +35,31 @@ public class CountdownAction extends AmbientAction
     public CountdownAction(ActionConfigBundle configBundle)
     {
         super(configBundle);
-        this.durationInSeconds  = Integer.parseInt(configBundle.getString("durationInSeconds"));
+        try
+        {
+            this.durationInSeconds = Integer.parseInt(configBundle.getString("durationInSeconds"));
+            this.offonend = configBundle.getString("offonend").equals("1");
+        }
+        catch(Exception e)
+        {
+
+        }
         Log.d(TAG, "new Countdownaction from config bunlde");
+    }
+
+
+    @Override
+    protected ActionConfigBundle setConfigurationData()
+    {
+        ActionConfigBundle configBundle = new ActionConfigBundle();
+        configBundle.putString("durationInSeconds", ""+this.durationInSeconds);
+        String ox="0";
+        if(offonend)
+        {
+            ox="1";
+        }
+        configBundle.putString("offonend", ox);
+        return configBundle;
     }
 
     public void setDurationInSeconds(int seconds)
@@ -107,14 +131,6 @@ public class CountdownAction extends AmbientAction
         TableRow.LayoutParams params = new TableRow.LayoutParams(100, TableLayout.LayoutParams.WRAP_CONTENT);
         icon.setLayoutParams(params);
         return icon;
-    }
-
-    @Override
-    protected ActionConfigBundle setConfigurationData()
-    {
-        ActionConfigBundle configBundle = new ActionConfigBundle();
-        configBundle.putString("durationInSeconds", ""+this.durationInSeconds);
-        return configBundle;
     }
 
     @Override

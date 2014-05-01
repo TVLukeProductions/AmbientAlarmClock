@@ -25,6 +25,7 @@ import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
 import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarmManager;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
+import de.lukeslog.alarmclock.support.AlarmState;
 import de.lukeslog.alarmclock.support.Day;
 
 /**
@@ -425,6 +426,10 @@ public class AmbientAlarmConfigurationActivity extends Activity
                 Log.d(TAG, ""+alarm.numberOfRegisteredActions());
                 actions=alarm.numberOfRegisteredActions();
                 updateActionsList();
+            }
+            if(alarm.getStatus()== AlarmState.ALARM)
+            {
+                    AmbientAlarmManager.startAlarmActivity(alarm);
             }
             handler.removeCallbacks(this); // remove the old callback
             handler.postDelayed(this, delay); // register a new one

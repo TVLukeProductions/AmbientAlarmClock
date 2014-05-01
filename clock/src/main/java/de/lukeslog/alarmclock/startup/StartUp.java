@@ -19,7 +19,11 @@ public class StartUp  extends BroadcastReceiver
     @Override
 	public void onReceive(Context context, Intent intent) 
     {
-
+        Log.d(TAG, "STARTUPSTARTUPSTATUP");
+        Log.d(TAG, "-----------------------------------------------");
+        Log.d(TAG, "-----------------------------------------------");
+        Log.d(TAG, "-----------------------------------------------");
+        Log.d(TAG, "-----------------------------------------------");
         try
         {
            ServiceStarter.start(context);

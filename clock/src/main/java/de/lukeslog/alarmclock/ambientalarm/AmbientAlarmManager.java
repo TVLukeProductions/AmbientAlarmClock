@@ -14,6 +14,7 @@ import de.lukeslog.alarmclock.main.ClockWorkService;
 import de.lukeslog.alarmclock.main.NotificationManagement;
 import de.lukeslog.alarmclock.startup.NotificationService;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
+import de.lukeslog.alarmclock.ui.AmbientAlarmActivity;
 
 /**
  * Created by lukas on 31.03.14.
@@ -95,23 +96,43 @@ public class AmbientAlarmManager
         Log.d(TAG, "  Listsize="+registeredAlarms.size());
     }
 
-    public static void startAlarmActivity(AmbientAlarm ambientAlarm)
+    public static void startAlarmActivity(final AmbientAlarm ambientAlarm)
     {
         Log.d(TAG, "  startAlarmActivity!");
-        Context ctx = NotificationService.getContext();
+        final Context ctx = NotificationService.getContext();
         if(ctx!=null)
         {
-            Log.d(TAG, "  ctx is not null");
-            String alarmID = ambientAlarm.getAlarmID();
-            Log.d(TAG, "  alarmid is "+alarmID);
-            Intent intent = new Intent(ctx, ambientAlarm.getAlarmActivity());
-            Log.d(TAG, "  Intent created....");
-           // intent.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
-            Log.d(TAG, "  strage stuff...");
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            Log.d(TAG, "  now start stuff....");
-            intent.putExtra("ambientAlarmID", alarmID);
-            ctx.startActivity(intent);
+            new Thread(new Runnable()
+            {
+                @SuppressWarnings("unchecked")
+                public void run()
+                {
+                    Log.d(TAG, "  ctx is not null");
+                    String alarmID = ambientAlarm.getAlarmID();
+                    Log.d(TAG, "  alarmid is " + alarmID);
+                    Intent intent = new Intent(ctx, ambientAlarm.getAlarmActivity());
+                    Log.d(TAG, "  Intent created....");
+                    // intent.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+                    Log.d(TAG, "  strage stuff...");
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    Log.d(TAG, "  now start stuff....");
+                    intent.putExtra("ambientAlarmID", alarmID);
+                    ctx.startActivity(intent);
+                    try
+                    {
+                        Thread.sleep(1000);
+                    }
+                    catch (InterruptedException e)
+                    {
+                        e.printStackTrace();
+                    }
+                    if(!AmbientAlarmActivity.running)
+                    {
+                        ctx.startActivity(intent);
+                    }
+                }
+            }).start();
+
         }
         else
         {

@@ -181,7 +181,7 @@ public class AmbientAlarm implements TimingObject
 
     public void registerAction(String relativeTime, AmbientAction action)
     {
-        Log.d(TAG, "register action... "+relativeTime);
+        Log.d(TAG, "register action... "+action.getActionName()+" "+relativeTime);
         unregisterAction(action); //delete from its old timing if it exists...
         if(registeredActions.containsKey(relativeTime))
         {
@@ -393,8 +393,10 @@ public class AmbientAlarm implements TimingObject
             {
                 String actiontime = iterator.next();
                 ArrayList<AmbientAction> actions = registeredActions.get(actiontime);
+
                 for (AmbientAction action : actions)
                 {
+                    Log.d(TAG, action.getActionName());
                     if (action.getPriority() == i)
                     {
                         action.defineSettingsView(scrollView, this);

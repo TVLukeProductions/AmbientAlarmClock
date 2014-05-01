@@ -25,6 +25,7 @@ public class AmbientAlarmActivity extends Activity
 
     public static final String PREFS_NAME = AlarmClockConstants.PREFS_NAME;
     public static String TAG = AlarmClockConstants.TAG;
+    public static boolean running=false;
 
     PowerManager.WakeLock wakeLock;
     AmbientAlarmActivity alarmActivity;
@@ -70,21 +71,7 @@ public class AmbientAlarmActivity extends Activity
     @Override
     public void  onDestroy()
     {
-        try
-        {
-            if(wakeLock!=null)
-            {
-                wakeLock.release();
-            }
-            if(updater!=null)
-            {
-                updater.onPause();
-            }
-        }
-        catch(Exception e)
-        {
-
-        }
+        Log.d(TAG, "on Destroy alarm activity...");
         super.onDestroy();
     }
 
@@ -104,6 +91,22 @@ public class AmbientAlarmActivity extends Activity
 
     private void closeActivity()
     {
+        Log.d(TAG, "close activity....");
+        try
+        {
+            if(updater!=null)
+            {
+                updater.onPause();
+            }
+            if(wakeLock!=null)
+            {
+                wakeLock.release();
+            }
+        }
+        catch(Exception e)
+        {
+            Log.e(TAG, "Exception closing the Alarm Activity because of on pause stuff...");
+        }
         AmbientAlarmActivity.this.finish();
     }
 
@@ -202,6 +205,7 @@ public class AmbientAlarmActivity extends Activity
         @Override
         public void run()
         {
+            running=true;
            Log.d(TAG, "Alarm Activity is running...");
            alarm.updateAlarmUI(alarmActivity);
 
@@ -211,12 +215,14 @@ public class AmbientAlarmActivity extends Activity
 
         public void onPause()
         {
-            Log.d(TAG, "Activity update on Pause ");
+            running=false;
+            Log.d(TAG, "Alarm Activity update on Pause ");
             handler.removeCallbacks(this); // stop updating
         }
 
         public void onResume()
         {
+            running=true;
             handler.removeCallbacks(this); // remove the old callback
             handler.postDelayed(this, delay); // register a new one
         }
@@ -231,11 +237,41 @@ public class AmbientAlarmActivity extends Activity
 
     private void awakeButtonPressed()
     {
-        alarm.awakeButtonPressed();
+        try
+        {
+            if(updater!=null)
+            {
+                updater.onPause();
+            }
+            if(wakeLock!=null)
+            {
+                wakeLock.release();
+            }
+            alarm.awakeButtonPressed();
+        }
+        catch(Exception e)
+        {
+            Log.e(TAG, "Exception an pressing awake button");
+        }
     }
 
     private void snoozeButtonPressed()
     {
-        alarm.snoozeButtonPressed();
+        try
+        {
+            if(updater!=null)
+            {
+                updater.onPause();
+            }
+            if(wakeLock!=null)
+            {
+                wakeLock.release();
+            }
+            alarm.snoozeButtonPressed();
+        }
+        catch(Exception e)
+        {
+            Log.e(TAG, "Exception an pressing snooze button");
+        }
     }
 }

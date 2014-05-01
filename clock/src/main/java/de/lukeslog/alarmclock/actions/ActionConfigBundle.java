@@ -25,6 +25,7 @@ public class ActionConfigBundle
     public ActionConfigBundle(String semiColonSeparatedData)
     {
         content = new Bundle();
+        Log.i(TAG, semiColonSeparatedData);
         StringTokenizer tk = new StringTokenizer(semiColonSeparatedData, ";");
         while(tk.hasMoreTokens())
         {

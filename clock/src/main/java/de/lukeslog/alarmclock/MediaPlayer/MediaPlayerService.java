@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnPreparedListener;
@@ -25,7 +24,6 @@ import java.io.IOException;
 import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.actions.ActionManager;
 import de.lukeslog.alarmclock.actions.MusicAction;
-import de.lukeslog.alarmclock.main.ClockWorkService;
 import de.lukeslog.alarmclock.ambientService.lastfm.Scrobbler;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
 import de.lukeslog.alarmclock.support.Radiostations;
@@ -38,7 +36,7 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
     public static final String ACTION_START_MUSIC = "startmusic";
     public static final String ACTION_STOP_MUSIC = "stopmusic";
     public static final String ACTION_SWITCH_TO_RADIO = "switchtoradio";
-    public static final String ACTION_TURN_MEDIA_OFF = "turnitalloff";
+    public static final String ACTION_TURN_MEDIASERVICE_PERMNENTLY_OFF = "turnitalloff";
 
     public static String TAG = AlarmClockConstants.TAG;
 
@@ -200,6 +198,7 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
                     mp.setOnCompletionListener(this);
                     mp.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
                     mp.setOnPreparedListener(this);
+                    mp.prepareAsync();
                 } else
                 {
                     mp.setDataSource(musicpath);
@@ -371,7 +370,7 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
                 String station = Radiostations.stations.get(ma.getRadiourl());
                 turnOnRadio(station);
             }
-            if(action.equals(ACTION_TURN_MEDIA_OFF))
+            if(action.equals(ACTION_TURN_MEDIASERVICE_PERMNENTLY_OFF))
             {
                 Log.d(TAG, "turneverythingoff");
                 stopeverything();

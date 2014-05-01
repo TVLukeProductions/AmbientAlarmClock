@@ -42,7 +42,7 @@ public class AmbientAlarmTests extends InstrumentationTestCase
         }
     }
 
-    public void testingDaySettingsAfterDaysAreSet() throws Exception
+    public void testDaySettingsAfterDaysAreSet() throws Exception
     {
         AmbientAlarm a = new AmbientAlarm();
         a.setAlarmStateForDay(Day.MONDAY, true);
@@ -56,6 +56,11 @@ public class AmbientAlarmTests extends InstrumentationTestCase
         assertEquals(true, a.getActiveForDayOfTheWeek(Day.FRIDAY));
         assertEquals(false, a.getActiveForDayOfTheWeek(Day.SATURDAY));
         assertEquals(true, a.getActiveForDayOfTheWeek(Day.SUNDAY));
+    }
+
+    public void testFindNextAlarm() throws Exception
+    {
+
     }
 
 

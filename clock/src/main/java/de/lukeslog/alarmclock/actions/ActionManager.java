@@ -1,17 +1,22 @@
 package de.lukeslog.alarmclock.actions;
 
+import android.util.Log;
+
 import org.joda.time.DateTime;
 
 import java.util.HashMap;
 import java.util.ArrayList;
 
 import de.lukeslog.alarmclock.datatabse.AmbientAlarmDatabase;
+import de.lukeslog.alarmclock.support.AlarmClockConstants;
 
 /**
  * Created by lukas on 15.04.14.
  */
 public class ActionManager
 {
+
+    public static String TAG = ActionManager.class.getName();
 
     private static ArrayList<AmbientAction> actionList = new ArrayList<AmbientAction>();
 
@@ -41,6 +46,7 @@ public class ActionManager
         }
         if(className.equals(AmbientAction.MUSIC_ACTION))
         {
+            Log.d(TAG, "new music action from config bundle...");
             MusicAction ma = new MusicAction(configBundle);
             return ma;
         }

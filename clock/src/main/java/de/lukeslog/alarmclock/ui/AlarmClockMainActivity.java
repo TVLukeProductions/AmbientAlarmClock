@@ -350,6 +350,7 @@ public class AlarmClockMainActivity extends Activity
             {
                 if(alarm.getStatus()== AlarmState.ALARM)
                 {
+                    Log.d(TAG, "There is an alarm going on And I shluld do stuff... but I dont.");
                     AmbientAlarmManager.startAlarmActivity(alarm);
                 }
             }

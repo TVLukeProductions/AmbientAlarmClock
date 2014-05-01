@@ -30,7 +30,7 @@ public class MusicAction extends AmbientAction
     private String localFolder = "WakeUpSongs";
     private boolean useLocal=true;
     private boolean useDropbox=false;
-    private String dropboxFolder="";
+    private String dropboxFolder=" ";
     private boolean fadein = false;
     private String radiourl="DLF";
     private static boolean switchedToRadio =false;
