@@ -42,5 +42,11 @@
         android:layout_height="wrap_content"
         android:id="@+id/onoff"/>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Test"
+        android:id="@+id/plugtestbutton"/>
+
 
 </LinearLayout>

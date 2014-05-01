@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -49,6 +50,8 @@ public class EZControlPlugActionConfigurationFragment extends Fragment
         setPlugNumberTextView(fragment);
 
         setonoffspinner(fragment);
+
+        setTestButton(fragment);
 
         return fragment;
     }
@@ -101,8 +104,8 @@ public class EZControlPlugActionConfigurationFragment extends Fragment
     {
         final Spinner onoff = (Spinner) fragment.findViewById(R.id.onoff);
         List<String> list2 = new ArrayList<String>();
-        list2.add("On");
-        list2.add("Off");
+        list2.add("1");
+        list2.add("2");
         ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, list2);
         dataAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         onoff.setAdapter(dataAdapter2);
@@ -134,5 +137,19 @@ public class EZControlPlugActionConfigurationFragment extends Fragment
         {
             onoff.setSelection(1);
         }
+    }
+
+    public void setTestButton(View fragment)
+    {
+        Button testbutton = (Button) fragment.findViewById(R.id.plugtestbutton);
+        testbutton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                action.action(true);
+            }
+        });
+
     }
 }
