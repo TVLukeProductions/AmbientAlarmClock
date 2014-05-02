@@ -242,15 +242,23 @@ public class AmbientAlarmDatabase
     public static ArrayList<AmbientAlarm> getAllAlarmsFromDatabase()
     {
         Log.i(TAG, "get all...");
+        ArrayList<AmbientAlarm> ambientAlarms = new ArrayList<AmbientAlarm>();
+        try
+        {
+            Cursor c = queryDatabaseForAllAlarms();
 
-        Cursor c = queryDatabaseForAllAlarms();
-
-        Log.i(TAG, "cursorsize: "+c.getCount());
+            Log.i(TAG, "cursorsize: "+c.getCount());
 
 
-        ArrayList<AmbientAlarm> ambientAlarms = createAlarmListFromCursor(c);
+            ambientAlarms = createAlarmListFromCursor(c);
 
-        c.close();
+            c.close();
+        }
+        catch(Exception e)
+        {
+            Log.e(TAG, "ERROR IN GETTING ALARMS"+e.getLocalizedMessage());
+        }
+
 
         return ambientAlarms;
     }
@@ -416,8 +424,16 @@ public class AmbientAlarmDatabase
         }
         else
         {
-            database = openHelper.getWritableDatabase();
-            return queryDatabaseForAllAlarms();
+            try
+            {
+                database = openHelper.getWritableDatabase();
+                return queryDatabaseForAllAlarms();
+            }
+            catch(Exception e)
+            {
+                return null;
+            }
+
 
         }
     }

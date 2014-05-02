@@ -38,8 +38,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 14
-        versionCode 6
-        versionName "6.0b"
+        versionCode 7
+        versionName "7"
     }
 
     dependencies {
