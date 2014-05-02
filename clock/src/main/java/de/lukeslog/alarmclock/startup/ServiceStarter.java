@@ -6,6 +6,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+import de.lukeslog.alarmclock.ChromeCast.ChromeCastService;
 import de.lukeslog.alarmclock.MediaPlayer.MediaPlayerService;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarmManager;
 import de.lukeslog.alarmclock.datatabse.AmbientAlarmDatabase;
@@ -47,6 +48,7 @@ public class ServiceStarter
         classesToBoot.add(ClockWorkService.class);
         classesToBoot.add(MediaPlayerService.class);
         classesToBoot.add(NotificationService.class);
+        classesToBoot.add(ChromeCastService.class);
     }
 
     /*

@@ -65,6 +65,11 @@ public class ActionManager
             WebsiteAction wa = new WebsiteAction(configBundle);
             return wa;
         }
+        if(className.equals(AmbientAction.CHROMECAST_ACTION))
+        {
+            ChromecastAction cca = new ChromecastAction(configBundle);
+            return cca;
+        }
         return null;
     }
 
@@ -110,6 +115,8 @@ public class ActionManager
         HashMap<String, String> descriptionWebsiteAction = new HashMap<String, String>();
         fillDescription(descriptionWebsiteAction, AmbientAction.WEBSITE_ACTION, "Website Action", "action_icon", "Show a website on the alarm-screen.");
 
+       // HashMap<String, String> descriptionChromecastAction = new HashMap<String, String>();
+        //fillDescription(descriptionChromecastAction, AmbientAction.CHROMECAST_ACTION, "Chromecast Action", "action_icon", "Display pictures or video on a chromecast receiver.");
 
         actionInformation.add(descriptionCountdownAction);
         actionInformation.add(descriptionSendMailAction);
@@ -118,6 +125,7 @@ public class ActionManager
         actionInformation.add(descriptionEZControlPlugAction);
         actionInformation.add(descriptionWebsiteAction);
         actionInformation.add(descriptionEZControlHeatAction);
+      //  actionInformation.add(descriptionChromecastAction);
 
         return actionInformation;
     }
@@ -183,6 +191,11 @@ public class ActionManager
         {
             WebsiteAction wa = new WebsiteAction("New Website Action", "http://www.tagesschau.de");
             return wa;
+        }
+        if(actionTypeName.equals(AmbientAction.CHROMECAST_ACTION))
+        {
+            ChromecastAction ccax = new ChromecastAction("New Chromecast Action");
+            return ccax;
         }
         return null;
     }

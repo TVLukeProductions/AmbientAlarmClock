@@ -10,6 +10,9 @@ import android.widget.LinearLayout;
 
 import org.joda.time.DateTime;
 
+import java.util.StringTokenizer;
+
+import de.lukeslog.alarmclock.ChromeCast.ChromeCastService;
 import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.main.TimingObject;
 import de.lukeslog.alarmclock.ui.AmbientAlarmActivity;
@@ -33,7 +36,7 @@ public abstract class AmbientAction
     public static final String EZCONTROLPLUG_ACTION = EZControlPlugAction.class.toString();
     public static final String EZCONTROLHEAT_ACTION = EZControlHeatAction.class.toString();
     public static final String WEBSITE_ACTION = WebsiteAction.class.toString();
-
+    public static final String CHROMECAST_ACTION = ChromecastAction.class.toString();
 
     public static final int ACTION_UI_PRIORITY_HIGH = 1;
     public static final int ACTION_UI_PRIORITY_MEDIUM=2;
