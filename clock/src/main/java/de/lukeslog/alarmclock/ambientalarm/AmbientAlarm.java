@@ -264,7 +264,14 @@ public class AmbientAlarm implements TimingObject
             Log.d(TAG, "ALAAAAAARRM");
             if(registeredActions.containsKey("0"))
             {
-                performActions("0");
+                try
+                {
+                    performActions("0");
+                }
+                catch(Exception e)
+                {
+                    Log.e(TAG, "problem when calling perform actions"+e.getLocalizedMessage());
+                }
             }
             alert();
         }
@@ -303,9 +310,6 @@ public class AmbientAlarm implements TimingObject
     public void awakeButtonPressed()
     {
         Log.d(TAG, "awakeButton");
-        alarmState = AlarmState.WAITING;
-        resetSnoozeButtonCounter();
-        snoozealert=null;
         Set<String> keys = registeredActions.keySet();
         Iterator<String> iterator = keys.iterator();
         while (iterator.hasNext())
@@ -314,9 +318,19 @@ public class AmbientAlarm implements TimingObject
             ArrayList<AmbientAction> actions = registeredActions.get(actiontime);
             for (AmbientAction action : actions)
             {
-                action.awake();
+                try
+                {
+                    action.awake();
+                }
+                catch(Exception e )
+                {
+                    Log.e(TAG, "problem while pressing awake...");
+                }
             }
         }
+        alarmState = AlarmState.WAITING;
+        resetSnoozeButtonCounter();
+        snoozealert=null;
     }
 
     /**

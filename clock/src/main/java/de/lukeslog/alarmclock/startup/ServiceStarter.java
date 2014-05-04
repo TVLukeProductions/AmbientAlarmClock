@@ -24,7 +24,7 @@ public class ServiceStarter
     public static String TAG = AlarmClockConstants.TAG;
 
     private static ArrayList<Class> classesToBoot = new ArrayList<Class>();
-    public static Context ctx;
+    public static Context ctx=null;
 
     public static void start(Context context) throws NullPointerException
     {

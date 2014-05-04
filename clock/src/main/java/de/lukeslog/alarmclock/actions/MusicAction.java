@@ -41,6 +41,7 @@ public class MusicAction extends AmbientAction
     {
         super(actionName);
         switchedToRadio =false;
+        stopMusic();
     }
 
     public MusicAction(ActionConfigBundle configBundle)
@@ -60,6 +61,7 @@ public class MusicAction extends AmbientAction
         {
 
         }
+        stopMusic();
     }
 
     @Override

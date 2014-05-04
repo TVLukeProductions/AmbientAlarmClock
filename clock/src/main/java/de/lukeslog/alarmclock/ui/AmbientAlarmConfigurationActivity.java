@@ -429,7 +429,7 @@ public class AmbientAlarmConfigurationActivity extends Activity
             }
             if(alarm.getStatus()== AlarmState.ALARM)
             {
-                    AmbientAlarmManager.startAlarmActivity(alarm);
+                AmbientAlarmManager.startAlarmActivity(alarm);
             }
             handler.removeCallbacks(this); // remove the old callback
             handler.postDelayed(this, delay); // register a new one

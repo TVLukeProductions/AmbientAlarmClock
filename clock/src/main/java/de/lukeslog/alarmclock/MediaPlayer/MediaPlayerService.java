@@ -50,6 +50,8 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
     private boolean uselocalchecked;
     private boolean usedropboxchecked;
 
+    String actionID ="";
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId)
     {
@@ -353,19 +355,24 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
             if (action.equals(ACTION_START_MUSIC))
             {
                 Log.d(TAG, "I GOT THE START MUSIC THING!");
-                String actionID = intent.getStringExtra("AmbientActionID");
+                actionID = intent.getStringExtra("AmbientActionID");
                 MusicAction ma = (MusicAction) ActionManager.getActionByID(actionID);
                 play(ma);
             }
             if(action.equals(ACTION_STOP_MUSIC))
             {
                 Log.d(TAG, "STOooooooooP");
-                stop();
+                String newactionID = intent.getStringExtra("AmbientActionID");
+                if(newactionID.equals(actionID))
+                {
+                    stop();
+                    actionID="";
+                }
             }
             if(action.equals(ACTION_SWITCH_TO_RADIO))
             {
                 Log.d(TAG, "switchtoradio....");
-                String actionID = intent.getStringExtra("AmbientActionID");
+                actionID = intent.getStringExtra("AmbientActionID");
                 MusicAction ma = (MusicAction) ActionManager.getActionByID(actionID);
                 String station = Radiostations.stations.get(ma.getRadiourl());
                 turnOnRadio(station);
