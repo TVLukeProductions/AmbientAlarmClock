@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -16,6 +15,7 @@ import android.widget.TextView;
 import org.joda.time.DateTime;
 
 import de.lukeslog.alarmclock.MediaPlayer.MediaPlayerService;
+import de.lukeslog.alarmclock.support.Logger;
 import de.lukeslog.alarmclock.ui.AmbientAlarmActivity;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
 import de.lukeslog.alarmclock.R;
@@ -41,12 +41,12 @@ public class MusicAction extends AmbientAction
     {
         super(actionName);
         switchedToRadio =false;
-        stopMusic();
     }
 
     public MusicAction(ActionConfigBundle configBundle)
     {
         super(configBundle);
+        Logger.d(TAG, "Music Action. Here come the bundle specific stuff");
         try
         {
             localFolder = configBundle.getString("localFolder");
@@ -61,7 +61,7 @@ public class MusicAction extends AmbientAction
         {
 
         }
-        stopMusic();
+        Logger.d(TAG, "Music Action All Good So far");
     }
 
     @Override
@@ -126,12 +126,13 @@ public class MusicAction extends AmbientAction
     {
         if(now.getSecondOfMinute()==0 && now.getMinuteOfHour()%10==0)
         {
+            Logger.d(TAG, "MUSIC ACTION!!!!!! if wifi will go for sync...");
             ConnectivityManager connManager = (ConnectivityManager) ClockWorkService.getClockworkContext().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
             if (mWifi.isConnected())
             {
-                DropBox.syncFiles(dropboxFolder);
+                DropBox.syncFiles(dropboxFolder, actionID, "Music");
             }
         }
     }
@@ -212,7 +213,7 @@ public class MusicAction extends AmbientAction
 
     private void playmusic()
     {
-        Log.d(TAG, "play! says the music Action");
+        Logger.d(TAG, "play! says the music Action");
         Intent startmusic = new Intent();
         startmusic.setAction(MediaPlayerService.ACTION_START_MUSIC);
         startmusic.putExtra("AmbientActionID", getActionID());
@@ -221,6 +222,7 @@ public class MusicAction extends AmbientAction
 
     private void stopMusic()
     {
+        Logger.d(TAG, "Stop Music... Not Sure Why.");
         Intent stopmusic = new Intent();
         stopmusic.setAction(MediaPlayerService.ACTION_STOP_MUSIC);
         stopmusic.putExtra("AmbientActionID", getActionID());

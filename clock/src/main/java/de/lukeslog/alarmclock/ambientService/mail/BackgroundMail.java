@@ -15,10 +15,11 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress; 
 import javax.mail.internet.MimeBodyPart; 
 import javax.mail.internet.MimeMessage; 
-import javax.mail.internet.MimeMultipart; 
+import javax.mail.internet.MimeMultipart;
 
-import android.util.Log;
- 
+import de.lukeslog.alarmclock.support.Logger;
+
+
 //completly coppied this from  http://www.jondev.net/articles/Sending_Emails_without_User_Intervention_%28no_Intents%29_in_Android
 
 public class BackgroundMail extends javax.mail.Authenticator 
@@ -77,74 +78,74 @@ public class BackgroundMail extends javax.mail.Authenticator
   { 
     this(); 
  
-    Log.i(TAG, "new mail created for "+user);
+    Logger.i(TAG, "new mail created for " + user);
     _user = user; 
     _pass = pass; 
   } 
  
   public boolean send() throws Exception
   { 
-	  Log.i(TAG, "send called");
+	  Logger.i(TAG, "send called");
     Properties props = _setProperties(); 
     if(_user.equals("")) 
     { 
-    	Log.i(TAG, "fail 1");
+    	Logger.i(TAG, "fail 1");
     }
     if(_pass.equals("")) 
     { 
-    	Log.i(TAG, "fail 2");
+    	Logger.i(TAG, "fail 2");
     }
     if(_to.length <= 0) 
     { 
-    	Log.i(TAG, "fail 3");
+    	Logger.i(TAG, "fail 3");
     }
     if(_from.equals("")) 
     { 
-    	Log.i(TAG, "fail 4");
+    	Logger.i(TAG, "fail 4");
     }
     if(_subject.equals("")) 
     { 
-    	Log.i(TAG, "fail 5");
+    	Logger.i(TAG, "fail 5");
     }
     if(_body.equals("")) 
     { 
-    	Log.i(TAG, "fail 6");
+    	Logger.i(TAG, "fail 6");
     }
     if(!_user.equals("") && !_pass.equals("") && _to.length > 0 && !_from.equals("") && !_subject.equals("") && !_body.equals("")) 
     { 
-    	Log.i(TAG, "ok try");
+    	Logger.i(TAG, "ok try");
       Session session = Session.getInstance(props, this); 
-      Log.i(TAG, "2");
+      Logger.i(TAG, "2");
       MimeMessage msg = new MimeMessage(session); 
-      Log.i(TAG, "3");
+      Logger.i(TAG, "3");
       msg.setFrom(new InternetAddress(_from)); 
-      Log.i(TAG, "4");
+      Logger.i(TAG, "4");
       InternetAddress[] addressTo = new InternetAddress[_to.length]; 
       for (int i = 0; i < _to.length; i++) 
       { 
         addressTo[i] = new InternetAddress(_to[i]); 
       } 
       msg.setRecipients(MimeMessage.RecipientType.TO, addressTo); 
-      Log.i(TAG, "5");
+      Logger.i(TAG, "5");
       msg.setSubject(_subject); 
       msg.setSentDate(new Date()); 
-      Log.i(TAG, "6");
+      Logger.i(TAG, "6");
       // setup message body 
       BodyPart messageBodyPart = new MimeBodyPart(); 
       messageBodyPart.setText(_body); 
       _multipart.addBodyPart(messageBodyPart); 
-      Log.i(TAG, "7");
+      Logger.i(TAG, "7");
       // Put parts in message 
       msg.setContent(_multipart); 
-      Log.i(TAG, "8");
+      Logger.i(TAG, "8");
       // send email 
       Transport.send(msg); 
-      Log.i(TAG, "9");
+      Logger.i(TAG, "9");
       return true; 
     } 
     else 
     { 
-    	Log.i(TAG, "0b");
+    	Logger.i(TAG, "0b");
       return false; 
     } 
   } 

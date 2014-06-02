@@ -8,7 +8,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -27,6 +26,7 @@ import java.util.Set;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarmManager;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
+import de.lukeslog.alarmclock.support.Logger;
 import de.lukeslog.alarmclock.support.UISupport;
 import de.lukeslog.alarmclock.R;
 
@@ -54,7 +54,7 @@ public class ActionActivity extends Activity
         String actionID = getIntent().getStringExtra("ambientActionID");
         action = ActionManager.getActionByID(actionID);
 
-        Log.d(TAG, "ACTIONACTIVITE_>_>_>_>_>_>_ "+action.getActionName());
+        Logger.d(TAG, "ACTIONACTIVITE_>_>_>_>_>_>_ " + action.getActionName());
         setAlarmHeader();
 
         setJoinSnoozingCheckBox();
@@ -150,7 +150,7 @@ public class ActionActivity extends Activity
     {
 
         String timing = getTimingValue();
-        Log.d(TAG, "TIMING VALUE-------------->"+timing);
+        Logger.d(TAG, "TIMING VALUE-------------->"+timing);
         timing = timing.replace("-", "");
         timing = timing.replace("+", "");
         timing = timing.replace(" ", "");
@@ -244,15 +244,15 @@ public class ActionActivity extends Activity
 
     private void reregisteraction()
     {
-        Log.d(TAG, ">>>>> reregisteraction");
+        Logger.d(TAG, ">>>>> reregisteraction");
         Spinner beforeafter = (Spinner) findViewById(R.id.beforeafter);
         Spinner timeunits = (Spinner) findViewById(R.id.timeunits);
         TextView timingText = (TextView) findViewById(R.id.timingtext);
         try
         {
-            Log.d(TAG, ">>>>> TRY to get Timing");
+            Logger.d(TAG, ">>>>> TRY to get Timing");
             int timing = Integer.parseInt(timingText.getEditableText().toString());
-            Log.d(TAG, "timing="+timing);
+            Logger.d(TAG, "timing="+timing);
             if (timeunits.getSelectedItemPosition() == 1)
             {
                 timing = timing*60;
@@ -261,19 +261,20 @@ public class ActionActivity extends Activity
             {
                 timing=timing*60*60;
             }
-            Log.d(TAG, "reclaculated timing="+timing);
+            Logger.d(TAG, "reclaculated timing="+timing);
             String s = ""+timing;
             if(timing!=0)
             {
                 if (beforeafter.getSelectedItemPosition() == 0)
                 {
                     s = "-" + s;
-                } else
+                }
+                else
                 {
                     s = "+" + s;
                 }
             }
-            Log.d(TAG, "s = "+s);
+            Logger.d(TAG, "s = "+s);
             alarm.registerAction(s, action);
         }
         catch (Exception e)

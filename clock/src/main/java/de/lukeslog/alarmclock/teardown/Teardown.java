@@ -3,7 +3,7 @@ package de.lukeslog.alarmclock.teardown;
 import android.content.Context;
 import android.content.Intent;
 
-import de.lukeslog.alarmclock.ChromeCast.ChromeCastService;
+//import de.lukeslog.alarmclock.ChromeCast.ChromeCastService;
 import de.lukeslog.alarmclock.MediaPlayer.MediaPlayerService;
 import de.lukeslog.alarmclock.main.ClockWorkService;
 import de.lukeslog.alarmclock.startup.NotificationService;
@@ -22,7 +22,7 @@ public class Teardown
         ClockWorkService.getClockworkContext().sendBroadcast(stopmusic);
         //STOP NOTIFICATION
         NotificationService.stop();
-        ChromeCastService.stop();
+       // ChromeCastService.stop();
         //STOP CLOCKWORK
         ClockWorkService.stopService();
     }

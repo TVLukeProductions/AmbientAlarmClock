@@ -6,5 +6,5 @@ package de.lukeslog.alarmclock.datatabse;
 public class DatabaseConstants
 {
     public static String DATABASE_NAME = "AmbientAlarmDatabase";
-    public static final int DATABASE_VERSION=12;
+    public static final int DATABASE_VERSION=13;
 }

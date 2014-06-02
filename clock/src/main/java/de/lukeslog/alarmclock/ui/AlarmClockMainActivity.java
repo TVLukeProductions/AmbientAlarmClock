@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -33,6 +32,7 @@ import de.lukeslog.alarmclock.startup.ServiceStarter;
 import de.lukeslog.alarmclock.support.AlarmState;
 import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
+import de.lukeslog.alarmclock.support.Logger;
 import de.lukeslog.alarmclock.teardown.Teardown;
 
 /**
@@ -250,7 +250,7 @@ public class AlarmClockMainActivity extends Activity
 
     private void fillListOfAmbientAlarms()
     {
-
+        Logger.d(TAG, "fill list in main activity");
         ambientalarms = AmbientAlarmManager.getListOfAmbientAlarms();
         ListView listViewWithAlarms = (ListView) findViewById(R.id.listOfAlarms);
         adapter = new AlarmListAdapter(ctx, ambientalarms);
@@ -262,7 +262,7 @@ public class AlarmClockMainActivity extends Activity
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id)
             {
-                Log.d(TAG, "longclock");
+                Logger.d(TAG, "longclock");
                 if (!ambientalarms.get(position).isCurrentlyLocked())
                 {
                     AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
@@ -272,7 +272,7 @@ public class AlarmClockMainActivity extends Activity
                     {
                         public void onClick(DialogInterface dialog, int id)
                         {
-                            Log.d(TAG, "delete " + position);
+                            Logger.d(TAG, "delete " + position);
                             AmbientAlarmManager.deleteAmbientAlarm(position);
                             adapter.notifyDataSetChanged();
                         }
@@ -284,7 +284,7 @@ public class AlarmClockMainActivity extends Activity
                     // User cancelled the dialog
                     //    }
                     //});
-                    Log.d(TAG, "was geht?");
+                    Logger.d(TAG, "was geht?");
                     AlertDialog dialog = builder.create();
                     dialog.show();
                     return true;
@@ -299,7 +299,7 @@ public class AlarmClockMainActivity extends Activity
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int posi, long id)
             {
-                Log.d(TAG, "click");
+                Logger.d(TAG, "click");
                 if(!ambientalarms.get(posi).isCurrentlyLocked())
                 {
                     Intent i = new Intent(ctx, AmbientAlarmConfigurationActivity.class);
@@ -326,13 +326,13 @@ public class AlarmClockMainActivity extends Activity
                 }
                 catch (IllegalStateException e)
                 {
-                    Log.i(TAG, "Error authenticating", e);
+                    Logger.i(TAG, "Error authenticating"+ e);
                 }
             }
         }
         catch(Exception e)
         {
-            Log.d(TAG, "probably a null pointer exception from the dropbox...");
+            Logger.d(TAG, "probably a null pointer exception from the dropbox...");
         }
     }
 
@@ -344,13 +344,17 @@ public class AlarmClockMainActivity extends Activity
         @Override
         public void run()
         {
-            //Log.d(TAG, "run");
+            Logger.d(TAG, "run");
             adapter.notifyDataSetChanged();
+            if(ambientalarms==null)
+            {
+                fillListOfAmbientAlarms();
+            }
             for(AmbientAlarm alarm : ambientalarms)
             {
                 if(alarm.getStatus()== AlarmState.ALARM)
                 {
-                    Log.d(TAG, "There is an alarm going on And I shluld do stuff... but I dont.");
+                    Logger.d(TAG, "There is an alarm going on And I shluld do stuff... but I dont.");
                     AmbientAlarmManager.startAlarmActivity(alarm);
                 }
             }
@@ -360,7 +364,7 @@ public class AlarmClockMainActivity extends Activity
 
         public void onPause()
         {
-            Log.d(TAG, "Activity update on Pause ");
+            Logger.d(TAG, "Activity update on Pause ");
             handler.removeCallbacks(this); // stop the map from updating
         }
 

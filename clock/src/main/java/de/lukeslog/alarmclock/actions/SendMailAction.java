@@ -1,6 +1,5 @@
 package de.lukeslog.alarmclock.actions;
 
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
@@ -9,6 +8,7 @@ import android.widget.TextView;
 
 import org.joda.time.DateTime;
 
+import de.lukeslog.alarmclock.support.Logger;
 import de.lukeslog.alarmclock.ui.AmbientAlarmActivity;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
 import de.lukeslog.alarmclock.ambientService.mail.Mail;
@@ -73,7 +73,7 @@ public class SendMailAction extends AmbientAction
     @Override
     public void action(boolean isFirstAction)
     {
-        Log.d(TAG, "mail action");
+        Logger.d(TAG, "mail action");
         Mail.sendMail(sendTo, subject, text);
     }
 

@@ -1,7 +1,5 @@
 package de.lukeslog.alarmclock.actions;
 
-import android.util.Log;
-
 import org.joda.time.DateTime;
 
 import java.util.HashMap;
@@ -9,6 +7,7 @@ import java.util.ArrayList;
 
 import de.lukeslog.alarmclock.datatabse.AmbientAlarmDatabase;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
+import de.lukeslog.alarmclock.support.Logger;
 
 /**
  * Created by lukas on 15.04.14.
@@ -46,7 +45,7 @@ public class ActionManager
         }
         if(className.equals(AmbientAction.MUSIC_ACTION))
         {
-            Log.d(TAG, "new music action from config bundle...");
+            Logger.d(TAG, "new music action from config bundle...");
             MusicAction ma = new MusicAction(configBundle);
             return ma;
         }
@@ -65,11 +64,11 @@ public class ActionManager
             WebsiteAction wa = new WebsiteAction(configBundle);
             return wa;
         }
-        if(className.equals(AmbientAction.CHROMECAST_ACTION))
-        {
-            ChromecastAction cca = new ChromecastAction(configBundle);
-            return cca;
-        }
+        //if(className.equals(AmbientAction.CHROMECAST_ACTION))
+        //{
+        //    ChromecastAction cca = new ChromecastAction(configBundle);
+        //    return cca;
+        //}
         return null;
     }
 
@@ -83,6 +82,7 @@ public class ActionManager
 
     public static void addNewAction(AmbientAction ambientAction)
     {
+        Logger.d(TAG, "add new action in ActionManager");
         actionList.add(ambientAction);
     }
 
@@ -192,11 +192,11 @@ public class ActionManager
             WebsiteAction wa = new WebsiteAction("New Website Action", "http://www.tagesschau.de");
             return wa;
         }
-        if(actionTypeName.equals(AmbientAction.CHROMECAST_ACTION))
-        {
-            ChromecastAction ccax = new ChromecastAction("New Chromecast Action");
-            return ccax;
-        }
+        //if(actionTypeName.equals(AmbientAction.CHROMECAST_ACTION))
+        //{
+        //    ChromecastAction ccax = new ChromecastAction("New Chromecast Action");
+        //    return ccax;
+        //}
         return null;
     }
 }

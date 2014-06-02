@@ -13,19 +13,19 @@ import de.lukeslog.alarmclock.main.NotificationManagement;
  */
 public class NotificationService extends Service
 {
-    private static NotificationService ctx;
+    private static NotificationService ctxs;
 
 
     private static void startPermanentNotification()
     {
-        NotificationManagement.setAlarmClockIcon(ctx);
+        NotificationManagement.setAlarmClockIcon(ctxs);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId)
     {
         super.onStartCommand(intent, flags, startId);
-        ctx=this;
+        ctxs=this;
         startPermanentNotification();
         return START_STICKY;
     }
@@ -46,7 +46,7 @@ public class NotificationService extends Service
 
     private void stopPermanentNotification()
     {
-        NotificationManagement.stopAlarmClockIcon(ctx);
+        NotificationManagement.stopAlarmClockIcon(ctxs);
     }
 
     @Override
@@ -57,9 +57,9 @@ public class NotificationService extends Service
 
     public static void stop()
     {
-        if(ctx!=null)
+        if(ctxs!=null)
         {
-            ctx.stopEverything();
+            ctxs.stopEverything();
         }
     }
 
@@ -69,11 +69,11 @@ public class NotificationService extends Service
         stopSelf();
     }
 
-    public static NotificationService getContext()
+    public static NotificationService getNotificationContext()
     {
-        if(ctx!=null)
+        if(ctxs!=null)
         {
-            return ctx;
+            return ctxs;
         }
         return null;
     }

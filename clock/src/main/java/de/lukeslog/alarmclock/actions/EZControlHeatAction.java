@@ -1,6 +1,5 @@
 package de.lukeslog.alarmclock.actions;
 
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
@@ -16,6 +15,7 @@ import java.net.URLConnection;
 
 import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
+import de.lukeslog.alarmclock.support.Logger;
 import de.lukeslog.alarmclock.ui.AmbientAlarmActivity;
 
 /**
@@ -141,11 +141,11 @@ public class EZControlHeatAction extends AmbientAction
                     URL oracle = new URL("http://"+ezControlIP+"/control?cmd=set_state_actuator&number="+heaternumber+"&function="+level+"&page=control.html");
                     URLConnection yc = oracle.openConnection();
                     BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
-                    Log.d(TAG, "command->heat");
+                    Logger.d(TAG, "command->heat");
                 }
                 catch(Exception e)
                 {
-                    Log.e(TAG, "there was an error when setting the heat");
+                    Logger.e(TAG, "there was an error when setting the heat");
                 }
             }
         }).start();

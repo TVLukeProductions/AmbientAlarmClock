@@ -2,17 +2,17 @@ package de.lukeslog.alarmclock.startup;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import java.util.ArrayList;
 
-import de.lukeslog.alarmclock.ChromeCast.ChromeCastService;
+//import de.lukeslog.alarmclock.ChromeCast.ChromeCastService;
 import de.lukeslog.alarmclock.MediaPlayer.MediaPlayerService;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarmManager;
 import de.lukeslog.alarmclock.datatabse.AmbientAlarmDatabase;
 import de.lukeslog.alarmclock.ambientService.dropbox.DropBox;
 import de.lukeslog.alarmclock.main.ClockWorkService;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
+import de.lukeslog.alarmclock.support.Logger;
 import de.lukeslog.alarmclock.support.Radiostations;
 
 /**
@@ -48,7 +48,7 @@ public class ServiceStarter
         classesToBoot.add(ClockWorkService.class);
         classesToBoot.add(MediaPlayerService.class);
         classesToBoot.add(NotificationService.class);
-        classesToBoot.add(ChromeCastService.class);
+        //classesToBoot.add(ChromeCastService.class);
     }
 
     /*
@@ -72,7 +72,7 @@ public class ServiceStarter
         catch(Exception e)
         {
             //Error Handling
-            Log.e(TAG, "Error on Autostart");
+            Logger.e(TAG, "Error on Autostart");
         }
     }
 }

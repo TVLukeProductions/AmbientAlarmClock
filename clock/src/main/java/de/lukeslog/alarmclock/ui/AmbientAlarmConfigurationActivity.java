@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -27,6 +26,7 @@ import de.lukeslog.alarmclock.ambientalarm.AmbientAlarmManager;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
 import de.lukeslog.alarmclock.support.AlarmState;
 import de.lukeslog.alarmclock.support.Day;
+import de.lukeslog.alarmclock.support.Logger;
 
 /**
  * Created by lukas on 03.04.14.
@@ -52,10 +52,10 @@ public class AmbientAlarmConfigurationActivity extends Activity
 
         ctx = this;
         alarmID = getIntent().getStringExtra("ambientAlarmID");
-        Log.d(TAG, "alarmID="+alarmID);
+        Logger.d(TAG, "alarmID=" + alarmID);
         if(alarmID.equals(""))
         {
-            Log.d(TAG, "create new alarm");
+            Logger.d(TAG, "create new alarm");
             DateTime alarmtime = new DateTime();
             alarm = new AmbientAlarm();
             alarm.setAlarmTime(alarmtime.minusMinutes(1));
@@ -72,10 +72,10 @@ public class AmbientAlarmConfigurationActivity extends Activity
         }
         else
         {
-            Log.d(TAG, "get Alarm from the Alarm manager");
-            Log.d(TAG, "alarm!=null => "+ (alarm!=null));
+            Logger.d(TAG, "get Alarm from the Alarm manager");
+            Logger.d(TAG, "alarm!=null => "+ (alarm!=null));
             alarm = AmbientAlarmManager.getAlarmById(alarmID);
-            Log.d(TAG, "alarm!=null => "+ (alarm!=null));
+            Logger.d(TAG, "alarm!=null => "+ (alarm!=null));
         }
 
         if(alarm.isCurrentlyLocked())
@@ -376,7 +376,7 @@ public class AmbientAlarmConfigurationActivity extends Activity
                 DateTime alarmDateTime = new DateTime();
                 alarmDateTime = alarmDateTime.withHourOfDay(i);
                 alarmDateTime = alarmDateTime.withMinuteOfHour(i2);
-                Log.d(TAG, "set this new alarm to "+alarmDateTime);
+                Logger.d(TAG, "set this new alarm to "+alarmDateTime);
                 alarm.setAlarmTime(alarmDateTime);
             }
         });
@@ -385,8 +385,8 @@ public class AmbientAlarmConfigurationActivity extends Activity
     private void configureUIalarmSwritch()
     {
         Switch ambientalarmswitch = (Switch) findViewById(R.id.ambientalarmswitch);
-        Log.d(TAG, "alarmswitch!=null => "+(ambientalarmswitch!=null));
-        Log.d(TAG, "alarm !=null => "+(alarm!=null));
+        Logger.d(TAG, "alarmswitch!=null => "+(ambientalarmswitch!=null));
+        Logger.d(TAG, "alarm !=null => "+(alarm!=null));
         ambientalarmswitch.setChecked(alarm.isActive());
         ambientalarmswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
@@ -400,7 +400,7 @@ public class AmbientAlarmConfigurationActivity extends Activity
 
     private void fillinActions(LinearLayout scrollView)
     {
-        Log.d(TAG, "Fill in Actions");
+        Logger.d(TAG, "Fill in Actions");
         alarm.fillInActionView(scrollView);
     }
 
@@ -422,8 +422,8 @@ public class AmbientAlarmConfigurationActivity extends Activity
             //if the number of registered actions has changed, redraw the list of actions
             if(actions!=alarm.numberOfRegisteredActions())
             {
-                Log.d(TAG, ""+actions);
-                Log.d(TAG, ""+alarm.numberOfRegisteredActions());
+                Logger.d(TAG, ""+actions);
+                Logger.d(TAG, ""+alarm.numberOfRegisteredActions());
                 actions=alarm.numberOfRegisteredActions();
                 updateActionsList();
             }
@@ -437,7 +437,7 @@ public class AmbientAlarmConfigurationActivity extends Activity
 
         public void onPause()
         {
-            Log.d(TAG, "Activity update on Pause ");
+            Logger.d(TAG, "Activity update on Pause ");
             handler.removeCallbacks(this); // stop the map from updating
         }
 
@@ -451,17 +451,17 @@ public class AmbientAlarmConfigurationActivity extends Activity
 
     private void updateActionsList()
     {
-        Log.d(TAG, ""+alarm.numberOfRegisteredActions());
+        Logger.d(TAG, ""+alarm.numberOfRegisteredActions());
         fillinActions((LinearLayout) findViewById(R.id.actionlist));
         TextView x = new TextView(ctx);
         LinearLayout theView = (LinearLayout) findViewById(R.id.actionlist);
         if(alarm.numberOfRegisteredActions()==0)
         {
-            Log.d(TAG, "->add");
+            Logger.d(TAG, "->add");
             x.setText("You have not added any actions. This alarm will not do anything.");
             x.setBackgroundColor(Color.RED);
         }
         theView.addView(x);
-        Log.d(TAG, "xxx");
+        Logger.d(TAG, "xxx");
     }
 }

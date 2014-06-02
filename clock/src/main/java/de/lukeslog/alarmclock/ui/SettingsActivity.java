@@ -3,6 +3,7 @@ package de.lukeslog.alarmclock.ui;
 import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.ambientService.dropbox.DropBox;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
+import de.lukeslog.alarmclock.support.Logger;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -14,7 +15,6 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -169,7 +169,7 @@ public class SettingsActivity extends Activity implements OnItemSelectedListener
 			{
 			    if(account.type.equalsIgnoreCase("com.google"))
 			    {
-			    	Log.d(TAG, account.name);
+			    	Logger.d(TAG, account.name);
 			        String gmail = account.name;
 		        	Editor edit = settings.edit();
 		        	edit.putString("gmailacc", gmail);
@@ -182,7 +182,7 @@ public class SettingsActivity extends Activity implements OnItemSelectedListener
 	   @Override
 	    public void onActivityResult(int requestCode, int resultCode, Intent data) 
 	    {
-	    	Log.d("clock", "activity result");
+	    	Logger.d("clock", "activity result");
 	        if (requestCode == REQUEST_LINK_TO_DBX) 
 	        {
 	            if (resultCode == Activity.RESULT_OK) 
@@ -191,7 +191,7 @@ public class SettingsActivity extends Activity implements OnItemSelectedListener
 	            } 
 	            else 
 	            {
-	                Log.d("clock", "Link to Dropbox failed or was cancelled.");
+	                Logger.d("clock", "Link to Dropbox failed or was cancelled.");
 	            }
 	        } else 
 	        {
@@ -202,13 +202,13 @@ public class SettingsActivity extends Activity implements OnItemSelectedListener
 	@Override
 	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,long arg3) 
 	{
-		Log.d("clock", "selected");
+		Logger.d("clock", "selected");
 		
 	}
 
 	@Override
 	public void onNothingSelected(AdapterView<?> arg0) {
 		// TODO Auto-generated method stub
-		Log.d("clock", "nothing selected");
+		Logger.d("clock", "nothing selected");
 	}
 }

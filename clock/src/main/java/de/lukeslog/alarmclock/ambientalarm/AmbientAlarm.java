@@ -1,6 +1,5 @@
 package de.lukeslog.alarmclock.ambientalarm;
 
-import android.util.Log;
 import android.widget.LinearLayout;
 
 import org.joda.time.DateTime;
@@ -12,7 +11,8 @@ import java.util.Iterator;
 import java.util.Set;
 
 import de.lukeslog.alarmclock.actions.AmbientAction;
-import de.lukeslog.alarmclock.main.TimingObject;
+import de.lukeslog.alarmclock.main.Timable;
+import de.lukeslog.alarmclock.support.Logger;
 import de.lukeslog.alarmclock.ui.AmbientAlarmActivity;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
 import de.lukeslog.alarmclock.support.AlarmState;
@@ -26,7 +26,7 @@ import de.lukeslog.alarmclock.support.AlarmState;
  * Every alert has its own settings, which contains information about the services to be released
  * depending on the alert time.
  */
-public class AmbientAlarm implements TimingObject
+public class AmbientAlarm implements Timable
 {
     private static String TAG = AlarmClockConstants.TAG;
 
@@ -56,7 +56,7 @@ public class AmbientAlarm implements TimingObject
         DateTime now = new DateTime();
         long milis = now.getMillis();
         this.alarmID = "ambientalarm"+milis;
-        Log.d(TAG, "ALARM ID="+alarmID);
+        Logger.d(TAG, "ALARM ID=" + alarmID);
     }
 
     public AmbientAlarm(String alarmID)
@@ -131,12 +131,12 @@ public class AmbientAlarm implements TimingObject
         DateTime now = new DateTime();
         if(Seconds.secondsBetween(alarmTime, now).getSeconds()>0)
         {
-            Log.d(TAG, "alarm is in the past");
-            Log.d(TAG, this.alarmTime.toString());
+            Logger.d(TAG, "alarm is in the past");
+            Logger.d(TAG, this.alarmTime.toString());
         }
         else
         {
-            Log.d(TAG, "alarm is in the future... the future charlie");
+            Logger.d(TAG, "alarm is in the future... the future charlie");
             this.alarmTime = this.alarmTime.minusDays(1);
         }
         setToNextAlarmTime();
@@ -175,24 +175,24 @@ public class AmbientAlarm implements TimingObject
     private void setSnoozeAlertTime()
     {
         DateTime now = new DateTime();
-        Log.d(TAG, "alarmtime + "+(secondsSinceAlertTime(now)+snoozeTimeInSeconds));
+        Logger.d(TAG, "alarmtime + "+(secondsSinceAlertTime(now)+snoozeTimeInSeconds));
         snoozealert = lastAlarmTime.plusSeconds(secondsSinceAlertTime(now)+snoozeTimeInSeconds);
     }
 
     public void registerAction(String relativeTime, AmbientAction action)
     {
-        Log.d(TAG, "register action... "+action.getActionName()+" "+relativeTime);
+        Logger.d(TAG, "register action... "+action.getActionName()+" "+relativeTime);
         unregisterAction(action); //delete from its old timing if it exists...
         if(registeredActions.containsKey(relativeTime))
         {
-            Log.d(TAG, "old relative time...");
+            Logger.d(TAG, "old relative time...");
             ArrayList<AmbientAction> actions = registeredActions.get(relativeTime);
             actions.add(action);
             registeredActions.put(relativeTime, actions);
         }
         else
         {
-            Log.d(TAG, "new relative time");
+            Logger.d(TAG, "new relative time");
             ArrayList<AmbientAction> actions = new ArrayList<AmbientAction>();
             actions.add(action);
             registeredActions.put(relativeTime, actions);
@@ -201,14 +201,14 @@ public class AmbientAlarm implements TimingObject
     //activate or deactivate the alarm on a day
     public void setAlarmStateForDay(int day, boolean state) throws ArrayIndexOutOfBoundsException
     {
-        Log.d(TAG, "update AlarmforDay "+day);
+        Logger.d(TAG, "update AlarmforDay "+day);
         weekdays[day]=state;
         setAlarmTime(alarmTime);
     }
 
     public void snoozeButtonPressed()
     {
-        Log.d(TAG, "snoozeButton");
+        Logger.d(TAG, "snoozeButton");
         alarmState=AlarmState.SNOOZING;
         Set<String> keys = registeredActions.keySet();
         Iterator<String> iterator = keys.iterator();
@@ -227,8 +227,10 @@ public class AmbientAlarm implements TimingObject
 
     public void notifyOfCurrentTime(DateTime currentTime)
     {
-        //Log.d(TAG, "Seconds since last Alert: "+secondsSinceAlertTime(currentTime));
-        //Log.d(TAG, "Seconds to next Alert: "+secondsToAlertTime(currentTime));
+        Logger.i(TAG, "Alarm "+alarmID+" notified of the time.");
+        Logger.i(TAG, "State of  "+alarmID+" = "+alarmState);
+        Logger.d(TAG, "Seconds since last Alert: "+secondsSinceAlertTime(currentTime));
+        Logger.d(TAG, "Seconds to next Alert: "+secondsToAlertTime(currentTime));
         performActionIfActionIsRequired(currentTime);
         if(secondsToAlertTime(currentTime)<=0)
         {
@@ -236,7 +238,6 @@ public class AmbientAlarm implements TimingObject
         }
         //Log.d(TAG, "" + alarmTime.getDayOfWeek());
         //Log.d(TAG, alarmTime.toString());
-        //TODO: Check if any Service has registered to be started on that distance.
     }
 
     public HashMap<String, ArrayList<AmbientAction>> getRegisteredActions()
@@ -249,19 +250,19 @@ public class AmbientAlarm implements TimingObject
         //an action has been registered to be performed x seconds before alert
         if(registeredActions.containsKey("-"+secondsToAlertTime(currentTime)))
         {
-            Log.d(TAG, "jap1");
+            Logger.d(TAG, "jap1");
             performActions("-" + secondsToAlertTime(currentTime));
         }
         //an action has been registered to be performed x seconds after
         if(registeredActions.containsKey("+"+secondsSinceAlertTime(currentTime)))
         {
-            Log.d(TAG, "jap2");
+            Logger.d(TAG, "jap2");
             performActions("+"+secondsSinceAlertTime(currentTime));
         }
         //action registered on alert
         if(secondsSinceAlertTime(currentTime)==0 || secondsToSnoozeAlertTime(currentTime)==0)
         {
-            Log.d(TAG, "ALAAAAAARRM");
+            Logger.d(TAG, "ALAAAAAARRM");
             if(registeredActions.containsKey("0"))
             {
                 try
@@ -270,7 +271,7 @@ public class AmbientAlarm implements TimingObject
                 }
                 catch(Exception e)
                 {
-                    Log.e(TAG, "problem when calling perform actions"+e.getLocalizedMessage());
+                    Logger.e(TAG, "problem when calling perform actions"+e.getLocalizedMessage());
                 }
             }
             alert();
@@ -279,22 +280,22 @@ public class AmbientAlarm implements TimingObject
 
     private void performActions(String s)
     {
-        Log.d(TAG, "performactions..."+s);
+        Logger.d(TAG, "performactions..."+s);
         ArrayList<AmbientAction> actions = registeredActions.get(s);
         if(s.equals("0") && alarmState!=AlarmState.ALARM || !s.equals("0"))
         {
             //Log.d(TAG, ""+actions.size());
             for(AmbientAction action : actions)
             {
-                Log.d(TAG, "...");
+                Logger.d(TAG, "...");
                 if(isFirstAlert())
                 {
-                    Log.d(TAG, "is first action...");
+                    Logger.d(TAG, "is first action...");
                     action.action(true);
                 }
                 else
                 {
-                    Log.d(TAG, "is later action");
+                    Logger.d(TAG, "is later action");
                     action.action(false);
                 }
             }
@@ -309,7 +310,7 @@ public class AmbientAlarm implements TimingObject
 
     public void awakeButtonPressed()
     {
-        Log.d(TAG, "awakeButton");
+        Logger.d(TAG, "awakeButton");
         Set<String> keys = registeredActions.keySet();
         Iterator<String> iterator = keys.iterator();
         while (iterator.hasNext())
@@ -324,7 +325,7 @@ public class AmbientAlarm implements TimingObject
                 }
                 catch(Exception e )
                 {
-                    Log.e(TAG, "problem while pressing awake...");
+                    Logger.e(TAG, "problem while pressing awake...");
                 }
             }
         }
@@ -340,7 +341,7 @@ public class AmbientAlarm implements TimingObject
     {
         if(alarmState == AlarmState.WAITING || alarmState == AlarmState.SNOOZING )
         {
-            //Log.d(TAG, "set AlarmState to ALARM!");
+            Logger.d(TAG, "set AlarmState to ALARM!");
             alarmState=AlarmState.ALARM;
             if (isFirstAlert())
             {
@@ -356,13 +357,13 @@ public class AmbientAlarm implements TimingObject
 
     private void reAltert()
     {
-        Log.d(TAG, "realert()");
+        Logger.d(TAG, "realert()");
         AmbientAlarmManager.startAlarmActivity(this);
     }
 
     private void firstAlert()
     {
-        Log.d(TAG, "first Alert");
+        Logger.d(TAG, "first Alert");
         AmbientAlarmManager.startAlarmActivity(this);
     }
 
@@ -383,21 +384,21 @@ public class AmbientAlarm implements TimingObject
         for(int i=0; i<7; i++)
         {
             alarmTime = alarmTime.plusDays(1);
-            Log.d(TAG, "check this date"+alarmTime.dayOfWeek().getAsShortText());
+            Logger.d(TAG, "check this date"+alarmTime.dayOfWeek().getAsShortText());
             int day = alarmTime.getDayOfWeek()-1;
             if(weekdays[day])
             {
-                Log.d(TAG, "yap");
+                Logger.d(TAG, "yap");
                 break;
             }
-            Log.d(TAG, "nope...");
+            Logger.d(TAG, "nope...");
         }
 
     }
 
     public void fillInActionView(LinearLayout scrollView)
     {
-        Log.d(TAG, "registered Actions Child Count = "+scrollView.getChildCount());
+        Logger.d(TAG, "registered Actions Child Count = "+scrollView.getChildCount());
         scrollView.removeAllViews();
         for(int i=0; i<4; i++)
         {
@@ -410,7 +411,7 @@ public class AmbientAlarm implements TimingObject
 
                 for (AmbientAction action : actions)
                 {
-                    Log.d(TAG, action.getActionName());
+                    Logger.d(TAG, action.getActionName());
                     if (action.getPriority() == i)
                     {
                         action.defineSettingsView(scrollView, this);
@@ -473,7 +474,7 @@ public class AmbientAlarm implements TimingObject
                 //Log.d(TAG, action.getActionID());
                 if(action.getActionID().equals(actionToDelete.getActionID()))
                 {
-                    Log.d(TAG, "  --> remove action.");
+                    Logger.d(TAG, "  --> remove action.");
                     actions.remove(i);
                     break;
                 }

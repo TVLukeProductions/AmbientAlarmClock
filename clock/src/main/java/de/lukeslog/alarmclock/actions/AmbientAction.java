@@ -4,17 +4,13 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import org.joda.time.DateTime;
 
-import java.util.StringTokenizer;
-
-import de.lukeslog.alarmclock.ChromeCast.ChromeCastService;
 import de.lukeslog.alarmclock.R;
-import de.lukeslog.alarmclock.main.TimingObject;
+import de.lukeslog.alarmclock.support.Logger;
 import de.lukeslog.alarmclock.ui.AmbientAlarmActivity;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarmManager;
@@ -36,7 +32,7 @@ public abstract class AmbientAction
     public static final String EZCONTROLPLUG_ACTION = EZControlPlugAction.class.toString();
     public static final String EZCONTROLHEAT_ACTION = EZControlHeatAction.class.toString();
     public static final String WEBSITE_ACTION = WebsiteAction.class.toString();
-    public static final String CHROMECAST_ACTION = ChromecastAction.class.toString();
+    //public static final String CHROMECAST_ACTION = ChromecastAction.class.toString();
 
     public static final int ACTION_UI_PRIORITY_HIGH = 1;
     public static final int ACTION_UI_PRIORITY_MEDIUM=2;
@@ -51,22 +47,22 @@ public abstract class AmbientAction
     {
         this.actionName=actionName;
         DateTime now = new DateTime();
-        actionID = "action"+actionName+""+now.getMillis();
+        actionID = "action "+actionName+" "+now.getMillis();
         ActionManager.addNewAction(this);
     }
 
     public AmbientAction(ActionConfigBundle configBundle)
     {
-        Log.d(TAG, "Ambient Action from config Bunlde... ");
+        Logger.d(TAG, "Ambient Action from config Bunlde... ");
         this.actionName = configBundle.getString("actionName");
         if(actionName!=null)
         {
-            Log.d(TAG, actionName);
+            Logger.d(TAG, actionName);
         }
         else
         {
             actionName="New Action.";
-            Log.d(TAG, actionName);
+            Logger.d(TAG, actionName);
         }
         this.actionID = configBundle.getString("actionID");
         String js = configBundle.getString("joinSnoozing");
@@ -80,7 +76,7 @@ public abstract class AmbientAction
         }
         if(actionID!=null)
         {
-            Log.d(TAG, actionID);
+            Logger.d(TAG, actionID);
         }
         else
         {
@@ -157,7 +153,7 @@ public abstract class AmbientAction
         {
             public void onClick(DialogInterface dialog, int id)
             {
-                Log.d(TAG, "delete "+AmbientAction.this.getActionID());
+                Logger.d(TAG, "delete "+AmbientAction.this.getActionID());
                 alarm.unregisterAction(AmbientAction.this);
                 AmbientAlarmManager.updateDataBaseEntry(alarm);
             }

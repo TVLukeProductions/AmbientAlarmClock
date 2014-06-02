@@ -1,6 +1,5 @@
 package de.lukeslog.alarmclock.actions;
 
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -11,6 +10,7 @@ import android.widget.TextView;
 import org.joda.time.DateTime;
 import org.joda.time.Seconds;
 
+import de.lukeslog.alarmclock.support.Logger;
 import de.lukeslog.alarmclock.ui.AmbientAlarmActivity;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
 import de.lukeslog.alarmclock.support.UISupport;
@@ -44,7 +44,7 @@ public class CountdownAction extends AmbientAction
         {
 
         }
-        Log.d(TAG, "new Countdownaction from config bunlde");
+        Logger.d(TAG, "new Countdownaction from config bunlde");
     }
 
 
@@ -142,7 +142,7 @@ public class CountdownAction extends AmbientAction
     @Override
     public void updateUI(AmbientAlarm ambientAlarm, AmbientAlarmActivity alarmActivity)
     {
-        Log.d(TAG, "update Layout is called");
+        Logger.d(TAG, "update Layout is called");
         LinearLayout content = (LinearLayout) alarmActivity.findViewById(R.id.content);
 
         DateTime now = new DateTime();

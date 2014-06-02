@@ -2,8 +2,6 @@ package de.lukeslog.alarmclock.ambientalarm;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
-import android.view.WindowManager;
 
 import org.joda.time.DateTime;
 
@@ -14,6 +12,7 @@ import de.lukeslog.alarmclock.main.ClockWorkService;
 import de.lukeslog.alarmclock.main.NotificationManagement;
 import de.lukeslog.alarmclock.startup.NotificationService;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
+import de.lukeslog.alarmclock.support.Logger;
 import de.lukeslog.alarmclock.ui.AmbientAlarmActivity;
 
 /**
@@ -63,7 +62,7 @@ public class AmbientAlarmManager
      */
     public static void addNewAmbientAlarm(AmbientAlarm ambientAlarm)
     {
-        Log.d(TAG, "  addNewAmbientAlarm(AmbientAlarm)");
+        Logger.d(TAG, "  addNewAmbientAlarm(AmbientAlarm)");
         if(registeredAlarms!=null)
         {
             registeredAlarms.add(ambientAlarm);
@@ -78,28 +77,28 @@ public class AmbientAlarmManager
 
     public static void updateDataBaseEntry(AmbientAlarm ambientAlarm)
     {
-        Log.d(TAG, "  updateDatabaseEntry(AmbientAlarm)");
+        Logger.d(TAG, "  updateDatabaseEntry(AmbientAlarm)");
         AmbientAlarmDatabase.updateAmbientAlarm(ambientAlarm);
     }
 
     public static ArrayList<AmbientAlarm> getListOfAmbientAlarms()
     {
-        Log.d(TAG, "  getListOfAmbientAlarms()");
+        Logger.d(TAG, "  getListOfAmbientAlarms()");
         return registeredAlarms;
     }
 
     public static void updateListFromDataBase()
     {
-        Log.d(TAG, "  update Alarm List from Database");
+        Logger.d(TAG, "  update Alarm List from Database");
         //Log.d(TAG, "  Listsize="+registeredAlarms.size());
         registeredAlarms = AmbientAlarmDatabase.getAllAlarmsFromDatabase();
-        Log.d(TAG, "  Listsize="+registeredAlarms.size());
+        Logger.d(TAG, "  Listsize="+registeredAlarms.size());
     }
 
     public static void startAlarmActivity(final AmbientAlarm ambientAlarm)
     {
-        Log.d(TAG, "  startAlarmActivity!");
-        final Context ctx = NotificationService.getContext();
+        Logger.d(TAG, "  startAlarmActivity!");
+        final Context ctx = ClockWorkService.getContext();
         if(ctx!=null)
         {
             new Thread(new Runnable()
@@ -107,27 +106,29 @@ public class AmbientAlarmManager
                 @SuppressWarnings("unchecked")
                 public void run()
                 {
-                    Log.d(TAG, "  ctx is not null");
+                    Logger.d(TAG, "  ctx is not null");
                     String alarmID = ambientAlarm.getAlarmID();
-                    Log.d(TAG, "  alarmid is " + alarmID);
+                    Logger.d(TAG, "  alarmid is " + alarmID);
                     Intent intent = new Intent(ctx, ambientAlarm.getAlarmActivity());
-                    Log.d(TAG, "  Intent created....");
+                    Logger.d(TAG, "  Intent created....");
                     // intent.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
-                    Log.d(TAG, "  strage stuff...");
+                    Logger.d(TAG, "  strage stuff...");
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                    Log.d(TAG, "  now start stuff....");
+                    Logger.d(TAG, "  now start stuff....");
                     intent.putExtra("ambientAlarmID", alarmID);
                     ctx.startActivity(intent);
                     try
                     {
-                        Thread.sleep(1000);
+                        Thread.sleep(3000);
                     }
                     catch (InterruptedException e)
                     {
                         e.printStackTrace();
                     }
+                    //check if the activity is running...
                     if(!AmbientAlarmActivity.running)
                     {
+                        Logger.d(TAG, "apparently it is running....");
                         ctx.startActivity(intent);
                     }
                 }
@@ -136,13 +137,13 @@ public class AmbientAlarmManager
         }
         else
         {
-            Log.e(TAG, "CONTEXT WAS NULL!!!!! ALARMACTIVITY COULD NOT BE STARTED!");
+            Logger.e(TAG, "CONTEXT WAS NULL!!!!! ALARMACTIVITY COULD NOT BE STARTED!");
         }
     }
 
     public static void deleteAmbientAlarm(int position)
     {
-        Log.d(TAG, "  delete Ambient Alarm!");
+        Logger.d(TAG, "  delete Ambient Alarm!");
         if(registeredAlarms!=null)
         {
             AmbientAlarmDatabase.removeAmbientAlarm(registeredAlarms.get(position));
@@ -154,11 +155,11 @@ public class AmbientAlarmManager
     {
         if(registeredAlarms!=null)
         {
-            Log.d(TAG, "  getAlarmByID " + alarmID);
-            Log.d(TAG, "  size of AlarmList " + registeredAlarms.size());
+            Logger.d(TAG, "  getAlarmByID " + alarmID);
+            Logger.d(TAG, "  size of AlarmList " + registeredAlarms.size());
             for (AmbientAlarm alarm : registeredAlarms)
             {
-                Log.d(TAG, "    -->" + alarm.getAlarmID());
+                Logger.d(TAG, "    -->" + alarm.getAlarmID());
                 if (alarm.getAlarmID().equals(alarmID))
                 {
                     return alarm;

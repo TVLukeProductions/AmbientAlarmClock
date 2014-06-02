@@ -3,9 +3,11 @@ package de.lukeslog.alarmclock.main;
 import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.os.IBinder;
 
 import org.joda.time.DateTime;
@@ -15,12 +17,14 @@ import java.util.Calendar;
 
 import de.lukeslog.alarmclock.actions.ActionManager;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarmManager;
+import de.lukeslog.alarmclock.startup.NotificationService;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
+import de.lukeslog.alarmclock.support.Logger;
 
 /**
  * Created by lukas on 29.03.14.
  */
-public class ClockWorkService extends IntentService
+public class ClockWorkService extends Service
 {
 
     public static final String PREFS_NAME = AlarmClockConstants.PREFS_NAME;
@@ -29,15 +33,13 @@ public class ClockWorkService extends IntentService
     public static SharedPreferences settings;
 
     private static int currentSecond=-1;
+    private static DateTime lasttime;
     private static Context context=null;
     private static boolean running = true;
 
-    private static ArrayList<TimingObject> notifications = new ArrayList<TimingObject>();
+    private static Updater updater;
 
-    public ClockWorkService()
-    {
-        super("ClockWorkService");
-    }
+    private static ArrayList<Timable> notifications = new ArrayList<Timable>();
 
     public static Context getClockworkContext()
     {
@@ -52,7 +54,7 @@ public class ClockWorkService extends IntentService
         }
     }
 
-    public static void registerForNotofication(TimingObject x)
+    public static void registerForNotofication(Timable x)
     {
         notifications.add(x);
     }
@@ -62,7 +64,16 @@ public class ClockWorkService extends IntentService
     {
         super.onStartCommand(intent, flags, startId);
         //Log.d(TAG, "ClockWorkService onStartCommand()");
+
+        startUpdater();
+
         return START_NOT_STICKY;
+    }
+
+    private void startUpdater()
+    {
+        updater= new Updater();
+        updater.run();
     }
 
     @Override
@@ -81,27 +92,53 @@ public class ClockWorkService extends IntentService
         return null;
     }
 
-    @Override
-    protected void onHandleIntent(Intent intent)
-    {
-        tick();
-    }
 
-    /**
-     * Tick is the method that ticks along with each new call of the ClockWorkService
-     */
-    private void tick()
+    private class  Updater implements Runnable
     {
-        if(running)
+        private Handler handler = new Handler();
+        public static final int delay = 1000;
+
+        @Override
+        public void run()
         {
-            if(newSecondHasStarted())
+            DateTime currentTime = new DateTime();
+            if(running)
             {
-                //Log.d(TAG, "tick");
-                DateTime currentTime = new DateTime();
-                AmbientAlarmManager.notifyActiveAlerts(currentTime);
-                ActionManager.notifyOfCurrentTime(currentTime);
+                if(lasttime==null)
+                {
+                    lasttime=currentTime;
+                }
+                if(newSecondHasStarted())
+                {
+                    //sometimes the handler can skip one or two seconds, this would mean missing the
+                    //alarm if we only called with the current time so we have a while loop calling for all times
+                    //since the last time
+                    currentTime = currentTime.withMillisOfSecond(0);
+                    lasttime = lasttime.withMillisOfSecond(0);
+                    while(lasttime.isBefore(currentTime))
+                    {
+                        lasttime=lasttime.plusSeconds(1);
+                        Logger.i(TAG + "_time", ". "+lasttime.getHourOfDay()+":"+lasttime.getMinuteOfHour()+":"+lasttime.getSecondOfMinute()+":"+lasttime.getMillisOfSecond());
+                        AmbientAlarmManager.notifyActiveAlerts(lasttime);
+                        ActionManager.notifyOfCurrentTime(lasttime);
+                    }
+                    lasttime=currentTime;
+                }
             }
-            scheduleNextTick();
+            handler.removeCallbacks(this); // remove the old callback
+            handler.postDelayed(this, delay); // register a new one
+        }
+
+        public void onPause()
+        {
+            Logger.d(TAG, "Clock Work Service update on Pause ");
+            handler.removeCallbacks(this); // stop the map from updating
+        }
+
+        public void onResume()
+        {
+            handler.removeCallbacks(this); // remove the old callback
+            handler.postDelayed(this, delay); // register a new one
         }
     }
 
@@ -112,6 +149,11 @@ public class ClockWorkService extends IntentService
     private boolean newSecondHasStarted()
     {
         DateTime currentTime = new DateTime();
+        if(currentTime.getSecondOfMinute()-currentSecond>1)
+        {
+            Logger.e(TAG, "WE JUST SKIPPED A SECCOND! WE JUST SKIPPED A SECOND! THIS IS WORST THING. EVER.");
+        }
+
         if(currentSecond!=currentTime.getSecondOfMinute())
         {
             currentSecond=currentTime.getSecondOfMinute();
@@ -120,22 +162,18 @@ public class ClockWorkService extends IntentService
         return false;
     }
 
-    /**
-     * Schedules the next time this class is called. This is like the clockwork of this entire thing.
-     *
-     */
-    private void scheduleNextTick()
-    {
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.MILLISECOND, 900); //since timing is not all that reliable on most machines we call this more than once per second.
-        Intent intent = new Intent(this, ClockWorkService.class);
-        PendingIntent pendingIntent = PendingIntent.getService(this, AlarmClockConstants.TICK, intent, 0);
-        AlarmManager am = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-        am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingIntent);
-    }
-
     public static void stopService()
     {
+        updater.onPause();
         running=false;
+    }
+
+    public static Context getContext()
+    {
+        if(context!=null)
+        {
+            return context;
+        }
+        throw new NullPointerException();
     }
 }

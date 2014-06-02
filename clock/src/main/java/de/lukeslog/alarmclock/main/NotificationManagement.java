@@ -5,10 +5,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
+import de.lukeslog.alarmclock.support.Logger;
 import de.lukeslog.alarmclock.ui.AlarmClockMainActivity;
 
 /**
@@ -21,7 +21,7 @@ public class NotificationManagement
 
     public static void setAlarmClockIcon(Context ctx)
     {
-        Log.d(TAG, "setAlarmClockIcon");
+        Logger.d(TAG, "setAlarmClockIcon");
         int icon = R.drawable.launchericon;
         Notification note=new Notification(icon, "Clock running", System.currentTimeMillis());//TODO: Text as variable
         Intent i=new Intent(ctx, AlarmClockMainActivity.class);
@@ -45,8 +45,10 @@ public class NotificationManagement
 
     public static void stopAlarmClockIcon(Context ctx)
     {
-
-        NotificationManager mNotificationManager = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.cancel(1337);
+        if(ctx!=null)
+        {
+            NotificationManager mNotificationManager = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.cancel(1337);
+        }
     }
 }

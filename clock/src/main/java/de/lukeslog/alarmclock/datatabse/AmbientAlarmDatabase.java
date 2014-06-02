@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import org.joda.time.DateTime;
 
@@ -20,6 +19,7 @@ import de.lukeslog.alarmclock.actions.AmbientAction;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
 import de.lukeslog.alarmclock.support.Day;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
+import de.lukeslog.alarmclock.support.Logger;
 
 /**
  * Created by lukas on 31.03.14.
@@ -104,7 +104,7 @@ public class AmbientAlarmDatabase
 
     public static void updateAmbientAction(AmbientAction ambientAction)
     {
-        Log.d(TAG, "upate Action Database "+ambientAction.getActionID());
+        Logger.d(TAG, "upate Action Database " + ambientAction.getActionID());
         ContentValues cValues = new ContentValues();
         cValues.put(TABLE_ACTION_NAME, ambientAction.getActionName());
         cValues.put(TABLE_ACTION_TYPE, ambientAction.getClass().toString());
@@ -112,32 +112,32 @@ public class AmbientAlarmDatabase
         cValues.put(TABLE_ACTION_CONFIG_BUNDLE_VALUES, configString);
         if(actionEntryExists(ambientAction))
         {
-            Log.d(TAG, "we make an update "+ambientAction.getActionID());
+            Logger.d(TAG, "we make an update "+ambientAction.getActionID());
             String[] args={ambientAction.getActionID()};
             database.update(TABLE_ACTION, cValues, TABLE_ACTION_ACTIONID + " = ?", args);
         }
         else
         {
             cValues.put(TABLE_ACTION_ACTIONID, ambientAction.getActionID());
-            Log.d(TAG, "we create a new entry "+ambientAction.getActionID());
+            Logger.d(TAG, "we create a new entry "+ambientAction.getActionID());
             database.insert(TABLE_ACTION, null, cValues);
         }
     }
 
     public static ArrayList<AmbientAction> getAllActionsFromDatabase()
     {
-        Log.i(TAG, "get all Actions from Database");
+        Logger.i(TAG, "get all Actions from Database");
 
         Cursor c = queryDatabaseForAllActions();
 
-        Log.i(TAG, "cursorsize: "+c.getCount());
+        Logger.i(TAG, "cursorsize: "+c.getCount());
 
 
         ArrayList<AmbientAction> ambientActions = createActionListFromCursor(c);
 
         c.close();
 
-        Log.d(TAG, "List of ambient actions is done...");
+        Logger.d(TAG, "List of ambient actions is done...");
 
         return ambientActions;
     }
@@ -153,7 +153,7 @@ public class AmbientAlarmDatabase
         while (c.moveToNext())
         {
             AmbientAction ambientAction = createActionFromCursorElement(c);
-            Log.d(TAG, ambientAction.getActionName());
+            Logger.d(TAG, ambientAction.getActionName());
             ambientActions.add(ambientAction);
         }
         return ambientActions;
@@ -163,10 +163,10 @@ public class AmbientAlarmDatabase
     {
         String configString = c.getString(c.getColumnIndex(TABLE_ACTION_CONFIG_BUNDLE_VALUES));
         String className = c.getString(c.getColumnIndex(TABLE_ACTION_TYPE));
-        Log.d(TAG, "ACTION TYPE NAME="+className);
+        Logger.d(TAG, "ACTION TYPE NAME="+className);
         ActionConfigBundle acb = new ActionConfigBundle(configString);
         AmbientAction aa = ActionManager.createActionFromConfigBundle(acb, className);
-        Log.d(TAG, "created "+aa.getActionName()+" from Cursor");
+        Logger.d(TAG, "created "+aa.getActionName()+" from Cursor");
         return aa;
     }
 
@@ -188,17 +188,17 @@ public class AmbientAlarmDatabase
     private static boolean actionEntryExists(AmbientAction ambientAction)
     {
         String[] args={ambientAction.getActionID()};
-        Log.d(TAG, "alarmID="+ambientAction.getActionID());
+        Logger.d(TAG, "alarmID="+ambientAction.getActionID());
         Cursor cursor = database.rawQuery("SELECT * FROM "+TABLE_ACTION+" WHERE "+TABLE_ACTION_ACTIONID+" = ? ", args);
         boolean exists = (cursor.getCount() > 0);
         cursor.close();
-        Log.d(TAG, "existst? "+exists);
+        Logger.d(TAG, "existst? "+exists);
         return exists;
     }
 
     public static void updateAmbientAlarm(AmbientAlarm ambientAlarm)
     {
-        Log.d(TAG, "update Database");
+        Logger.d(TAG, "update Database");
         ContentValues cValues = new ContentValues();
         cValues.put(TABLE_ALARM_ACTIVE, boolToInt(ambientAlarm.isActive()));
         cValues.put(TABLE_ALARM_SNOOZING, boolToInt(ambientAlarm.isSnoozing()));
@@ -215,14 +215,14 @@ public class AmbientAlarmDatabase
         cValues.put(TABLE_ALARM_DAY_SUNDAY, boolToInt(ambientAlarm.getActiveForDayOfTheWeek(Day.SUNDAY)));
         if(alarmEntryExists(ambientAlarm))
         {
-            Log.d(TAG, "we make an update "+ambientAlarm.getAlarmID());
+            Logger.d(TAG, "we make an update "+ambientAlarm.getAlarmID());
             String[] args={ambientAlarm.getAlarmID()};
             database.update(TABLE_ALARM, cValues, TABLE_ALARM_ALARMID + " = ?", args);
         }
         else
         {
             cValues.put(TABLE_ALARM_ALARMID, ambientAlarm.getAlarmID());
-            Log.d(TAG, "we create a new entry");
+            Logger.d(TAG, "we create a new entry");
             database.insert(TABLE_ALARM, null, cValues);
         }
         Set<String> keys = ambientAlarm.getRegisteredActions().keySet();
@@ -241,13 +241,13 @@ public class AmbientAlarmDatabase
 
     public static ArrayList<AmbientAlarm> getAllAlarmsFromDatabase()
     {
-        Log.i(TAG, "get all...");
+        Logger.i(TAG, "get all...");
         ArrayList<AmbientAlarm> ambientAlarms = new ArrayList<AmbientAlarm>();
         try
         {
             Cursor c = queryDatabaseForAllAlarms();
 
-            Log.i(TAG, "cursorsize: "+c.getCount());
+            Logger.i(TAG, "cursorsize: "+c.getCount());
 
 
             ambientAlarms = createAlarmListFromCursor(c);
@@ -256,7 +256,9 @@ public class AmbientAlarmDatabase
         }
         catch(Exception e)
         {
-            Log.e(TAG, "ERROR IN GETTING ALARMS"+e.getLocalizedMessage());
+            Logger.e(TAG, "ERROR IN GETTING ALARMS"+e.getLocalizedMessage());
+            Logger.e(TAG, ""+e.toString());
+            Logger.e(TAG, ""+e.getMessage());
         }
 
 
@@ -271,7 +273,7 @@ public class AmbientAlarmDatabase
 
     private static void updateActionsForAmbientAlarm(AmbientAlarm alarm)
     {
-        Log.d(TAG, "updateActionsforAmbietAlarm");
+        Logger.d(TAG, "updateActionsforAmbietAlarm");
         removeActionsRelatedToAlarm(alarm);
         HashMap<String, ArrayList<AmbientAction>> actions = alarm.getRegisteredActions();
         Set<String> keyset = actions.keySet();
@@ -280,7 +282,7 @@ public class AmbientAlarmDatabase
             ArrayList<AmbientAction> ambientactions = actions.get(s);
             for(AmbientAction action : ambientactions)
             {
-                Log.d(TAG, "add action name-> "+action.getActionName());
+                Logger.d(TAG, "add action name-> "+action.getActionName());
                 addToAlarmToActionDatabase(alarm.getAlarmID(), s, action.getActionID());
             }
 
@@ -289,20 +291,20 @@ public class AmbientAlarmDatabase
 
     private static void removeActionsRelatedToAlarm(AmbientAlarm alarm)
     {
-        Log.d(TAG, "remove all related Actions");
+        Logger.d(TAG, "remove all related Actions");
         database.delete(TABLE_ALARMTOACTION, TABLE_ALARM_ALARMID + " = '" + alarm.getAlarmID() + "'", null);
     }
 
     private static ArrayList<String> registerActionsToAlarm(AmbientAlarm alarm)
     {
-        Log.d(TAG,"register actions to alarm...");
-        Log.d(TAG,"register actions to alarm...");
-        Log.d(TAG,"register actions to alarm...");
-        Log.d(TAG,"register actions to alarm...");
-        Log.d(TAG,"register actions to alarm...");
-        Log.d(TAG,"register actions to alarm...");
-        Log.d(TAG,"register actions to alarm...");
-        Log.d(TAG,"register actions to alarm...");
+        Logger.d(TAG,"register actions to alarm...");
+        Logger.d(TAG,"register actions to alarm...");
+        Logger.d(TAG,"register actions to alarm...");
+        Logger.d(TAG,"register actions to alarm...");
+        Logger.d(TAG,"register actions to alarm...");
+        Logger.d(TAG,"register actions to alarm...");
+        Logger.d(TAG,"register actions to alarm...");
+        Logger.d(TAG,"register actions to alarm...");
         ArrayList<String> relatedActions = new ArrayList<String>();
         String[] args={alarm.getAlarmID()};
         Cursor cursor = database.rawQuery("SELECT * FROM "+TABLE_ALARMTOACTION+" WHERE "+TABLE_ALARM_ALARMID+" = ? ", args);
@@ -310,17 +312,17 @@ public class AmbientAlarmDatabase
         ActionManager.updateActionList();
 
         ArrayList<AmbientAction> actions = ActionManager.getActionList();
-        Log.d(TAG, "    actions list size() => "+actions.size());
+        Logger.d(TAG, "    actions list size() => "+actions.size());
         while(cursor.moveToNext())
         {
-            Log.d(TAG, "    next");
+            Logger.d(TAG, "    next");
             String actionID = cursor.getString(cursor.getColumnIndex(TABLE_ACTION_ACTIONID));
-            Log.d(TAG, "actionID = "+actionID);
+            Logger.d(TAG, "actionID = "+actionID);
             String actionTiming = cursor.getString(cursor.getColumnIndex(TABLE_ALARMTOACTION_TIMING));
 
             for(AmbientAction action : actions)
             {
-                Log.d(TAG, "action!=null"+(action!=null));
+                Logger.d(TAG, "action!=null"+(action!=null));
                 if(action.getActionID().equals(actionID))
                 {
                     alarm.registerAction(actionTiming, action);
@@ -333,7 +335,7 @@ public class AmbientAlarmDatabase
 
     private static void addToAlarmToActionDatabase(String alarmID, String s, String actionID)
     {
-        Log.d(TAG, "ADD TO ALARM TO ACTION DATABASE"+alarmID+" "+actionID);
+        Logger.d(TAG, "ADD TO ALARM TO ACTION DATABASE"+alarmID+" "+actionID);
         ContentValues cValues = new ContentValues();
         cValues.put(TABLE_ALARM_ALARMID, alarmID);
         cValues.put(TABLE_ALARMTOACTION_TIMING, s);
@@ -343,19 +345,19 @@ public class AmbientAlarmDatabase
 
     private static boolean alarmEntryExists(AmbientAlarm ambientAlarm)
     {
-        Log.d(TAG, " alarmEntryExists()");
+        Logger.d(TAG, " alarmEntryExists()");
         String[] args={ambientAlarm.getAlarmID()};
-        Log.d(TAG, "alarmID=" + ambientAlarm.getAlarmID());
+        Logger.d(TAG, "alarmID=" + ambientAlarm.getAlarmID());
         Cursor cursor = database.rawQuery("SELECT * FROM "+TABLE_ALARM+" WHERE "+TABLE_ALARM_ALARMID+" = ? ", args);
         boolean exists = (cursor.getCount() > 0);
         cursor.close();
-        Log.d(TAG, "existst? "+exists);
+        Logger.d(TAG, "existst? "+exists);
         return exists;
     }
 
     private static ArrayList<AmbientAlarm> createAlarmListFromCursor(Cursor c)
     {
-        Log.d(TAG, "createAlarmListFromCursor(");
+        Logger.d(TAG, "createAlarmListFromCursor(");
         ArrayList<AmbientAlarm> ambientAlarms = new ArrayList<AmbientAlarm>();
         while (c.moveToNext())
         {
@@ -367,18 +369,18 @@ public class AmbientAlarmDatabase
 
     private static AmbientAlarm createAlarmFromCursorElement(Cursor c)
     {
-        Log.d(TAG, "createAlarmFromCursorElement()");
+        Logger.d(TAG, "createAlarmFromCursorElement()");
         AmbientAlarm ambientAlarm = new AmbientAlarm(c.getString(c.getColumnIndex(TABLE_ALARM_ALARMID)));
         DateTime alarmTime = new DateTime();
         alarmTime = alarmTime.withHourOfDay(c.getInt(c.getColumnIndex(TABLE_ALARM_TIME_HOUR)));
         alarmTime = alarmTime.withMinuteOfHour(c.getInt(c.getColumnIndex(TABLE_ALARM_TIME_MINUTE)));
         ambientAlarm.setAlarmTime(alarmTime);
         ambientAlarm.setActive(intToBool(c.getInt(c.getColumnIndex(TABLE_ALARM_ACTIVE))));
-        Log.d(TAG, "" + ambientAlarm.isActive());
+        Logger.d(TAG, "" + ambientAlarm.isActive());
         ambientAlarm.setSnoozing(intToBool(c.getInt(c.getColumnIndex(TABLE_ALARM_SNOOZING))));
-        Log.d(TAG, "" + ambientAlarm.isSnoozing());
+        Logger.d(TAG, "" + ambientAlarm.isSnoozing());
         ambientAlarm.setSnoozeTimeInSeconds(c.getInt(c.getColumnIndex(TABLE_ALARM_SNOOZE_TIME)));
-        Log.d(TAG, "olol");
+        Logger.d(TAG, "olol");
         ambientAlarm.setLocked(intToBool(c.getInt(c.getColumnIndex(TABLE_ALARM_LOCK))));
         ambientAlarm.setAlarmStateForDay(Day.MONDAY, intToBool(c.getInt(c.getColumnIndex(TABLE_ALARM_DAY_MONDAY))));
         ambientAlarm.setAlarmStateForDay(Day.TUESDAY, intToBool(c.getInt(c.getColumnIndex(TABLE_ALARM_DAY_TUESDAY))));
@@ -395,8 +397,8 @@ public class AmbientAlarmDatabase
 
     private static Cursor queryDatabaseForAllAlarms()
     {
-        Log.d(TAG, "querry Database for All Alarms");
-        Log.d(TAG, "database!=null => "+(database!=null));
+        Logger.d(TAG, "querry Database for All Alarms");
+        Logger.d(TAG, "database!=null => "+(database!=null));
         if(database!=null)
         {
             Cursor c = database.query(TABLE_ALARM, new String[]{
@@ -465,13 +467,13 @@ public class AmbientAlarmDatabase
         OpenHelper(Context context)
         {
             super(context, DatabaseConstants.DATABASE_NAME, null,  DatabaseConstants.DATABASE_VERSION);
-            Log.d(TAG, "Open Helper");
+            Logger.d(TAG, "Open Helper");
         }
 
         @Override
         public void onCreate(SQLiteDatabase db)
         {
-            Log.i(TAG, "onCreate for EntryDB");
+            Logger.i(TAG, "onCreate for EntryDB");
             db.execSQL(TABLE_ALARM_CREATE);
             db.execSQL(TABLE_ACTION_CREATE);
             db.execSQL(TABLE_ALARMTOACTION_CREATE);
@@ -480,7 +482,7 @@ public class AmbientAlarmDatabase
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
         {
-            Log.i(TAG, "onUpgrade for EntryDB");
+            Logger.i(TAG, "onUpgrade for EntryDB");
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_ALARM);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_ACTION);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_ALARMTOACTION);

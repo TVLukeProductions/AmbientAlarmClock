@@ -1,13 +1,13 @@
 package de.lukeslog.alarmclock.actions;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import java.util.Iterator;
 import java.util.Set;
 import java.util.StringTokenizer;
 
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
+import de.lukeslog.alarmclock.support.Logger;
 
 /**
  * Created by lukas on 15.04.14.
@@ -25,7 +25,7 @@ public class ActionConfigBundle
     public ActionConfigBundle(String semiColonSeparatedData)
     {
         content = new Bundle();
-        Log.i(TAG, semiColonSeparatedData);
+        Logger.i(TAG, semiColonSeparatedData);
         StringTokenizer tk = new StringTokenizer(semiColonSeparatedData, ";");
         while(tk.hasMoreTokens())
         {
@@ -38,7 +38,7 @@ public class ActionConfigBundle
             }
             catch(Exception e)
             {
-                Log.d(TAG, "Exception in ActionConfigBundle Constructor");
+                Logger.d(TAG, "Exception in ActionConfigBundle Constructor");
             }
         }
     }

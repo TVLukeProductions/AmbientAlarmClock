@@ -1,6 +1,5 @@
 package de.lukeslog.alarmclock.actions;
 
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
@@ -16,6 +15,7 @@ import java.net.URLConnection;
 
 import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
+import de.lukeslog.alarmclock.support.Logger;
 import de.lukeslog.alarmclock.ui.AmbientAlarmActivity;
 
 /**
@@ -78,11 +78,11 @@ public class EZControlPlugAction extends AmbientAction
                     URL oracle = new URL("http://"+ezControlIP+"/control?cmd=set_state_actuator&number="+plugnumber+"&function="+function+"&page=control.html");
                     URLConnection yc = oracle.openConnection();
                     BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
-                    Log.d(TAG, "command->coffee");
+                    Logger.d(TAG, "command->coffee");
                 }
                 catch(Exception e)
                 {
-                    Log.e(TAG, "there was an error while setting the coffe machine");
+                    Logger.e(TAG, "there was an error while setting the coffe machine");
                 }
             }
         }).start();

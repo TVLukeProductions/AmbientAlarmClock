@@ -6,7 +6,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -16,6 +15,7 @@ import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarmManager;
 import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
+import de.lukeslog.alarmclock.support.Logger;
 
 /**
  * Created by lukas on 03.04.14.
@@ -39,11 +39,13 @@ public class AmbientAlarmActivity extends Activity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ambient_alarm_base_activity);
-        Log.d(TAG, "AmbientAlarmActivity: onCreate");
+        Logger.d(TAG, "AmbientAlarmActivity: onCreate");
         String alarmID = getIntent().getStringExtra("ambientAlarmID");
         alarm = AmbientAlarmManager.getAlarmById(alarmID);
 
         alarmActivity = this;
+
+        running=true;
 
         turnScreenOnAndBright();
 
@@ -64,6 +66,7 @@ public class AmbientAlarmActivity extends Activity
     public void onPause()
     {
         super.onPause();
+        running=false;
         closeActivity();
 
     }
@@ -71,7 +74,8 @@ public class AmbientAlarmActivity extends Activity
     @Override
     public void  onDestroy()
     {
-        Log.d(TAG, "on Destroy alarm activity...");
+        Logger.d(TAG, "on Destroy alarm activity...");
+        running=false;
         super.onDestroy();
     }
 
@@ -91,7 +95,7 @@ public class AmbientAlarmActivity extends Activity
 
     private void closeActivity()
     {
-        Log.d(TAG, "close activity....");
+        Logger.d(TAG, "close activity....");
         try
         {
             if(updater!=null)
@@ -105,7 +109,7 @@ public class AmbientAlarmActivity extends Activity
         }
         catch(Exception e)
         {
-            Log.e(TAG, "Exception closing the Alarm Activity because of on pause stuff...");
+            Logger.e(TAG, "Exception closing the Alarm Activity because of on pause stuff...");
         }
         AmbientAlarmActivity.this.finish();
     }
@@ -135,53 +139,53 @@ public class AmbientAlarmActivity extends Activity
 
     private void turnScreenOnAndBright()
     {
-        Log.d(TAG, "turnscreenonandbright");
+        Logger.d(TAG, "turnscreenonandbright");
         try
         {
-            Log.e(TAG, "1");
+            Logger.e(TAG, "1");
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-            Log.e(TAG, "2");
-            Log.e(TAG, "3");
+            Logger.e(TAG, "2");
+            Logger.e(TAG, "3");
 
         }
         catch(Exception e)
         {
-            Log.e(TAG, "The Problem seems to be to turn on or unlock the screen");
+            Logger.e(TAG, "The Problem seems to be to turn on or unlock the screen");
         }
-        Log.e(TAG, "a");
+        Logger.e(TAG, "a");
         final Window win = getWindow();
-        Log.e(TAG, "b");
+        Logger.e(TAG, "b");
         win.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                 | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
         try
         {
-            Log.e(TAG, "c");
+            Logger.e(TAG, "c");
             // API 8+
             win.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                         | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
                         | WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON);
-            Log.e(TAG, "d");
+            Logger.e(TAG, "d");
             }
             catch (final Throwable whocares)
             {
                 // API 7+
-                Log.e(TAG, "c2");
+                Logger.e(TAG, "c2");
                 win.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                         | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
-                Log.e(TAG, "d2");
+                Logger.e(TAG, "d2");
             }
         try
         {
             PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-            Log.e(TAG, "4");
+            Logger.e(TAG, "4");
             wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "MyWakeLock");
-            Log.e(TAG, "5");
+            Logger.e(TAG, "5");
             wakeLock.acquire();
         }
         catch(Exception e)
         {
-            Log.d(TAG, "The power manager stuff does not work...");
-            Log.e(TAG, e.getLocalizedMessage());
+            Logger.d(TAG, "The power manager stuff does not work...");
+            Logger.e(TAG, e.getLocalizedMessage());
         }
         try
         {
@@ -194,7 +198,7 @@ public class AmbientAlarmActivity extends Activity
         {
 
         }
-        Log.e(TAG, ""+7);
+        Logger.e(TAG, ""+7);
     }
 
     private class  UIUpdater implements Runnable
@@ -206,7 +210,7 @@ public class AmbientAlarmActivity extends Activity
         public void run()
         {
             running=true;
-           Log.d(TAG, "Alarm Activity is running...");
+           Logger.d(TAG, "Alarm Activity is running...");
            alarm.updateAlarmUI(alarmActivity);
 
            handler.removeCallbacks(this); // remove the old callback
@@ -216,7 +220,7 @@ public class AmbientAlarmActivity extends Activity
         public void onPause()
         {
             running=false;
-            Log.d(TAG, "Alarm Activity update on Pause ");
+            Logger.d(TAG, "Alarm Activity update on Pause ");
             handler.removeCallbacks(this); // stop updating
         }
 
@@ -251,7 +255,7 @@ public class AmbientAlarmActivity extends Activity
         }
         catch(Exception e)
         {
-            Log.e(TAG, "Exception an pressing awake button");
+            Logger.e(TAG, "Exception an pressing awake button");
         }
     }
 
@@ -271,7 +275,7 @@ public class AmbientAlarmActivity extends Activity
         }
         catch(Exception e)
         {
-            Log.e(TAG, "Exception an pressing snooze button");
+            Logger.e(TAG, "Exception an pressing snooze button");
         }
     }
 }

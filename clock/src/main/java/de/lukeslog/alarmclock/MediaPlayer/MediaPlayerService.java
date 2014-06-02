@@ -12,7 +12,6 @@ import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Environment;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.util.Log;
 
 import org.farng.mp3.MP3File;
 import org.farng.mp3.TagException;
@@ -26,6 +25,7 @@ import de.lukeslog.alarmclock.actions.ActionManager;
 import de.lukeslog.alarmclock.actions.MusicAction;
 import de.lukeslog.alarmclock.ambientService.lastfm.Scrobbler;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
+import de.lukeslog.alarmclock.support.Logger;
 import de.lukeslog.alarmclock.support.Radiostations;
 
 /**
@@ -110,7 +110,7 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
     {
         boolean mExternalStorageAvailable = false;
         String state = Environment.getExternalStorageState();
-        Log.d(TAG, "Go Play 3");
+        Logger.d(TAG, "Go Play 3");
         if (Environment.MEDIA_MOUNTED.equals(state))
         {
             // We can read and write the media
@@ -131,7 +131,7 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
             File filesystem = Environment.getExternalStorageDirectory();
             if (usedropboxchecked)
             {
-                localfolderstring = filesystem.getPath() + "/Music/WakeUpSongs/";
+                localfolderstring = filesystem.getPath() + "/AAC/"+actionID+"/Music";
             }
             File file = new File(localfolderstring);
             //Log.d(TAG, "wakeupsongsX");
@@ -142,7 +142,7 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
                 filelist3 = file.listFiles();
             } catch (Exception e)
             {
-                Log.d(TAG, "Could not get Filelist");
+                Logger.d(TAG, "Could not get Filelist");
             }
             //Log.d(TAG, "--2");
             //count mp3s
@@ -193,7 +193,7 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
                 mp = new MediaPlayer();
                 if (numberOfMp3 == 0)
                 {
-                    Log.d(TAG, "DEFAULT FILE");
+                    Logger.d(TAG, "DEFAULT FILE");
                     mp = MediaPlayer.create(this, mediaarray[0]);
                     //mp.setLooping(true);
                     mp.setVolume(0.99f, 0.99f);
@@ -206,12 +206,12 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
                     mp.setDataSource(musicpath);
                     mp.setLooping(false);
                     mp.setVolume(0.99f, 0.99f);
-                    Log.d(TAG, "...");
+                    Logger.d(TAG, "...");
                     mp.setOnCompletionListener(this);
                     mp.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
-                    Log.d(TAG, "....");
+                    Logger.d(TAG, "....");
                     mp.setOnPreparedListener(this);
-                    Log.d(TAG, ".....");
+                    Logger.d(TAG, ".....");
                     mp.prepareAsync();
                 }
 
@@ -228,13 +228,13 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
             }
         } else
         {
-            Log.d(TAG, "not read or writeable...");
+            Logger.d(TAG, "not read or writeable...");
         }
     }
 
     public void stop()
     {
-        Log.d(TAG, "stop Media Player Service");
+        Logger.d(TAG, "stop Media Player Service");
         mp.stop();
         mp.release();
         mp=null;
@@ -277,27 +277,27 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
             mp.stop();
             mp.release();
         }
-        Log.d("clock", "turnOnRadio");
+        Logger.d("clock", "turnOnRadio");
         try
         {
-            Log.d(TAG, "try");
+            Logger.d(TAG, "try");
             mp = new MediaPlayer();
             mp.setScreenOnWhilePlaying(true);
             mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            Log.d(TAG, "Station---------------------" + station);
+            Logger.d(TAG, "Station---------------------" + station);
             try
             {
                 mp.setDataSource(station);
             } catch (Exception e)
             {
-                Log.d(TAG, "default radio");
+                Logger.d(TAG, "default radio");
                 try
                 {
                     mp.setDataSource(Radiostations.stations.get("DLF"));
                 }
                 catch (Exception ex)
                 {
-                    Log.d(TAG, "fuck this");
+                    Logger.d(TAG, "fuck this");
                 }
             }
             mp.setVolume(0.99f, 0.99f);
@@ -307,30 +307,30 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
 
         } catch (Exception ee)
         {
-            Log.e("Error", "No Stream");
+            Logger.e("Error", "No Stream");
         }
     }
 
     @Override
     public void onPrepared(MediaPlayer mpx)
     {
-        Log.d(TAG, "on Prepared!");
+        Logger.d(TAG, "on Prepared!");
         mpx.setOnCompletionListener(this);
-        Log.d(TAG, "ok, I'v set the on Completion Listener again...");
+        Logger.d(TAG, "ok, I'v set the on Completion Listener again...");
         mpx.start();
     }
 
     @Override
     public void onCompletion(MediaPlayer mpx)
     {
-        Log.d(TAG, "on Completetion");
+        Logger.d(TAG, "on Completetion");
         playmp3();
     }
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra)
     {
-        Log.d(TAG, "MEDIAPLAYER ON ERROR");
+        Logger.d(TAG, "MEDIAPLAYER ON ERROR");
         playmp3();
         return true;
     }
@@ -354,14 +354,14 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
             String action = intent.getAction();
             if (action.equals(ACTION_START_MUSIC))
             {
-                Log.d(TAG, "I GOT THE START MUSIC THING!");
+                Logger.d(TAG, "I GOT THE START MUSIC THING!");
                 actionID = intent.getStringExtra("AmbientActionID");
                 MusicAction ma = (MusicAction) ActionManager.getActionByID(actionID);
                 play(ma);
             }
             if(action.equals(ACTION_STOP_MUSIC))
             {
-                Log.d(TAG, "STOooooooooP");
+                Logger.d(TAG, "STOooooooooP");
                 String newactionID = intent.getStringExtra("AmbientActionID");
                 if(newactionID.equals(actionID))
                 {
@@ -371,7 +371,7 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
             }
             if(action.equals(ACTION_SWITCH_TO_RADIO))
             {
-                Log.d(TAG, "switchtoradio....");
+                Logger.d(TAG, "switchtoradio....");
                 actionID = intent.getStringExtra("AmbientActionID");
                 MusicAction ma = (MusicAction) ActionManager.getActionByID(actionID);
                 String station = Radiostations.stations.get(ma.getRadiourl());
@@ -379,7 +379,7 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
             }
             if(action.equals(ACTION_TURN_MEDIASERVICE_PERMNENTLY_OFF))
             {
-                Log.d(TAG, "turneverythingoff");
+                Logger.d(TAG, "turneverythingoff");
                 stopeverything();
             }
         }

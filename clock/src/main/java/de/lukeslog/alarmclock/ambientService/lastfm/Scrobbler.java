@@ -1,10 +1,10 @@
 package de.lukeslog.alarmclock.ambientService.lastfm;
 
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import de.lukeslog.alarmclock.main.ClockWorkService;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
+import de.lukeslog.alarmclock.support.Logger;
 import de.umass.lastfm.Authenticator;
 import de.umass.lastfm.Caller;
 import de.umass.lastfm.Session;
@@ -38,7 +38,7 @@ public class Scrobbler
                     }
                     catch(Exception e)
                     {
-                        Log.e(TAG, e.getMessage());
+                        Logger.e(TAG, e.getMessage());
                     }
                     if(session!=null)
                     {

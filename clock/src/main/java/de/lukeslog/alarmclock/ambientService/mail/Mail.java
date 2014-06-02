@@ -1,10 +1,10 @@
 package de.lukeslog.alarmclock.ambientService.mail;
 
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import de.lukeslog.alarmclock.main.ClockWorkService;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
+import de.lukeslog.alarmclock.support.Logger;
 
 /**
  * Created by lukas on 31.03.14.
@@ -18,22 +18,22 @@ public class Mail
         SharedPreferences settings = ClockWorkService.settings;
         String gmailaccString= settings.getString("gmailacc", "");
         String gmailpswString= settings.getString("gmailpsw", "");
-        Log.i(TAG, "gmailacc=" + gmailaccString);
-        Log.i(TAG, "newmail");
+        Logger.i(TAG, "gmailacc=" + gmailaccString);
+        Logger.i(TAG, "newmail");
         final BackgroundMail m = new BackgroundMail(gmailaccString, gmailpswString);
-        Log.i(TAG, "setTo");
+        Logger.i(TAG, "setTo");
         String t[] = new String[1];
         t[0]= address;
         m.setTo(t);
-        Log.i(TAG, "Set From");
+        Logger.i(TAG, "Set From");
         m.setFrom(gmailaccString);
-        Log.i(TAG, "setSubject");
+        Logger.i(TAG, "setSubject");
         String header=subject;
-        Log.i(TAG, "Sending with header="+header);
+        Logger.i(TAG, "Sending with header="+header);
         m.setSubject(header);
-        Log.i(TAG, "setBody");
+        Logger.i(TAG, "setBody");
         String body=text+"\n \n Sincearly, \n your ambient alarm clock."; //TODO: localization
-        Log.i(TAG, "body \n"+body);
+        Logger.i(TAG, "body \n"+body);
         m.setBody(body);
         Thread tt = new Thread(new Runnable()
         {
@@ -42,13 +42,13 @@ public class Mail
             {
                 try
                 {
-                    Log.i(TAG, "send?");
+                    Logger.i(TAG, "send?");
                     m.send();
 
                 }
                 catch (Exception e)
                 {
-                    Log.i(TAG, "cc"+e);
+                    Logger.i(TAG, "cc"+e);
                     e.printStackTrace();
                 }
             }

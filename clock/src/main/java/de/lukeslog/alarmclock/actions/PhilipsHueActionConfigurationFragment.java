@@ -4,17 +4,13 @@ import android.app.Fragment;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import java.util.Collection;
 import java.util.List;
@@ -24,6 +20,7 @@ import de.jaetzold.philips.hue.HueLightBulb;
 import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
+import de.lukeslog.alarmclock.support.Logger;
 
 /**
  * Created by lukas on 24.04.14.
@@ -72,41 +69,41 @@ public class PhilipsHueActionConfigurationFragment extends Fragment
                         List<HueBridge> bridges = HueBridge.discover();
                         for(HueBridge bridge : bridges)
                         {
-                            Log.d(TAG, "Found " + bridge);
+                            Logger.d(TAG, "Found " + bridge);
                             // You may need a better scheme to store your username that to just hardcode it.
                             // suggestion: Save a mapping from HueBridge.getUDN() to HueBridge.getUsername() somewhere.
                             bridge.setUsername(PhilipsHueAction.BRIDGEUSERNAME);
                             if(!bridge.authenticate(false))
                             {
-                                Log.d(TAG, "Press the button on your Hue bridge in the next 30 seconds to grant access.");
+                                Logger.d(TAG, "Press the button on your Hue bridge in the next 30 seconds to grant access.");
                                 if(bridge.authenticate(true))
                                 {
-                                    Log.d(TAG, "Access granted. username: " + bridge.getUsername());
+                                    Logger.d(TAG, "Access granted. username: " + bridge.getUsername());
                                     Collection<HueLightBulb> lights = (Collection<HueLightBulb>) bridge.getLights();
-                                    Log.d(TAG, "Available LightBulbs: "+lights.size());
+                                    Logger.d(TAG, "Available LightBulbs: "+lights.size());
                                     for (HueLightBulb bulb : lights)
                                     {
-                                        Log.d(TAG, bulb.toString());
+                                        Logger.d(TAG, bulb.toString());
                                         PhilipsHueAction.identifiy(bulb);
                                     }
                                     System.out.println("");
                                 }
                                 else
                                 {
-                                    Log.d(TAG, "Authentication failed.");
+                                    Logger.d(TAG, "Authentication failed.");
                                 }
                             }
                             else
                             {
-                                Log.d(TAG, "Already granted access. username: " + bridge.getUsername());
+                                Logger.d(TAG, "Already granted access. username: " + bridge.getUsername());
                                 Collection<HueLightBulb> lights = (Collection<HueLightBulb>) bridge.getLights();
-                                Log.d(TAG, "Available LightBulbs: "+lights.size());
+                                Logger.d(TAG, "Available LightBulbs: "+lights.size());
                                 for (HueLightBulb bulb : lights)
                                 {
-                                    Log.d(TAG, bulb.toString());
+                                    Logger.d(TAG, bulb.toString());
                                     PhilipsHueAction.identifiy(bulb);
                                 }
-                                Log.d(TAG, "");
+                                Logger.d(TAG, "");
                             }
                         }
                     }
@@ -137,7 +134,7 @@ public class PhilipsHueActionConfigurationFragment extends Fragment
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
             {
-                Log.d(TAG, ""+progress);
+                Logger.d(TAG, ""+progress);
                 action.setRed(progress);
                 setexamplecolor(fragment);
             }
@@ -160,7 +157,7 @@ public class PhilipsHueActionConfigurationFragment extends Fragment
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
             {
-                Log.d(TAG, ""+progress);
+                Logger.d(TAG, ""+progress);
                 action.setGreen(progress);
                 setexamplecolor(fragment);
             }
@@ -183,7 +180,7 @@ public class PhilipsHueActionConfigurationFragment extends Fragment
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
             {
-                Log.d(TAG, ""+progress);
+                Logger.d(TAG, ""+progress);
                 action.setBlue(progress);
                 setexamplecolor(fragment);
             }
@@ -236,12 +233,12 @@ public class PhilipsHueActionConfigurationFragment extends Fragment
     {
         protected Long doInBackground(Integer... urls)
         {
-            Log.d(TAG, "doInBackground");
+            Logger.d(TAG, "doInBackground");
             for(int i=0; i<30; i++)
             {
                 try
                 {
-                    Log.d(TAG, "sleep");
+                    Logger.d(TAG, "sleep");
                     Thread.sleep(1000);
                 }
                 catch (InterruptedException e)
@@ -249,7 +246,7 @@ public class PhilipsHueActionConfigurationFragment extends Fragment
 
                     e.printStackTrace();
                 }
-                Log.d(TAG, "pp");
+                Logger.d(TAG, "pp");
                 publishProgress(i);
             }
             return 0l;
@@ -259,31 +256,31 @@ public class PhilipsHueActionConfigurationFragment extends Fragment
         {
             if(progress[0]==0)
             {
-                Log.d(TAG, "set visble");
+                Logger.d(TAG, "set visble");
                 connectbar.setVisibility(View.VISIBLE);
-                Log.d(TAG, "p=0 start disc and auth");
+                Logger.d(TAG, "p=0 start disc and auth");
             }
             text.setText("Press the button on your Hue bridge in the next 30 seconds to grant access.");
             connectbutton.setClickable(false);
-            Log.d(TAG, "int p");
+            Logger.d(TAG, "int p");
             double px = progress[0];
             int p = (int) (px/(0.3));
             if(progress[0]==29)
             {
                 p=100;
             }
-            Log.d(TAG, "p="+p);
+            Logger.d(TAG, "p="+p);
             connectbar.setProgress(p);
-            Log.d(TAG, "done");
+            Logger.d(TAG, "done");
         }
 
         protected void onPostExecute(Long result)
         {
-            Log.d(TAG, "on post execute");
+            Logger.d(TAG, "on post execute");
             connectbar.setVisibility(View.GONE);
             connectbutton.setClickable(true);
             text.setText("");
-            Log.d(TAG, "on Post Execute 2");
+            Logger.d(TAG, "on Post Execute 2");
         }
     }
 }

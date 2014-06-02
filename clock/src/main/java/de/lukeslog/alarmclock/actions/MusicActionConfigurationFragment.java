@@ -7,7 +7,6 @@ import android.os.Environment;
 import android.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +31,7 @@ import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
 import de.lukeslog.alarmclock.main.ClockWorkService;
 import de.lukeslog.alarmclock.ambientService.dropbox.DropBox;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
+import de.lukeslog.alarmclock.support.Logger;
 import de.lukeslog.alarmclock.support.Radiostations;
 
 /**
@@ -111,16 +111,16 @@ public class MusicActionConfigurationFragment extends Fragment
             public void onTextChanged(CharSequence s, int start, int before, int count) {}
         });
 
-        Log.d(TAG, "2 use local" + uselocalchecked);
-        Log.d(TAG, "2 use dp"+usedropboxchecked);
+        Logger.d(TAG, "2 use local" + uselocalchecked);
+        Logger.d(TAG, "2 use dp"+usedropboxchecked);
         final CheckBox use_local = (CheckBox) fragment.findViewById(R.id.use_local);
 
-        Log.d(TAG, "3 use local"+uselocalchecked);
-        Log.d(TAG, "3 use dp"+usedropboxchecked);
+        Logger.d(TAG, "3 use local"+uselocalchecked);
+        Logger.d(TAG, "3 use dp"+usedropboxchecked);
         final CheckBox use_dropbox = (CheckBox) fragment.findViewById(R.id.use_dropbox);
 
-        Log.d(TAG, "4 use local"+uselocalchecked);
-        Log.d(TAG, "4 use dp"+usedropboxchecked);
+        Logger.d(TAG, "4 use local"+uselocalchecked);
+        Logger.d(TAG, "4 use dp"+usedropboxchecked);
 
         //FILLING THE SPINER FOR LOCAL FOLDERS
         localFolderList = new ArrayList<String>();
@@ -147,7 +147,7 @@ public class MusicActionConfigurationFragment extends Fragment
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3)
             {
-                Log.d(TAG, "selected");
+                Logger.d(TAG, "selected");
                 final EditText localfolder = (EditText) fragment.findViewById(R.id.localfolder);
                 localfolder.setText(localfolderspinerArray.get(arg2));
                 action.setLocalFolder(localfolderspinerArray.get(arg2));
@@ -158,7 +158,7 @@ public class MusicActionConfigurationFragment extends Fragment
             public void onNothingSelected(AdapterView<?> arg0)
             {
 
-                Log.d(TAG, "not selected");
+                Logger.d(TAG, "not selected");
             }
         });
         ArrayAdapter<String> localadapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, localfolderspinerArray);
@@ -172,13 +172,13 @@ public class MusicActionConfigurationFragment extends Fragment
             localfolderlist.setSelection(lsf);
         }
         localadapter.notifyDataSetChanged();
-        Log.d(TAG, "5 use ocal"+uselocalchecked);
-        Log.d(TAG, "5 use dp"+usedropboxchecked);
+        Logger.d(TAG, "5 use ocal"+uselocalchecked);
+        Logger.d(TAG, "5 use dp"+usedropboxchecked);
 
         //---------------------------------------
         //FROM HERE ON WE FILL THE DROPBOX SPINER
         ArrayList<String> folderlist = DropBox.folders;
-        Log.d(TAG, "folderlistsize="+folderlist.size());
+        Logger.d(TAG, "folderlistsize="+folderlist.size());
         final List<String> spinnerArray = new ArrayList<String>();
         int sf = settings.getInt("selectedfolder", 0);
 
@@ -195,19 +195,19 @@ public class MusicActionConfigurationFragment extends Fragment
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3)
             {
-                Log.d(TAG, "selected");
+                Logger.d(TAG, "selected");
                 final EditText dropboxfolder = (EditText) fragment.findViewById(R.id.dropboxfolder);
                 dropboxfolder.setText(spinnerArray.get(arg2));
                 //use_dropbox.setChecked(true);
                 action.setDropBoxFolder(spinnerArray.get(arg2));
-                DropBox.syncFiles(action.getDropboxFolder());
+                DropBox.syncFiles(action.getDropboxFolder(), action.actionID, "Music");
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> arg0)
             {
 
-                Log.d(TAG, "not selected");
+                Logger.d(TAG, "not selected");
             }
         });
 
@@ -223,8 +223,8 @@ public class MusicActionConfigurationFragment extends Fragment
         }
         adapter.notifyDataSetChanged();
 
-        Log.d(TAG, "6 use local"+uselocalchecked);
-        Log.d(TAG, "6 use dp"+usedropboxchecked);
+        Logger.d(TAG, "6 use local"+uselocalchecked);
+        Logger.d(TAG, "6 use dp"+usedropboxchecked);
 
         //make sure these are exclusive
         use_local.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
@@ -273,8 +273,8 @@ public class MusicActionConfigurationFragment extends Fragment
                 }
             }
         });
-        Log.d(TAG, "7 use local"+uselocalchecked);
-        Log.d(TAG, "7 use dp"+usedropboxchecked);
+        Logger.d(TAG, "7 use local"+uselocalchecked);
+        Logger.d(TAG, "7 use dp"+usedropboxchecked);
         use_local.setChecked(uselocalchecked);
         use_dropbox.setChecked(usedropboxchecked);
         action.setUseDropbox(usedropboxchecked);
@@ -292,7 +292,7 @@ public class MusicActionConfigurationFragment extends Fragment
         while(it.hasNext())
         {
             String x = it.next();
-            Log.d(TAG, x);
+            Logger.d(TAG, x);
             list2.add(x);
         }
         ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, list2);

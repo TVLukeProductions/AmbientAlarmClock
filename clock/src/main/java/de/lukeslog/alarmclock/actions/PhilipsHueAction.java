@@ -1,6 +1,5 @@
 package de.lukeslog.alarmclock.actions;
 
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
@@ -15,6 +14,7 @@ import java.util.List;
 import de.jaetzold.philips.hue.ColorHelper;
 import de.jaetzold.philips.hue.HueBridge;
 import de.jaetzold.philips.hue.HueLightBulb;
+import de.lukeslog.alarmclock.support.Logger;
 import de.lukeslog.alarmclock.ui.AmbientAlarmActivity;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
 import de.lukeslog.alarmclock.R;
@@ -212,39 +212,39 @@ public class PhilipsHueAction extends AmbientAction
                 }
                 catch(Exception e)
                 {
-                    Log.e(TAG, e.getMessage());
+                    Logger.e(TAG, e.getMessage());
                 }
                 for(HueBridge bridge : bridges)
                 {
                     bridge.setUsername(BRIDGEUSERNAME);
                     if(bridge.authenticate(true))
                     {
-                        Log.d(TAG, "Access granted. username: " + bridge.getUsername());
+                        Logger.d(TAG, "Access granted. username: " + bridge.getUsername());
                         try
                         {
                             lights = (Collection<HueLightBulb>) bridge.getLights();
                         }
                         catch(Exception e)
                         {
-                            Log.e(TAG, e.getMessage());
+                            Logger.e(TAG, e.getMessage());
                         }
-                        Log.d(TAG, "Available LightBulbs : "+lights.size());
+                        Logger.d(TAG, "Available LightBulbs : "+lights.size());
                         for (HueLightBulb bulb : lights)
                         {
                             try
                             {
-                                Log.d(TAG, bulb.toString());
+                                Logger.d(TAG, bulb.toString());
                                 bulb.setOn(false);
                             }
                             catch(Exception e)
                             {
-                                Log.e(TAG, e.getMessage());
+                                Logger.e(TAG, e.getMessage());
                             }
                         }
                     }
                     else
                     {
-                        Log.d(TAG, "Authentication failed.");
+                        Logger.d(TAG, "Authentication failed.");
                     }
                 }
             }
@@ -264,19 +264,19 @@ public class PhilipsHueAction extends AmbientAction
                     bridge.setUsername(BRIDGEUSERNAME);
                     if(bridge.authenticate(true))
                     {
-                        Log.d(TAG, "Access granted. username: " + bridge.getUsername());
+                        Logger.d(TAG, "Access granted. username: " + bridge.getUsername());
                         lights = (Collection<HueLightBulb>) bridge.getLights();
-                        Log.d(TAG, "Available LightBulbs: "+lights.size());
+                        Logger.d(TAG, "Available LightBulbs: "+lights.size());
                         for (HueLightBulb bulb : lights)
                         {
-                            Log.d(TAG, bulb.toString());
+                            Logger.d(TAG, bulb.toString());
                             //identifiy(bulb);
                         }
-                        Log.d(TAG, "");
+                        Logger.d(TAG, "");
                     }
                     else
                     {
-                        Log.d(TAG, "Authentication failed.");
+                        Logger.d(TAG, "Authentication failed.");
                     }
                 }
             }
@@ -296,23 +296,23 @@ public class PhilipsHueAction extends AmbientAction
                 }
                 catch(Exception e)
                 {
-                    Log.e(TAG, e.getMessage());
+                    Logger.e(TAG, e.getMessage());
                 }
                 for(HueBridge bridge : bridges)
                 {
                     bridge.setUsername(BRIDGEUSERNAME);
                     if(bridge.authenticate(true))
                     {
-                        Log.d(TAG, "Access granted. username: " + bridge.getUsername());
+                        Logger.d(TAG, "Access granted. username: " + bridge.getUsername());
                         try
                         {
                             lights = (Collection<HueLightBulb>) bridge.getLights();
                         }
                         catch(Exception e)
                         {
-                            Log.e(TAG, e.getMessage());
+                            Logger.e(TAG, e.getMessage());
                         }
-                        Log.d(TAG, "Available LightBulbs : "+lights.size());
+                        Logger.d(TAG, "Available LightBulbs : "+lights.size());
                         for (HueLightBulb bulb : lights)
                         {
                             try
@@ -323,7 +323,7 @@ public class PhilipsHueAction extends AmbientAction
                             }
                             catch(Exception e)
                             {
-                                Log.e(TAG, e.getMessage());
+                                Logger.e(TAG, e.getMessage());
                             }
 
                         }
@@ -331,7 +331,7 @@ public class PhilipsHueAction extends AmbientAction
                     }
                     else
                     {
-                        Log.d(TAG, "Authentication failed.");
+                        Logger.d(TAG, "Authentication failed.");
                     }
                 }
             }
@@ -346,7 +346,7 @@ public class PhilipsHueAction extends AmbientAction
             {
                 try
                 {
-                    Log.d(TAG, bulb.toString());
+                    Logger.d(TAG, bulb.toString());
                     boolean originalyon=false;
                     if(bulb.getOn())
                     {
@@ -410,7 +410,7 @@ public class PhilipsHueAction extends AmbientAction
                 }
                 catch(Exception e)
                 {
-                    Log.e(TAG, "error while setting lights 2");
+                    Logger.e(TAG, "error while setting lights 2");
                 }
             }
         }).start();
@@ -503,7 +503,7 @@ public class PhilipsHueAction extends AmbientAction
                             }
                             catch(Exception h)
                             {
-                                Log.e(TAG, "thread sleep exception");
+                                Logger.e(TAG, "thread sleep exception");
                             }
 
                         }
@@ -515,7 +515,7 @@ public class PhilipsHueAction extends AmbientAction
                 }
                 catch(Exception e)
                 {
-                    Log.e(TAG, "there was an error when setting the lightbulb");
+                    Logger.e(TAG, "there was an error when setting the lightbulb");
                 }
             }
         }).start();
