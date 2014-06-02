@@ -4,7 +4,11 @@
 <img src="https://raw.githubusercontent.com/TVLukeProductions/AmbientAlarmClock/master/clock/src/main/res/drawable-mdpi/icon.png" alt="Logo"/>
 </p>
 
-The simple but effective alarm clock that plays you some music, offers you the news, turns on the light and more. [Download here](https://www.dropbox.com/s/bhu0opjdgtnxbna/AAL2.apk)
+The simple but effective alarm clock that plays you some music, offers you the news, turns on the light and more. Ambient Technology is the vision of technology that adapts your surroundings to your needs and offers services to you in better ways then ever before using sensing and acting technology.
+
+Imagine your coffee machine turning on 5 minutes before your alarm clock rings so you always wake up to the smell of fresh coffee. Imagine music slowly swelling up while the lights simulate a sunrise. Imagine the heating in your bath turning on before you step into your bath and all of it controlled by your alarm time instead of at a fixed time. Using Home Automation technology from ezControl, the Philips Hue and other technologies the Ambient Alarm Clock makes these scenarios possible.
+
+You can [Download the Ambient Alarm Clock here](https://www.dropbox.com/s/bhu0opjdgtnxbna/AAL2.apk).
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/TVLukeProductions/AmbientAlarmClock/master/pics/overviewnew.jpg" alt="UI"/>
@@ -12,20 +16,22 @@ The simple but effective alarm clock that plays you some music, offers you the n
 
 Features:
 #### Alarm Clock
-* Alarm Clock that wakes you up with music of your choice
-* You can chose what songs you want to wake up to by selecting a folder on your device with music (or use dropbox). The Alarm clock will select one at random.
-* You can have the song fade in slowly or start loud
-* Define your own snooze time or if you even want a snooze button shown
+* Alarm Clock that wakes you up with music of your choice.
+* You can chose what songs you want to wake up to by selecting a folder on your device with music (or use DropBox). The alarm clock will select one song out of the selected folder at random.
+* You can have the song fade in slowly or start loud.
+* Define your own snooze time or if you even want a snooze button shown at all.
+* Choose a set of actions for each alarm which are then performed by the clock. Actions can include control over light, music or home appliances as well as data shown on the device.
+* Each action can be activated individually on a chosen time before or after the alarm.
 
 #### Website on wake up
-* Define a web site to be shown on alert (for example a news web site)
+* Define a web site to be shown on your device on alert (for example a news web site).
 
 #### Countdown on wake up
-* You don't have all the time in the world. You need to get the bus? You always want to know how much time is left until you need to get out? Activate the Countdown, which will start with the first alarm and tell you when you have to got. The alarm-clock will stop the alert when it has run out, so you don't even have to be there any more.
+* You don't have all the time in the world. You need to get the bus? You always want to know how much time is left until you need to get out? Activate the Countdown, which will start with the first alarm and tell you when you have to got. The alarm-clock can, if you want it to, stop the alert when it has run out, so you don't even have to be there any more.
 
 #### Reminder to go to bed
 * Get a reminder to go to bed several hours before the alarm rings (you can define how many hours)
-* Get the reminder send to you via email
+* Get the reminder send to you via email.
 
 #### Radio Player
 * Listen to the radio after the alarm has rung. You have the choice between several radio stations

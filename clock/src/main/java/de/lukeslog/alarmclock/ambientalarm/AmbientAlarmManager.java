@@ -12,6 +12,7 @@ import de.lukeslog.alarmclock.main.ClockWorkService;
 import de.lukeslog.alarmclock.main.NotificationManagement;
 import de.lukeslog.alarmclock.startup.NotificationService;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
+import de.lukeslog.alarmclock.support.AlarmState;
 import de.lukeslog.alarmclock.support.Logger;
 import de.lukeslog.alarmclock.ui.AmbientAlarmActivity;
 
@@ -117,19 +118,26 @@ public class AmbientAlarmManager
                     Logger.d(TAG, "  now start stuff....");
                     intent.putExtra("ambientAlarmID", alarmID);
                     ctx.startActivity(intent);
-                    try
+                    while(ambientAlarm.getStatus()== AlarmState.ALARM)
                     {
-                        Thread.sleep(3000);
-                    }
-                    catch (InterruptedException e)
-                    {
-                        e.printStackTrace();
-                    }
-                    //check if the activity is running...
-                    if(!AmbientAlarmActivity.running)
-                    {
-                        Logger.d(TAG, "apparently it is running....");
-                        ctx.startActivity(intent);
+                        try
+                        {
+                            Thread.sleep(3000);
+                        }
+                        catch (InterruptedException e)
+                        {
+                            e.printStackTrace();
+                        }
+                        //check if the activity is running...
+                        if (!AmbientAlarmActivity.running)
+                        {
+                            Logger.d(TAG, "apparently it is not running....");
+                            ctx.startActivity(intent);
+                        }
+                        else
+                        {
+                            Logger.d(TAG, "not running...");
+                        }
                     }
                 }
             }).start();
