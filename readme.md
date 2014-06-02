@@ -63,7 +63,24 @@ Yes. Whenever I make the app better to make sure I get up better I get used to t
 ## Version History
 #### Current
 
-**AmbientAlarmClock 6.0.1** (May 1st 2014)
+**AmbientAlarmClock 2.11** (June 1st 2014)
+* Completely rewritten code base
+* Now supports multiple independent ambient alarms
+* Users can configure which alarms should be used on which days
+* Users can configure actions to be performed for each alarm
+* Actions include all previously available actions like turning on lights, switching power plugs, playing music with syncing DropBox folders and muc more
+* Faster, nicer and more responsive UI
+
+Change Log:
+* Fixed an issue with using IntentService with a high frequency of calls, now uses a handler
+* Fixed excessive logging, now uses own Logger-class which als can write into file for long term debugging efforts
+* Fixed an issue with DropBox Sync that could drain data plans
+* removed some unreachable code
+* Fixed some error handling in the database handler
+
+#### Older Versions
+
+**AmbientAlarmClock 2.6.0.1** (May 1st 2014)
 * Completely rewritten code base
 * Now Supports multiple independent ambient alarms
 * Configure which alarms should be used on which days
@@ -71,9 +88,7 @@ Yes. Whenever I make the app better to make sure I get up better I get used to t
 * Actions include all previously available actions like turning on lights, switching power plugs, playing music with syncing DropBox folders and muc more
 * Faster, nicer and more responsive UI
 
-#### Older Versions
-
-**AmbientAlarmClock 5.1.9** (March 1st 2014)
+**AmbientAlarmClock 1.5.1.9** (March 1st 2014)
 * Set Your Alarm Time
 * Set A Reminder to be displayed on the device and send via email
 * Choose a folder for music to play
@@ -92,7 +107,7 @@ Change Log:
 * Included A countdown functionality
 
 
-**AmbientAlarmClock 5.1.8** (Jan. 4th 2014)
+**AmbientAlarmClock 1.5.1.8** (Jan. 4th 2014)
 
 * Set Your Alarm Time
 * Set A "Go-To-Bed"-Reminder to be displayed on the device and send via email
@@ -110,7 +125,7 @@ Change Log:
 * Fixed a crashing issue (critical)
 * Fixed Folder finding during alarm (critical)
 
-**AmbientAlarmClock 5.1.7**
+**AmbientAlarmClock 1.5.1.7**
 
 * Set Your Alarm Time
 * Set A Reminder to be displayed on the device and send via email
