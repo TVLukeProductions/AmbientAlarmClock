@@ -10,7 +10,7 @@ to improve your live using sensing and acting technology.
 
 Imagine your coffee machine turning on 5 minutes before your alarm clock rings so you always wake up to the scent of fresh coffee. Imagine music slowly swelling up while the lights simulate a sunrise. Imagine the heating in your bath turning on before you step into your bath and all of it controlled by your alarm time instead of at a fixed time. Using Home Automation technology from ezControl, the Philips Hue and other technologies the Ambient Alarm Clock makes these scenarios possible.
 
-You can [Download the Ambient Alarm Clock here](https://www.dropbox.com/s/b8irps6uhls48hv/AAC11.apk).
+You can [Download the Ambient Alarm Clock here](https://dl.dropbox.com/s/m48u5i7o7pu5a57/AAC12.apk).
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/TVLukeProductions/AmbientAlarmClock/master/pics/overviewnew.jpg" alt="UI"/>
