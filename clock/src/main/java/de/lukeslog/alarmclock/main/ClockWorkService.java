@@ -3,7 +3,6 @@ package de.lukeslog.alarmclock.main;
 import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,28 +11,27 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 
 import org.joda.time.DateTime;
+import org.joda.time.Seconds;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 
 import de.lukeslog.alarmclock.actions.ActionManager;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarmManager;
-import de.lukeslog.alarmclock.startup.NotificationService;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
 import de.lukeslog.alarmclock.support.Logger;
 
 /**
  * Created by lukas on 29.03.14.
  */
-public class ClockWorkService extends Service implements Runnable
+public class ClockWorkService  extends IntentService
 {
-
     public static final String PREFS_NAME = AlarmClockConstants.PREFS_NAME;
     public static String TAG = AlarmClockConstants.TAG;
 
     public static SharedPreferences settings;
 
-    private static int currentSecond=-1;
+    private static int currentMinute=-1;
     private static DateTime lasttime;
     private static Context context=null;
     private static boolean running = true;
@@ -41,6 +39,11 @@ public class ClockWorkService extends Service implements Runnable
     private Thread runner;
 
     private static ArrayList<Timable> notifications = new ArrayList<Timable>();
+
+    public ClockWorkService()
+    {
+        super("ClockWorkService");
+    }
 
     public static Context getClockworkContext()
     {
@@ -66,16 +69,7 @@ public class ClockWorkService extends Service implements Runnable
         super.onStartCommand(intent, flags, startId);
         //Log.d(TAG, "ClockWorkService onStartCommand()");
 
-        startUpdater();
-
         return START_NOT_STICKY;
-    }
-
-    private void startUpdater()
-    {
-
-        runner = new Thread(this);
-        runner.start();
     }
 
     @Override
@@ -95,32 +89,33 @@ public class ClockWorkService extends Service implements Runnable
     }
 
     @Override
-    public void run()
+    protected void onHandleIntent(Intent intent)
     {
-        boolean running=true;
-        while(running)
+        if(running)
         {
             DateTime currentTime = new DateTime();
-            if(lasttime==null)
+            if (lasttime == null)
             {
-                lasttime=currentTime;
+                lasttime = currentTime;
             }
-            if(newSecondHasStarted())
+            if (newSecondHasStarted())
             {
-                //sometimes the handler can skip one or two seconds, this would mean missing the
+                //sometimes the handler can skip one Minute, this would mean missing the
                 //alarm if we only called with the current time so we have a while loop calling for all times
                 //since the last time
                 currentTime = currentTime.withMillisOfSecond(0);
+                currentTime = currentTime.withSecondOfMinute(0);
                 lasttime = lasttime.withMillisOfSecond(0);
-                while(lasttime.isBefore(currentTime))
+                lasttime = lasttime.withSecondOfMinute(0);
+                while (lasttime.isBefore(currentTime))
                 {
-                    lasttime=lasttime.plusSeconds(1);
+                    lasttime = lasttime.plusMinutes(1);
                     //since lasttime is a global object which may change during execution on the other thread
                     final DateTime time = new DateTime(lasttime);
 
                     Handler mainHandler = new Handler(context.getMainLooper());
 
-                     // This is your code
+                    // This is your code
                     mainHandler.post(new Runnable()
                     {
                         @Override
@@ -130,17 +125,25 @@ public class ClockWorkService extends Service implements Runnable
                         }
                     });
                 }
-                lasttime=currentTime;
+                lasttime = currentTime;
             }
+            scheduleNext();
         }
-        try
-        {
-            Thread.currentThread().sleep(500);
-        }
-        catch(Exception ie)
-        {
+    }
 
-        }
+    private void scheduleNext()
+    {
+        Calendar cal = Calendar.getInstance();
+        DateTime now = new DateTime();
+        DateTime inaminute = new DateTime();
+        inaminute = inaminute.plusMinutes(1);
+        inaminute = inaminute.withSecondOfMinute(0);
+        int secondstoadd = Seconds.secondsBetween(inaminute, now).getSeconds();
+        cal.add(Calendar.SECOND, secondstoadd);
+        Intent intent = new Intent(this, ClockWorkService.class);
+        PendingIntent pendingIntent = PendingIntent.getService(this, AlarmClockConstants.TICK, intent, 0);
+        AlarmManager am = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingIntent);
     }
 
     private void tick(DateTime time)
@@ -157,14 +160,14 @@ public class ClockWorkService extends Service implements Runnable
     private boolean newSecondHasStarted()
     {
         DateTime currentTime = new DateTime();
-        if(currentTime.getSecondOfMinute()-currentSecond>1)
+        if(currentTime.getMinuteOfHour()-currentMinute>1)
         {
-            Logger.e(TAG, "WE JUST SKIPPED A SECCOND! WE JUST SKIPPED A SECOND! THIS IS WORST THING. EVER.");
+            Logger.e(TAG, "WE JUST SKIPPED A MINUTE! WE JUST SKIPPED A MINUTE! THIS IS WORST THING. EVER.");
         }
 
-        if(currentSecond!=currentTime.getSecondOfMinute())
+        if(currentMinute!=currentTime.getMinuteOfHour())
         {
-            currentSecond=currentTime.getSecondOfMinute();
+            currentMinute=currentTime.getMinuteOfHour();
             return true;
         }
         return false;

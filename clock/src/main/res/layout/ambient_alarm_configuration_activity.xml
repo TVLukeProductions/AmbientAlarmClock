@@ -52,7 +52,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="SnoozeTime (Sec)"
+                android:text="SnoozeTime (Min)"
                 android:id="@+id/textView"/>
 
             <EditText

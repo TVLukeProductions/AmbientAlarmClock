@@ -3,6 +3,7 @@ package de.lukeslog.alarmclock.ambientalarm;
 import android.widget.LinearLayout;
 
 import org.joda.time.DateTime;
+import org.joda.time.Minutes;
 import org.joda.time.Seconds;
 
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public class AmbientAlarm implements Timable
     private boolean active=false;
     private boolean snoozing = false;
     private boolean lock = false;
-    private int snoozeTimeInSeconds = 500;
+    private int snoozeTimeInMinutes = 5;
     private int snoozeButtonPressedCounter=0;
     private DateTime alarmTime = new DateTime();
     private DateTime snoozealert;
@@ -102,15 +103,15 @@ public class AmbientAlarm implements Timable
     }
 
     //get the set snooze time
-    public int getSnoozeTimeInSeconds()
+    public int getSnoozeTimeInMinutes()
     {
-        return snoozeTimeInSeconds;
+        return snoozeTimeInMinutes;
     }
 
     //set the snooze Time
-    public void setSnoozeTimeInSeconds(int snoozeTimeInSeconds)
+    public void setSnoozeTimeInMinutes(int snoozeTimeInMinutes)
     {
-        this.snoozeTimeInSeconds = snoozeTimeInSeconds;
+        this.snoozeTimeInMinutes = snoozeTimeInMinutes;
     }
 
     //get the Time of the Alarm
@@ -143,27 +144,32 @@ public class AmbientAlarm implements Timable
         this.lastAlarmTime = this.alarmTime;
     }
 
-    public int secondsSinceAlertTime(DateTime currentTime)
+    public int minutesSinceAlertTime(DateTime currentTime)
     {
-        if(Seconds.secondsBetween(lastAlarmTime, currentTime).getSeconds()<0)
+        if(Minutes.minutesBetween(lastAlarmTime, currentTime).getMinutes()<0)
         {
             return -1;
         }
-        return (Seconds.secondsBetween(lastAlarmTime, currentTime).getSeconds());
+        return (Minutes.minutesBetween(lastAlarmTime, currentTime).getMinutes());
+    }
+
+    public int minutesToAlertTime(DateTime currentTime)
+    {
+
+        return (Minutes.minutesBetween(currentTime, alarmTime).getMinutes());
     }
 
     public int secondsToAlertTime(DateTime currentTime)
     {
-
         return (Seconds.secondsBetween(currentTime, alarmTime).getSeconds());
     }
 
-    private int secondsToSnoozeAlertTime(DateTime currentTime)
+    private int minutesToSnoozeAlertTime(DateTime currentTime)
     {
         if(snoozealert!=null)
         {
             //Log.d(TAG, "secondstonooze->"+Seconds.secondsBetween(currentTime, snoozealert).getSeconds());
-            int x = Seconds.secondsBetween(snoozealert, currentTime).getSeconds();
+            int x = Minutes.minutesBetween(snoozealert, currentTime).getMinutes();
             return x;
         }
         else
@@ -175,8 +181,10 @@ public class AmbientAlarm implements Timable
     private void setSnoozeAlertTime()
     {
         DateTime now = new DateTime();
-        Logger.d(TAG, "alarmtime + "+(secondsSinceAlertTime(now)+snoozeTimeInSeconds));
-        snoozealert = lastAlarmTime.plusSeconds(secondsSinceAlertTime(now)+snoozeTimeInSeconds);
+        Logger.d(TAG, "alarmtime + "+(minutesSinceAlertTime(now)+snoozeTimeInMinutes));
+        int adding = minutesSinceAlertTime(now)+snoozeTimeInMinutes;
+        snoozealert = lastAlarmTime.plusMinutes(adding);
+        Logger.d(TAG, "New SnoozeAlert: "+snoozealert.getHourOfDay()+":"+snoozealert.getMinuteOfHour());
     }
 
     public void registerAction(String relativeTime, AmbientAction action)
@@ -229,10 +237,10 @@ public class AmbientAlarm implements Timable
     {
         Logger.i(TAG, "Alarm "+alarmID+" notified of the time.");
         Logger.i(TAG, "State of  "+alarmID+" = "+alarmState);
-        Logger.d(TAG, "Seconds since last Alert: "+secondsSinceAlertTime(currentTime));
-        Logger.d(TAG, "Seconds to next Alert: "+secondsToAlertTime(currentTime));
+        Logger.d(TAG, "Minutes since last Alert: "+ minutesSinceAlertTime(currentTime));
+        Logger.d(TAG, "Minutes to next Alert: "+ minutesToAlertTime(currentTime));
         performActionIfActionIsRequired(currentTime);
-        if(secondsToAlertTime(currentTime)<=0)
+        if(minutesToAlertTime(currentTime)<=0)
         {
             setToNextAlarmTime();
         }
@@ -247,20 +255,20 @@ public class AmbientAlarm implements Timable
 
     private void performActionIfActionIsRequired(DateTime currentTime)
     {
-        //an action has been registered to be performed x seconds before alert
-        if(registeredActions.containsKey("-"+secondsToAlertTime(currentTime)))
+        //an action has been registered to be performed x minutes before alert
+        if(registeredActions.containsKey("-"+ minutesToAlertTime(currentTime)))
         {
             Logger.d(TAG, "jap1");
-            performActions("-" + secondsToAlertTime(currentTime));
+            performActions("-" + minutesToAlertTime(currentTime));
         }
-        //an action has been registered to be performed x seconds after
-        if(registeredActions.containsKey("+"+secondsSinceAlertTime(currentTime)))
+        //an action has been registered to be performed x minutes after
+        if(registeredActions.containsKey("+"+ minutesSinceAlertTime(currentTime)))
         {
             Logger.d(TAG, "jap2");
-            performActions("+"+secondsSinceAlertTime(currentTime));
+            performActions("+"+ minutesSinceAlertTime(currentTime));
         }
         //action registered on alert
-        if(secondsSinceAlertTime(currentTime)==0 || secondsToSnoozeAlertTime(currentTime)==0)
+        if(minutesToAlertTime(currentTime)==0 || minutesToSnoozeAlertTime(currentTime)==0)
         {
             Logger.d(TAG, "ALAAAAAARRM");
             if(registeredActions.containsKey("0"))
@@ -487,11 +495,11 @@ public class AmbientAlarm implements Timable
         DateTime now = new DateTime();
         if(islocked())
         {
-            if(secondsSinceAlertTime(now)>-1 && secondsSinceAlertTime(now)<AlarmClockConstants.LOCKTIME)
+            if(minutesSinceAlertTime(now)>-1 && minutesSinceAlertTime(now)<AlarmClockConstants.LOCKTIME)
             {
                 return true;
             }
-            if(secondsToAlertTime(now)>-1 && secondsToAlertTime(now)<AlarmClockConstants.LOCKTIME)
+            if(minutesToAlertTime(now)>-1 && minutesToAlertTime(now)<AlarmClockConstants.LOCKTIME)
             {
                 return true;
             }

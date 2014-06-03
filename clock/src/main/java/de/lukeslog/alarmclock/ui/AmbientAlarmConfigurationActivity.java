@@ -331,7 +331,7 @@ public class AmbientAlarmConfigurationActivity extends Activity
             }
         });
         EditText snoozetime = (EditText)findViewById(R.id.snoozetimeinseconds);
-        snoozetime.setText(""+alarm.getSnoozeTimeInSeconds());
+        snoozetime.setText(""+alarm.getSnoozeTimeInMinutes());
         snoozetime.addTextChangedListener(new TextWatcher()
         {
             @Override
@@ -356,7 +356,7 @@ public class AmbientAlarmConfigurationActivity extends Activity
                 }
                 else
                 {
-                    alarm.setSnoozeTimeInSeconds(Integer.parseInt(editable.toString()));
+                    alarm.setSnoozeTimeInMinutes(Integer.parseInt(editable.toString()));
                 }
             }
         });

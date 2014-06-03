@@ -5,12 +5,12 @@
         <PreferenceScreen
             android:key="pref_email_detail_settings"
             android:title="@string/email_logdata"
-            android:summary="Configure your email account."
+            android:summary="@string/pref_email_summary"
             android:persistent="true">
             <Preference
                 android:key="pref_static_field_key"
                 android:selectable="false"
-                android:summary="Be advised that this application stores your account data.\n\nPlease use an application specific password.\nGoogle Mail allows for 2-factor authentication and account specific passwords. Find out more under http://www.google.com/landing/2step/\n"/>
+                android:summary="@string/be_advised_google_mail"/>
             <EditTextPreference
                 android:key="pref_email_login"
                 android:summary="@string/pref_summary_email_user"
@@ -38,11 +38,12 @@
         <PreferenceScreen
             android:key="pref_lastfm_detail_settings"
             android:title="@string/pref_lastfm_logdata"
+            android:summary="@string/pref_lastfm_summary"
             android:persistent="true">
             <Preference
                 android:key="pref_static_field_key"
                 android:selectable="false"
-                android:summary="Be advised that this application stores your account data."/>
+                android:summary="@string/be_advised_short"/>
             <EditTextPreference
                 android:key="pref_lastfm_login"
                 android:summary="@string/pref_summary_lastfm_user"

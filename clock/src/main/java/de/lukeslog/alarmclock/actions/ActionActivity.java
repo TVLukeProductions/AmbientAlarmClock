@@ -180,7 +180,6 @@ public class ActionActivity extends Activity
 
         final Spinner timeunits = (Spinner) findViewById(R.id.timeunits);
         List<String> list2 = new ArrayList<String>();
-        list2.add("seconds");
         list2.add("minutes");
         list2.add("hours");
         ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list2);
@@ -204,11 +203,6 @@ public class ActionActivity extends Activity
         {
             t=t/60;
             timeunits.setSelection(1);
-        }
-        if(t>60 && t%60==0)
-        {
-            t=t/60;
-            timeunits.setSelection(2);
         }
 
 
@@ -253,13 +247,9 @@ public class ActionActivity extends Activity
             Logger.d(TAG, ">>>>> TRY to get Timing");
             int timing = Integer.parseInt(timingText.getEditableText().toString());
             Logger.d(TAG, "timing="+timing);
-            if (timeunits.getSelectedItemPosition() == 1)
+            if(timeunits.getSelectedItemPosition() == 1)
             {
-                timing = timing*60;
-            }
-            if(timeunits.getSelectedItemPosition() == 2)
-            {
-                timing=timing*60*60;
+                timing=timing*60;
             }
             Logger.d(TAG, "reclaculated timing="+timing);
             String s = ""+timing;

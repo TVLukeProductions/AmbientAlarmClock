@@ -202,7 +202,7 @@ public class AmbientAlarmDatabase
         ContentValues cValues = new ContentValues();
         cValues.put(TABLE_ALARM_ACTIVE, boolToInt(ambientAlarm.isActive()));
         cValues.put(TABLE_ALARM_SNOOZING, boolToInt(ambientAlarm.isSnoozing()));
-        cValues.put(TABLE_ALARM_SNOOZE_TIME, ambientAlarm.getSnoozeTimeInSeconds());
+        cValues.put(TABLE_ALARM_SNOOZE_TIME, ambientAlarm.getSnoozeTimeInMinutes());
         cValues.put(TABLE_ALARM_LOCK, boolToInt(ambientAlarm.islocked()));
         cValues.put(TABLE_ALARM_TIME_HOUR, ambientAlarm.getAlarmTime().getHourOfDay());
         cValues.put(TABLE_ALARM_TIME_MINUTE, ambientAlarm.getAlarmTime().getMinuteOfHour());
@@ -379,7 +379,7 @@ public class AmbientAlarmDatabase
         Logger.d(TAG, "" + ambientAlarm.isActive());
         ambientAlarm.setSnoozing(intToBool(c.getInt(c.getColumnIndex(TABLE_ALARM_SNOOZING))));
         Logger.d(TAG, "" + ambientAlarm.isSnoozing());
-        ambientAlarm.setSnoozeTimeInSeconds(c.getInt(c.getColumnIndex(TABLE_ALARM_SNOOZE_TIME)));
+        ambientAlarm.setSnoozeTimeInMinutes(c.getInt(c.getColumnIndex(TABLE_ALARM_SNOOZE_TIME)));
         Logger.d(TAG, "olol");
         ambientAlarm.setLocked(intToBool(c.getInt(c.getColumnIndex(TABLE_ALARM_LOCK))));
         ambientAlarm.setAlarmStateForDay(Day.MONDAY, intToBool(c.getInt(c.getColumnIndex(TABLE_ALARM_DAY_MONDAY))));
