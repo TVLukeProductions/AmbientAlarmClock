@@ -64,7 +64,21 @@ Yes. Whenever I make the app better to make sure I get up better I get used to t
 
 ## Version History
 #### Current
+**AmbientAlarmClock 2.12** (June 3st 2014)
+* Completely rewritten code base
+* Now supports multiple independent ambient alarms
+* Users can configure which alarms should be used on which days
+* Users can configure actions to be performed for each alarm
+* Actions include all previously available actions like turning on lights, switching power plugs, playing music with syncing DropBox folders and muc more
+* Faster, nicer and more responsive UI
 
+Change Log:
+* Critical Bug that made the alarm not happen
+* Minutes are now the minimal timing unit to decrease CPU load
+* The settings now are conform to Android UI guidelines
+* You can now use other email servers then Google Mail
+
+#### Older Versions
 **AmbientAlarmClock 2.11** (June 1st 2014)
 * Completely rewritten code base
 * Now supports multiple independent ambient alarms
@@ -79,8 +93,6 @@ Change Log:
 * Fixed an issue with DropBox Sync that could drain data plans
 * removed some unreachable code
 * Fixed some error handling in the database handler
-
-#### Older Versions
 
 **AmbientAlarmClock 2.6.0.1** (May 1st 2014)
 * Completely rewritten code base

@@ -5,7 +5,7 @@
     <string name="namespace">de.lukeslog.alarmclock</string>
     <string name="app_name_short">Ambient Alarm Clock</string>
     <string name="alarm">Alarm</string><!-- "clock"-->
-    <string name="snooze">5 more minutes mom!</string><!-- "five more minutes mom" -->
+    <string name="snooze">Snooze</string><!-- "five more minutes mom" -->
     <string name="awake">OK. I am up!</string><!-- "ok I'm awake"-->
     <string name="save">Save</string><!-- the word for "save" or "store"-->
     <string name="radio">Radio</string><!-- the word for "radio"-->
