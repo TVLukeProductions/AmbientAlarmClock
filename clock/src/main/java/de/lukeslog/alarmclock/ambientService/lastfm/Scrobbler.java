@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import de.lukeslog.alarmclock.main.ClockWorkService;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
 import de.lukeslog.alarmclock.support.Logger;
+import de.lukeslog.alarmclock.support.Settings;
 import de.umass.lastfm.Authenticator;
 import de.umass.lastfm.Caller;
 import de.umass.lastfm.Session;
@@ -25,8 +26,8 @@ public class Scrobbler
             public void run()
             {
                 SharedPreferences settings = ClockWorkService.settings;
-                String lastfmusername = settings.getString("lastfmusername", "");
-                String lastfmpassword = settings.getString("lastfmpassword", "");
+                String lastfmusername = settings.getString(Settings.LASTFM_USER, "");
+                String lastfmpassword = settings.getString(Settings.LASTFM_PSW, "");
                 boolean scrobbletolastfm = settings.getBoolean("scrobble", false);
                 if(!lastfmusername.equals("") && scrobbletolastfm)
                 {
@@ -56,8 +57,8 @@ public class Scrobbler
         SharedPreferences settings = ClockWorkService.settings;
         if(settings!=null)
         {
-            String lastfmusername = settings.getString("lastfmusername", "");
-            String lastfmpassword = settings.getString("lastfmpassword", "");
+            String lastfmusername = settings.getString(Settings.LASTFM_USER, "");
+            String lastfmpassword = settings.getString(Settings.LASTFM_PSW, "");
             if (!lastfmusername.equals("") && !lastfmpassword.equals(""))
             {
                 return true;
@@ -79,8 +80,8 @@ public class Scrobbler
     {
         SharedPreferences settings = ClockWorkService.settings;
         boolean scrobbletolastfm = settings.getBoolean("scrobble", false);
-        String lastfmusername = settings.getString("lastfmusername", "");
-        String lastfmpassword = settings.getString("lastfmpassword", "");
+        String lastfmusername = settings.getString(Settings.LASTFM_USER, "");
+        String lastfmpassword = settings.getString(Settings.LASTFM_PSW, "");
         if(!lastfmusername.equals("") && !lastfmpassword.equals("") && scrobbletolastfm)
         {
             return scrobbletolastfm;
@@ -91,8 +92,8 @@ public class Scrobbler
     public static boolean hasLogInDataProvided()
     {
         SharedPreferences settings = ClockWorkService.settings;
-        String lastfmusername = settings.getString("lastfmusername", "");
-        String lastfmpassword = settings.getString("lastfmpassword", "");
+        String lastfmusername = settings.getString(Settings.LASTFM_USER, "");
+        String lastfmpassword = settings.getString(Settings.LASTFM_PSW, "");
         if(!lastfmusername.equals("") && !lastfmpassword.equals(""))
         {
             return true;

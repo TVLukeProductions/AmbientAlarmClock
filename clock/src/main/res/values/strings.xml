@@ -29,4 +29,25 @@
     <string name="off">Turn Off</string>
     <string name="numberoftheheater">Number of your radiator</string>
     <string name="turntolevel">Turn to Level</string>
+    <!-- preferences strings-->
+    <string name="pref_email_title">Email Settings</string>
+    <string name="email_logdata">Email Data</string>
+    <string name="pref_summary_email_user"></string>
+    <string name="pref_email_user">Email User</string>
+    <string name="pref_summary_email_password"></string>
+    <string name="pref_email_pasword">Password</string>
+    <string name="pref_summary_email_smtpserver">Your SMTP server address</string>
+    <string name="pref_email_smtpserver">SMTP Server</string>
+    <string name="pref_summary_email_smtpserver_port">Your Server Port</string>
+    <string name="pref_email_smtpserver_port">Port</string>
+    <string name="pref_lastfm_title">Last.fm</string>
+    <string name="pref_lastfm_logdata">Last.fm Data</string>
+    <string name="pref_lastfm_user">Username</string>
+    <string name="pref_summary_lastfm_user"></string>
+    <string name="pref_summary_lastfm_password"></string>
+    <string name="pref_lastfm_password">Password</string>
+    <string name="pref_developers_title">Developers</string>
+    <string name="pref_logging">Logging</string>
+    <string name="pref_logging_summary">Activates DDMS-logging</string>
+    <string name="pref_logging_file">Write to logfile</string>
 </resources>

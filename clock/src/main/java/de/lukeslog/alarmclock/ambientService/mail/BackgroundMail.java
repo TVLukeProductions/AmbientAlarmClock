@@ -1,6 +1,8 @@
 package de.lukeslog.alarmclock.ambientService.mail;
 
-import java.util.Date; 
+import android.content.SharedPreferences;
+
+import java.util.Date;
 import java.util.Properties; 
 import javax.activation.CommandMap; 
 import javax.activation.DataHandler; 
@@ -17,7 +19,9 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage; 
 import javax.mail.internet.MimeMultipart;
 
+import de.lukeslog.alarmclock.main.ClockWorkService;
 import de.lukeslog.alarmclock.support.Logger;
+import de.lukeslog.alarmclock.support.Settings;
 
 
 //completly coppied this from  http://www.jondev.net/articles/Sending_Emails_without_User_Intervention_%28no_Intents%29_in_Android
@@ -47,11 +51,13 @@ public class BackgroundMail extends javax.mail.Authenticator
  
  
   public BackgroundMail() 
-  { 
+  {
 
-    _host = "smtp.gmail.com"; // default smtp server 
-    _port = "465"; // default smtp port 
-    _sport = "465"; // default socketfactory port 
+     SharedPreferences sharedPref = ClockWorkService.settings;
+
+    _host = sharedPref.getString(Settings.EMAIL_SMTPSERVER, "");
+    _port = sharedPref.getString(Settings.EMAIL_SMTPSERVER_PORT, "");
+    _sport = sharedPref.getString(Settings.EMAIL_SMTPSERVER_PORT, "");
  
     _user = ""; // username 
     _pass = ""; // password 

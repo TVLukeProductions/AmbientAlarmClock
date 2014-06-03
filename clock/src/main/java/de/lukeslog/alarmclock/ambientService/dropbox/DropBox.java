@@ -241,10 +241,12 @@ public class DropBox
             }
             catch (UnknownHostException e)
             {
+                Logger.e(TAG, "1. "+e.getMessage());
                 e.printStackTrace();
             }
             catch (IOException e)
             {
+                Logger.e(TAG, "2. "+e.getMessage());
                 e.printStackTrace();
             }
         }

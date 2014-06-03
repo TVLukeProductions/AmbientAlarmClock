@@ -120,6 +120,19 @@ public class AmbientAlarmManager
                     ctx.startActivity(intent);
                     while(ambientAlarm.getStatus()== AlarmState.ALARM)
                     {
+                        //check if the activity is running...
+                        if (!AmbientAlarmActivity.running)
+                        {
+                            Logger.d(TAG, "apparently it is not running....");
+                            if(ambientAlarm.getStatus()== AlarmState.ALARM)//making the race condition as small as possible...
+                            {
+                                ctx.startActivity(intent);
+                            }
+                        }
+                        else
+                        {
+                            Logger.d(TAG, "running...");
+                        }
                         try
                         {
                             Thread.sleep(3000);
@@ -127,16 +140,6 @@ public class AmbientAlarmManager
                         catch (InterruptedException e)
                         {
                             e.printStackTrace();
-                        }
-                        //check if the activity is running...
-                        if (!AmbientAlarmActivity.running)
-                        {
-                            Logger.d(TAG, "apparently it is not running....");
-                            ctx.startActivity(intent);
-                        }
-                        else
-                        {
-                            Logger.d(TAG, "not running...");
                         }
                     }
                 }

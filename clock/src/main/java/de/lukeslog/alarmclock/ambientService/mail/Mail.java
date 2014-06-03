@@ -1,10 +1,12 @@
 package de.lukeslog.alarmclock.ambientService.mail;
 
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import de.lukeslog.alarmclock.main.ClockWorkService;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
 import de.lukeslog.alarmclock.support.Logger;
+import de.lukeslog.alarmclock.support.Settings;
 
 /**
  * Created by lukas on 31.03.14.
@@ -15,9 +17,9 @@ public class Mail
 
     public static void sendMail(String address, String subject, String text)
     {
-        SharedPreferences settings = ClockWorkService.settings;
-        String gmailaccString= settings.getString("gmailacc", "");
-        String gmailpswString= settings.getString("gmailpsw", "");
+        SharedPreferences sharedPref = ClockWorkService.settings;
+        String gmailaccString = sharedPref.getString(Settings.EMAIL_USER, "");
+        String gmailpswString = sharedPref.getString(Settings.EMAIL_PSW, "");
         Logger.i(TAG, "gmailacc=" + gmailaccString);
         Logger.i(TAG, "newmail");
         final BackgroundMail m = new BackgroundMail(gmailaccString, gmailpswString);
@@ -32,7 +34,7 @@ public class Mail
         Logger.i(TAG, "Sending with header="+header);
         m.setSubject(header);
         Logger.i(TAG, "setBody");
-        String body=text+"\n \n Sincearly, \n your ambient alarm clock."; //TODO: localization
+        String body=text+"\n \n Sincearly, \n your ambient alarm clock.";
         Logger.i(TAG, "body \n"+body);
         m.setBody(body);
         Thread tt = new Thread(new Runnable()

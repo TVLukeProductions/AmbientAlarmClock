@@ -10,83 +10,124 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import de.lukeslog.alarmclock.main.ClockWorkService;
+
 /**
  * Created by lukas on 28.05.14.
  */
 public class Logger
 {
-    public static boolean testing = false;
-    public static boolean logfile = false;
-
     public static void i(String TAG, String m)
     {
-        if(testing)
+        if(ClockWorkService.settings!=null)
+        {
+            if (ClockWorkService.settings.getBoolean("pref_looging", false))
+            {
+                Log.i(TAG, m);
+            }
+            if (ClockWorkService.settings.getBoolean("pref_looging_file", false))
+            {
+                store(TAG, m);
+            }
+        }
+        else
         {
             Log.i(TAG, m);
-        }
-        if(logfile)
-        {
-            store(TAG, m);
         }
     }
 
     public static void d(String TAG, String m)
     {
-        if(testing)
+        if(ClockWorkService.settings!=null)
+        {
+            if (ClockWorkService.settings.getBoolean("pref_looging", false))
+            {
+                Log.d(TAG, m);
+            }
+            if (ClockWorkService.settings.getBoolean("pref_looging_file", false))
+            {
+                store(TAG, m);
+            }
+        }
+        else
         {
             Log.d(TAG, m);
-        }
-        if(logfile)
-        {
-            store(TAG, m);
         }
     }
 
     public static void e(String TAG, String m)
     {
-        if(testing)
+        if(ClockWorkService.settings!=null)
+        {
+            if (ClockWorkService.settings.getBoolean("pref_looging", false))
+            {
+                Log.e(TAG, m);
+            }
+            if (ClockWorkService.settings.getBoolean("pref_looging_file", false))
+            {
+                store(TAG, m);
+            }
+        }
+        else
         {
             Log.e(TAG, m);
-        }
-        if(logfile)
-        {
-            store(TAG, m);
         }
     }
 
     public static void v(String TAG, String m)
     {
-        if(testing)
+        if(ClockWorkService.settings!=null)
+        {
+            if (ClockWorkService.settings.getBoolean("pref_looging", false))
+            {
+                Log.v(TAG, m);
+            }
+            if (ClockWorkService.settings.getBoolean("pref_looging_file", false))
+            {
+                store(TAG, m);
+            }
+        }
+        else
         {
             Log.v(TAG, m);
-        }
-        if(logfile)
-        {
-            store(TAG, m);
         }
     }
 
     public static void w(String TAG, String m)
     {
-        if(testing)
+        if(ClockWorkService.settings!=null)
+        {
+            if (ClockWorkService.settings.getBoolean("pref_looging", false))
+            {
+                Log.w(TAG, m);
+            }
+            if (ClockWorkService.settings.getBoolean("pref_looging_file", false))
+            {
+                store(TAG, m);
+            }
+        }
+        else
         {
             Log.w(TAG, m);
-        }
-        if(logfile)
-        {
-            store(TAG, m);
         }
     }
 
     public static void wtf(String TAG, String m)
     {
-        if(testing)
+        if(ClockWorkService.settings!=null)
+        {
+            if (ClockWorkService.settings.getBoolean("pref_looging", false))
+            {
+                Log.wtf(TAG, m);
+            }
+            if (ClockWorkService.settings.getBoolean("pref_looging_file", false))
+            {
+                store(TAG, m);
+            }
+        }
+        else
         {
             Log.wtf(TAG, m);
-        }
-        if(logfile)
-        {
-            store(TAG, m);
         }
     }
 

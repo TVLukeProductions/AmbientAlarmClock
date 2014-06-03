@@ -36,41 +36,47 @@ public class SettingsActivity extends Activity implements OnItemSelectedListener
 		public void onCreate(Bundle savedInstanceState) 
 		{
 		    super.onCreate(savedInstanceState);
-		    setContentView(R.layout.settings);
-		    ctx=this;
-		    final SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 
-		    String lastfmusername = settings.getString("lastfmusername", "");
-		    String lastfmpassword = settings.getString("lastfmpassword", "");
+            // Display the fragment as the main content.
+            getFragmentManager().beginTransaction()
+                    .replace(android.R.id.content, new NewSettingsFragment())
+                    .commit();
+
+		    //setContentView(R.layout.settings);
+		    //ctx=this;
+		    //final SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+
+		    //String lastfmusername = settings.getString("lastfmusername", "");
+		    //String lastfmpassword = settings.getString("lastfmpassword", "");
 
 
 
 
-		    getAccountInfo();
-			String gmailaccString= settings.getString("gmailacc", "");
-		    String gmailpswString= settings.getString("gmailpsw", "");
+		    //getAccountInfo();
+			//String gmailaccString= settings.getString("gmailacc", "");
+		    //String gmailpswString= settings.getString("gmailpsw", "");
 		    
-		    DropBox.ListAllFolders();
-
-		    
-		    
-
-		    EditText lastfmusernamefield = (EditText ) findViewById(R.id.lastfm);
-		    lastfmusernamefield.setText(lastfmusername);
-		    lastfmusernamefield.addTextChangedListener(new TextWatcher() 
-		    {
-
-		          public void afterTextChanged(Editable s) 
-		          {
-		        	  saveall();
-		          }
-
-		          public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-		          public void onTextChanged(CharSequence s, int start, int before, int count) {}
-		    });
+		    //DropBox.ListAllFolders();
 
 		    
+		    
+
+		    //EditText lastfmusernamefield = (EditText ) findViewById(R.id.lastfm);
+		    //lastfmusernamefield.setText(lastfmusername);
+		    //lastfmusernamefield.addTextChangedListener(new TextWatcher()
+		    //{
+
+		    //      public void afterTextChanged(Editable s)
+		    //      {
+		    //    	  saveall();
+		    //      }
+
+		    //      public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+		    //      public void onTextChanged(CharSequence s, int start, int before, int count) {}
+		    //});
+
+		    /*
 		    EditText lastfmpasswordfield = (EditText ) findViewById(R.id.lastfmpassword);
 		    lastfmpasswordfield.setText(lastfmpassword);
 		    lastfmpasswordfield.addTextChangedListener(new TextWatcher() 
@@ -119,7 +125,7 @@ public class SettingsActivity extends Activity implements OnItemSelectedListener
             //THIS IS HOW ONE KNOWS IF DROPBOX IS CONNECTED!
             DropBox.mDBApi.getSession().authenticationSuccessful();
 
-		    
+		    */
 
 		}
 

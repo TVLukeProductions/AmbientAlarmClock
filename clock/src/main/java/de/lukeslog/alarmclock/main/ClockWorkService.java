@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 
 import org.joda.time.DateTime;
 
@@ -24,7 +25,7 @@ import de.lukeslog.alarmclock.support.Logger;
 /**
  * Created by lukas on 29.03.14.
  */
-public class ClockWorkService extends Service
+public class ClockWorkService extends Service implements Runnable
 {
 
     public static final String PREFS_NAME = AlarmClockConstants.PREFS_NAME;
@@ -37,7 +38,7 @@ public class ClockWorkService extends Service
     private static Context context=null;
     private static boolean running = true;
 
-    private static Updater updater;
+    private Thread runner;
 
     private static ArrayList<Timable> notifications = new ArrayList<Timable>();
 
@@ -72,8 +73,9 @@ public class ClockWorkService extends Service
 
     private void startUpdater()
     {
-        updater= new Updater();
-        updater.run();
+
+        runner = new Thread(this);
+        runner.start();
     }
 
     @Override
@@ -83,7 +85,7 @@ public class ClockWorkService extends Service
         super.onCreate();
         context=this;
         //Log.d(TAG, "ClockWorkService onCreate()");
-        settings = getSharedPreferences(PREFS_NAME, 0);
+        settings = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
     @Override
@@ -92,54 +94,60 @@ public class ClockWorkService extends Service
         return null;
     }
 
-
-    private class  Updater implements Runnable
+    @Override
+    public void run()
     {
-        private Handler handler = new Handler();
-        public static final int delay = 1000;
-
-        @Override
-        public void run()
+        boolean running=true;
+        while(running)
         {
             DateTime currentTime = new DateTime();
-            if(running)
+            if(lasttime==null)
             {
-                if(lasttime==null)
-                {
-                    lasttime=currentTime;
-                }
-                if(newSecondHasStarted())
-                {
-                    //sometimes the handler can skip one or two seconds, this would mean missing the
-                    //alarm if we only called with the current time so we have a while loop calling for all times
-                    //since the last time
-                    currentTime = currentTime.withMillisOfSecond(0);
-                    lasttime = lasttime.withMillisOfSecond(0);
-                    while(lasttime.isBefore(currentTime))
-                    {
-                        lasttime=lasttime.plusSeconds(1);
-                        Logger.i(TAG + "_time", ". "+lasttime.getHourOfDay()+":"+lasttime.getMinuteOfHour()+":"+lasttime.getSecondOfMinute()+":"+lasttime.getMillisOfSecond());
-                        AmbientAlarmManager.notifyActiveAlerts(lasttime);
-                        ActionManager.notifyOfCurrentTime(lasttime);
-                    }
-                    lasttime=currentTime;
-                }
+                lasttime=currentTime;
             }
-            handler.removeCallbacks(this); // remove the old callback
-            handler.postDelayed(this, delay); // register a new one
-        }
+            if(newSecondHasStarted())
+            {
+                //sometimes the handler can skip one or two seconds, this would mean missing the
+                //alarm if we only called with the current time so we have a while loop calling for all times
+                //since the last time
+                currentTime = currentTime.withMillisOfSecond(0);
+                lasttime = lasttime.withMillisOfSecond(0);
+                while(lasttime.isBefore(currentTime))
+                {
+                    lasttime=lasttime.plusSeconds(1);
+                    //since lasttime is a global object which may change during execution on the other thread
+                    final DateTime time = new DateTime(lasttime);
 
-        public void onPause()
-        {
-            Logger.d(TAG, "Clock Work Service update on Pause ");
-            handler.removeCallbacks(this); // stop the map from updating
-        }
+                    Handler mainHandler = new Handler(context.getMainLooper());
 
-        public void onResume()
-        {
-            handler.removeCallbacks(this); // remove the old callback
-            handler.postDelayed(this, delay); // register a new one
+                     // This is your code
+                    mainHandler.post(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            tick(time);
+                        }
+                    });
+                }
+                lasttime=currentTime;
+            }
         }
+        try
+        {
+            Thread.currentThread().sleep(500);
+        }
+        catch(Exception ie)
+        {
+
+        }
+    }
+
+    private void tick(DateTime time)
+    {
+        Logger.i(TAG + "_time", ". "+time.getHourOfDay()+":"+time.getMinuteOfHour()+":"+time.getSecondOfMinute()+":"+time.getMillisOfSecond());
+        AmbientAlarmManager.notifyActiveAlerts(time);
+        ActionManager.notifyOfCurrentTime(time);
     }
 
     /**
@@ -164,7 +172,6 @@ public class ClockWorkService extends Service
 
     public static void stopService()
     {
-        updater.onPause();
         running=false;
     }
 
