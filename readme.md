@@ -159,3 +159,16 @@ Change Log:
 <img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a></p>
 
 <span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">Ambient Alarm Clock</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/TVLuke/AmbientAlarmClock/" property="cc:attributionName" rel="cc:attributionURL">Lukas Ruge</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.<br />Permissions beyond the scope of this license may be available at <a xmlns:cc="http://creativecommons.org/ns#" href="http://www.lukeslog.de/" rel="cc:morePermissions">http://www.lukeslog.de/</a>.
+
+#Kudos
+This app uses a lot of libraries, i just link to code here:
+* The Code to control Hue Lights comes from this project [https://github.com/jaetzold/philips-hue-java-sdk](https://github.com/jaetzold/philips-hue-java-sdk)
+* The Ability to send mail is provided by code from http://www.jondev.net/articles/Sending_Emails_without_User_Intervention_%28no_Intents%29_in_Android
+* This app uses [Joda-Time](http://www.joda.org/joda-time/) and so should everybody else
+* This app uses the [jid3lib](http://javamusictag.sourceforge.net/) to recognize ID3 Tags from MP3 sources
+* This app uses the DropBox-sync SDK and the DropBox androidSDK
+* This app uses [lastfm for java](https://code.google.com/p/lastfm-java/)
+* This project uses [javamail for android](https://code.google.com/p/javamail-android/downloads/detail?name=mail.jar&can=2&q=)
+* This Project uses [json simple](https://code.google.com/p/json-simple/)
+
+So, if you like this app, you may want to spread some love to these developers. They made it possible. Thanks!
