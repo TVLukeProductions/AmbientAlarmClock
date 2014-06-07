@@ -6,7 +6,7 @@ to improve your live using sensing and acting technology.
 
 Imagine your coffee machine turning on 5 minutes before your alarm clock rings so you always wake up to the scent of fresh coffee. Imagine music slowly swelling up while the lights simulate a sunrise. Imagine the heating in your bath turning on before you step into your bath and all of it controlled by your alarm time instead of at a fixed time. Using Home Automation technology from ezControl, the Philips Hue and other technologies the Ambient Alarm Clock makes these scenarios possible.
 
-You can [Download the Ambient Alarm Clock here](https://dl.dropbox.com/s/m48u5i7o7pu5a57/AAC12.apk).
+You can [Download the Ambient Alarm Clock here](https://dl.dropbox.com/s/xf87wni28ro97q2/AAC13.apk).
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/TVLukeProductions/AmbientAlarmClock/master/pics/overviewnew.jpg" alt="UI"/>
@@ -64,6 +64,7 @@ Yes. Whenever I make the app better to make sure I get up better I get used to t
 
 Change Log:
 * Fixed an annoying bug which would make the Alarm Activity reappear after the "awake" or "snooze" button was pressed.
+* Fixes file synchronization when an alarm is deleted (deleting remaining files)
 
 #### Older Versions
 **AmbientAlarmClock 2.12** (June 3rd 2014)
