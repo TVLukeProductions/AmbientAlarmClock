@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -50,6 +52,8 @@ public class PhilipsHueActionConfigurationFragment extends Fragment
         alarm = parent.getAlarm();
 
         collorpicker(fragment);
+
+        fadeincheckbox(fragment);
 
         connectbar = (ProgressBar) fragment.findViewById(R.id.progressBar1);
         connectbutton = (Button) fragment.findViewById(R.id.findhue);
@@ -113,6 +117,20 @@ public class PhilipsHueActionConfigurationFragment extends Fragment
 
         });
         return fragment;
+    }
+
+    private void fadeincheckbox(View fragment)
+    {
+        CheckBox fadein = (CheckBox) fragment.findViewById(R.id.fadein);
+        fadein.setChecked(action.fadein);
+        fadein.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                action.fadein=isChecked;
+            }
+        });
     }
 
     private void collorpicker(final View fragment)

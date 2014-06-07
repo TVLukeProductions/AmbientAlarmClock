@@ -27,6 +27,7 @@ public class PhilipsHueAction extends AmbientAction
     public static String BRIDGEUSERNAME = "552627b33010930f275b72ab1c7be258";
     List<HueBridge> bridges;
     Collection<HueLightBulb> lights;
+    boolean fadein = false;
     boolean lightshowX=true;
     int red=255;
     int green=255;
@@ -47,6 +48,7 @@ public class PhilipsHueAction extends AmbientAction
             red = Integer.parseInt(configBundle.getString("red"));
             green = Integer.parseInt(configBundle.getString("green"));
             blue = Integer.parseInt(configBundle.getString("blue"));
+            fadein = configBundle.getString("fadein").equals("1");
         }
         catch(Exception e)
         {
@@ -57,7 +59,7 @@ public class PhilipsHueAction extends AmbientAction
     @Override
     public void action(boolean isFirstAlert)
     {
-        if(isFirstAlert)
+        if(fadein)
         {
             turnOnTheLightsSlowly();
         }
@@ -130,6 +132,14 @@ public class PhilipsHueAction extends AmbientAction
         configBundle.putString("red", ""+red);
         configBundle.putString("green", ""+green);
         configBundle.putString("blue", ""+blue);
+        if(fadein)
+        {
+            configBundle.putString("fadein", "1");
+        }
+        else
+        {
+            configBundle.putString("fadein", "0");
+        }
         return configBundle;
     }
 

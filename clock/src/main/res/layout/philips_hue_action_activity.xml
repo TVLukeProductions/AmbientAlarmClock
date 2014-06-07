@@ -82,6 +82,13 @@
         android:text=""
         android:id="@+id/example"/>
 
+    <CheckBox
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/fadehuein"
+        android:id="@+id/fadein"
+        android:checked="false"/>
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

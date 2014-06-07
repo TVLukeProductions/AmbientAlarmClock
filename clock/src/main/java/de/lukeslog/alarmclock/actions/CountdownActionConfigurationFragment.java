@@ -7,6 +7,8 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import de.lukeslog.alarmclock.R;
@@ -68,6 +70,16 @@ public class CountdownActionConfigurationFragment extends Fragment
             }
         });
 
+        final CheckBox awakeonend = (CheckBox)  fragment.findViewById(R.id.awakeonend);
+        awakeonend.setChecked(action.offonend);
+        awakeonend.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                action.offonend=isChecked;
+            }
+        });
         return fragment;
     }
 }

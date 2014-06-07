@@ -132,6 +132,7 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
             File filesystem = Environment.getExternalStorageDirectory();
             if (usedropboxchecked)
             {
+                Logger.d(TAG, "Music Player knows that we should use a foder that is synced with a cloud storage");
                 localfolderstring = filesystem.getPath() + "/"+AlarmClockConstants.BASE_FOLDER+"/"+ AmbientAlarmManager.getAlarmByRegisteredAction(actionID).getAlarmID()+"/"+actionID;
             }
             File file = new File(localfolderstring);

@@ -145,7 +145,8 @@ public class DropBox
                                                             Logger.d(TAG, "music file " + e.fileName());
                                                             fileNames.add(e.fileName());
                                                             String thelastchange = e.modified;
-                                                            if (!(thelastchange.equals(settings.getString(AlarmClockConstants.LAST_CHANGE_DATE + e.fileName(), ""))))//last change has changed
+                                                            Logger.d(TAG, "lastchange "+thelastchange);
+                                                            if (!(thelastchange.equals(settings.getString(AlarmClockConstants.LAST_CHANGE_DATE+e.fileName(), thelastchange))))//last change has changed
                                                             {
                                                                 Logger.d(TAG, e.fileName() + " needs an update->");
                                                                 Editor edit = settings.edit();
@@ -156,10 +157,11 @@ public class DropBox
                                                                 //Log.d(TAG, "have output stream for the file");
                                                                 //Log.d(TAG, "String->"+dropboxDir1.fileName()+"/"+e.fileName());
                                                                 mApi.getFile(dropboxDir1.fileName() + "/" + e.fileName(), null, outputStream, null);
-                                                                //Log.d(TAG, "stuff with stuff");
-                                                                edit.putString(AlarmClockConstants.LAST_CHANGE_DATE + e.fileName(), e.modified);
+                                                                Logger.d(TAG, "set String "+AlarmClockConstants.LAST_CHANGE_DATE+e.fileName()+" in settings to "+thelastchange);
+                                                                edit.putString(AlarmClockConstants.LAST_CHANGE_DATE+e.fileName(), thelastchange);
                                                                 edit.commit();
-                                                            } else
+                                                            }
+                                                            else
                                                             {
                                                                 Logger.d(TAG, "  -> no change");
                                                             }
@@ -194,14 +196,15 @@ public class DropBox
 		    	    		Logger.e(TAG, "->"+ex.getMessage());
 			    	    	syncinprogress=false;
 		    	    	}
-		    	    	List<File> files = getListFiles(folder); 
+		    	    	List<File> files = getListFiles(folder);
+                        Logger.d(TAG, "List of files is "+files.size()+" long.");
 		    	    	Logger.d(TAG, "DROPBOX: compare local files to delete those that are not needed no more");
 		    	    	for(int i=0; i<files.size(); i++)
 		    	    	{
-		    	    		//Log.d(TAG, files.get(i).getName());
+		    	    		Logger.d(TAG, files.get(i).getName());
 		    	    		if(fileNames.contains(files.get(i).getName()))
 		    	    		{
-		    	    			//Log.i(TAG, "-> keep");
+		    	    			Logger.i(TAG, "-> keep");
 		    	    		}
 		    	    		else
 		    	    		{

@@ -25,7 +25,9 @@ Features:
 * Define a web site to be shown on your device on alert (for example a news web site).
 
 #### Countdown on wake up
-* You don't have all the time in the world. You need to get the bus? You always want to know how much time is left until you need to get out? Activate the Countdown, which will start with the first alarm and tell you when you have to got. The alarm-clock can, if you want it to, stop the alert when it has run out, so you don't even have to be there any more.
+* You don't have all the time in the world. You need to get the bus? You always want to know how much time is left until you need to
+get out? Activate the Countdown, which will start with the first alarm and tell you when you have to go. The alarm-clock can, if you
+want it to, stop the alert when it has run out, so you don't even have to be there any more.
 
 #### Reminder to go to bed
 * Get a reminder to go to bed several hours before the alarm rings (you can define how many hours)

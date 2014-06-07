@@ -174,8 +174,11 @@ public class CountdownAction extends AmbientAction
         textview.setText(UISupport.secondsToCountdownString(seconds));
         if(seconds==0)
         {
-            ambientAlarm.awakeButtonPressed();
-            alarmActivity.awakeButtonPressedRemotely();
+            if(offonend)
+            {
+                ambientAlarm.awakeButtonPressed();
+                alarmActivity.awakeButtonPressedRemotely();
+            }
         }
     }
 
