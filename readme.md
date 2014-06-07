@@ -9,7 +9,7 @@ Imagine your coffee machine turning on 5 minutes before your alarm clock rings s
 You can [Download the Ambient Alarm Clock here](https://dl.dropbox.com/s/xf87wni28ro97q2/AAC13.apk).
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/TVLukeProductions/AmbientAlarmClock/master/pics/overviewnew.jpg" alt="UI"/>
+<img src="https://raw.githubusercontent.com/TVLukeProductions/AmbientAlarmClock/master/pics/overview.jpg" alt="UI"/>
 </p>
 
 Features:
