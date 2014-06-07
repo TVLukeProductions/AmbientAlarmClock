@@ -60,19 +60,13 @@ Yes. Whenever I make the app better to make sure I get up better I get used to t
 
 ## Version History
 #### Current
-**AmbientAlarmClock 2.13** (June 3st 2014)
-* Completely rewritten code base
-* Now supports multiple independent ambient alarms
-* Users can configure which alarms should be used on which days
-* Users can configure actions to be performed for each alarm
-* Actions include all previously available actions like turning on lights, switching power plugs, playing music with syncing DropBox folders and muc more
-* Faster, nicer and more responsive UI
+**AmbientAlarmClock 2.13** (June 7th 2014)
 
 Change Log:
 * Fixed an annoying bug which would make the Alarm Activity reappear after the "awake" or "snooze" button was pressed.
 
 #### Older Versions
-**AmbientAlarmClock 2.12** (June 3st 2014)
+**AmbientAlarmClock 2.12** (June 3rd 2014)
 * Completely rewritten code base
 * Now supports multiple independent ambient alarms
 * Users can configure which alarms should be used on which days

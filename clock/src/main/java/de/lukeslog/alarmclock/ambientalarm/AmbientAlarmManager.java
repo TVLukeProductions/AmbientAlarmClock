@@ -2,9 +2,11 @@ package de.lukeslog.alarmclock.ambientalarm;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Environment;
 
 import org.joda.time.DateTime;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import de.lukeslog.alarmclock.datatabse.AmbientAlarmDatabase;
@@ -156,6 +158,11 @@ public class AmbientAlarmManager
         Logger.d(TAG, "  delete Ambient Alarm!");
         if(registeredAlarms!=null)
         {
+            //TODO: have a Folder Management that can do this better
+            String alarmID = registeredAlarms.get(position).getAlarmID();
+            File folder = new File(Environment.getExternalStorageDirectory().getPath() + "/AAC/"+alarmID+"/");
+            folder.delete();
+            //TODO: this is the stuff that belongs here... the above stuff should go into storage management... which does not exist.
             AmbientAlarmDatabase.removeAmbientAlarm(registeredAlarms.get(position));
             registeredAlarms.remove(position);
         }
