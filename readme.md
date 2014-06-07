@@ -1,9 +1,5 @@
 # Ambient Alarm Clock
 
-<p align="center">
-<img src="https://raw.githubusercontent.com/TVLukeProductions/AmbientAlarmClock/master/clock/src/main/res/drawable-mdpi/icon.png" alt="Logo"/>
-</p>
-
 A simple but effective alarm clock that plays you some music, offers you the news, turns on the light and more.
 Ambient Technology is the vision of technology that adapts your surroundings to your needs and offers services
 to improve your live using sensing and acting technology.
@@ -64,6 +60,18 @@ Yes. Whenever I make the app better to make sure I get up better I get used to t
 
 ## Version History
 #### Current
+**AmbientAlarmClock 2.13** (June 3st 2014)
+* Completely rewritten code base
+* Now supports multiple independent ambient alarms
+* Users can configure which alarms should be used on which days
+* Users can configure actions to be performed for each alarm
+* Actions include all previously available actions like turning on lights, switching power plugs, playing music with syncing DropBox folders and muc more
+* Faster, nicer and more responsive UI
+
+Change Log:
+* Fixed an annoying bug which would make the Alarm Activity reappear after the "awake" or "snooze" button was pressed.
+
+#### Older Versions
 **AmbientAlarmClock 2.12** (June 3st 2014)
 * Completely rewritten code base
 * Now supports multiple independent ambient alarms
@@ -78,7 +86,6 @@ Change Log:
 * The settings now are conform to Android UI guidelines
 * You can now use other email servers then Google Mail
 
-#### Older Versions
 **AmbientAlarmClock 2.11** (June 1st 2014)
 * Completely rewritten code base
 * Now supports multiple independent ambient alarms

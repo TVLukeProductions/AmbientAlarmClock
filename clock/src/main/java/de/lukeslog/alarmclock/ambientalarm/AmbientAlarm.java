@@ -318,6 +318,7 @@ public class AmbientAlarm implements Timable
 
     public void awakeButtonPressed()
     {
+        alarmState = AlarmState.WAITING;
         Logger.d(TAG, "awakeButton");
         Set<String> keys = registeredActions.keySet();
         Iterator<String> iterator = keys.iterator();
@@ -337,7 +338,6 @@ public class AmbientAlarm implements Timable
                 }
             }
         }
-        alarmState = AlarmState.WAITING;
         resetSnoozeButtonCounter();
         snoozealert=null;
     }
@@ -450,6 +450,7 @@ public class AmbientAlarm implements Timable
                 {
                     if (action.getPriority() == i)
                     {
+                        Logger.d(TAG, "updateUI from Ambient Alarm to AlarmActivity...");
                         action.updateUI(this, alarmActivity);
                     }
                 }

@@ -117,7 +117,6 @@ public class AmbientAlarmManager
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                     Logger.d(TAG, "  now start stuff....");
                     intent.putExtra("ambientAlarmID", alarmID);
-                    ctx.startActivity(intent);
                     while(ambientAlarm.getStatus()== AlarmState.ALARM)
                     {
                         //check if the activity is running...

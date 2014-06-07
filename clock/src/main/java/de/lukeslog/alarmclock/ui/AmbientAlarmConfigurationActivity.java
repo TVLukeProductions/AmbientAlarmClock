@@ -83,6 +83,12 @@ public class AmbientAlarmConfigurationActivity extends Activity
             AmbientAlarmConfigurationActivity.this.finish();
         }
 
+        if(alarm.getStatus() == AlarmState.ALARM)
+        {
+            Logger.d(TAG, "Start ALARM SCREEN from Config activity");
+            AmbientAlarmManager.startAlarmActivity(alarm);
+        }
+
         configureBasicUI();
 
         fillinActions((LinearLayout) findViewById(R.id.actionlist));
@@ -418,7 +424,7 @@ public class AmbientAlarmConfigurationActivity extends Activity
         @Override
         public void run()
         {
-            //Log.d(TAG, "run");
+            Logger.d(TAG, "run config screen");
             //if the number of registered actions has changed, redraw the list of actions
             if(actions!=alarm.numberOfRegisteredActions())
             {
@@ -429,6 +435,7 @@ public class AmbientAlarmConfigurationActivity extends Activity
             }
             if(alarm.getStatus()== AlarmState.ALARM)
             {
+                Logger.d(TAG, "START ALARM SCREEN from tge runner in the config activity");
                 AmbientAlarmManager.startAlarmActivity(alarm);
             }
             handler.removeCallbacks(this); // remove the old callback

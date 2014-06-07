@@ -101,10 +101,13 @@ public class AmbientAlarmActivity extends Activity
             if(updater!=null)
             {
                 updater.onPause();
+                Logger.d(TAG, "on Pause worked...");
             }
             if(wakeLock!=null)
             {
+                Logger.d(TAG, "wakelog release...");
                 wakeLock.release();
+                Logger.d(TAG, "...worked");
             }
         }
         catch(Exception e)
@@ -209,12 +212,14 @@ public class AmbientAlarmActivity extends Activity
         @Override
         public void run()
         {
-            running=true;
-           Logger.d(TAG, "Alarm Activity is running...");
-           alarm.updateAlarmUI(alarmActivity);
+           if(running)
+           {
+               Logger.d(TAG, "Alarm Activity is running...");
+               alarm.updateAlarmUI(alarmActivity);
 
-           handler.removeCallbacks(this); // remove the old callback
-           handler.postDelayed(this, delay); // register a new one
+               handler.removeCallbacks(this); // remove the old callback
+               handler.postDelayed(this, delay); // register a new one
+           }
         }
 
         public void onPause()
@@ -243,6 +248,7 @@ public class AmbientAlarmActivity extends Activity
     {
         try
         {
+            alarm.awakeButtonPressed();
             if(updater!=null)
             {
                 updater.onPause();
@@ -251,7 +257,6 @@ public class AmbientAlarmActivity extends Activity
             {
                 wakeLock.release();
             }
-            alarm.awakeButtonPressed();
         }
         catch(Exception e)
         {
@@ -263,6 +268,7 @@ public class AmbientAlarmActivity extends Activity
     {
         try
         {
+            alarm.snoozeButtonPressed();
             if(updater!=null)
             {
                 updater.onPause();
@@ -271,7 +277,6 @@ public class AmbientAlarmActivity extends Activity
             {
                 wakeLock.release();
             }
-            alarm.snoozeButtonPressed();
         }
         catch(Exception e)
         {
