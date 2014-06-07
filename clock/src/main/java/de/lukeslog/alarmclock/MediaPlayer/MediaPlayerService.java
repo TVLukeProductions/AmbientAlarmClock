@@ -24,6 +24,7 @@ import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.actions.ActionManager;
 import de.lukeslog.alarmclock.actions.MusicAction;
 import de.lukeslog.alarmclock.ambientService.lastfm.Scrobbler;
+import de.lukeslog.alarmclock.ambientalarm.AmbientAlarmManager;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
 import de.lukeslog.alarmclock.support.Logger;
 import de.lukeslog.alarmclock.support.Radiostations;
@@ -131,7 +132,7 @@ public class MediaPlayerService extends Service implements OnPreparedListener, O
             File filesystem = Environment.getExternalStorageDirectory();
             if (usedropboxchecked)
             {
-                localfolderstring = filesystem.getPath() + "/AAC/"+actionID+"/Music";
+                localfolderstring = filesystem.getPath() + "/"+AlarmClockConstants.BASE_FOLDER+"/"+ AmbientAlarmManager.getAlarmByRegisteredAction(actionID).getAlarmID()+"/"+actionID;
             }
             File file = new File(localfolderstring);
             //Log.d(TAG, "wakeupsongsX");

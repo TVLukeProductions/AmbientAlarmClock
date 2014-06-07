@@ -58,11 +58,10 @@
             android:name=".ui.AmbientAlarmActivity">
         </activity>
         <activity android:name=".ui.SettingsActivity" />
-        <activity android:name=".ui.NewSettingsFragment" />
         <service android:name="de.lukeslog.alarmclock.main.ClockWorkService" />
         <service android:name="de.lukeslog.alarmclock.startup.NotificationService" />
         <service android:name="de.lukeslog.alarmclock.MediaPlayer.MediaPlayerService"/>
-       <!-- <service android:name="de.lukeslog.alarmclock.ChromeCast.ChromeCastService"/>-->
+        <service android:name="de.lukeslog.alarmclock.ambientService.chromeCast.ChromeCastService"/>-->
         <service
             android:name="com.dropbox.sync.android.DbxSyncService"
             android:enabled="true"

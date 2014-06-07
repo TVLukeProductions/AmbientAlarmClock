@@ -2,13 +2,18 @@ package de.lukeslog.alarmclock.ambientalarm;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Environment;
 
 import org.joda.time.DateTime;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 
+import de.lukeslog.alarmclock.actions.AmbientAction;
 import de.lukeslog.alarmclock.datatabse.AmbientAlarmDatabase;
 import de.lukeslog.alarmclock.main.ClockWorkService;
 import de.lukeslog.alarmclock.main.NotificationManagement;
@@ -158,14 +163,46 @@ public class AmbientAlarmManager
         Logger.d(TAG, "  delete Ambient Alarm!");
         if(registeredAlarms!=null)
         {
+            Logger.d(TAG, "registeredalarm "+registeredAlarms.size());
             //TODO: have a Folder Management that can do this better
             String alarmID = registeredAlarms.get(position).getAlarmID();
-            File folder = new File(Environment.getExternalStorageDirectory().getPath() + "/AAC/"+alarmID+"/");
-            folder.delete();
+            File folder = new File(Environment.getExternalStorageDirectory().getPath() + "/"+AlarmClockConstants.BASE_FOLDER+"/"+alarmID+"/");
+            deleteDirectory(folder);
             //TODO: this is the stuff that belongs here... the above stuff should go into storage management... which does not exist.
             AmbientAlarmDatabase.removeAmbientAlarm(registeredAlarms.get(position));
             registeredAlarms.remove(position);
         }
+        Logger.d(TAG, "registeredalarm "+registeredAlarms.size());
+    }
+
+    static public boolean deleteDirectory(File path)
+    {
+        Logger.d(TAG, "DELETE "+path.getAbsolutePath());
+        if (path.exists())
+        {
+            File[] files = path.listFiles();
+            for (int i = 0; i < files.length; i++)
+            {
+                if (files[i].isDirectory())
+                {
+                    deleteDirectory(files[i]);
+                }
+                else
+                {
+                    Logger.d(TAG, "delete-->"+files[i].getAbsolutePath());
+                    files[i].delete();
+                    final SharedPreferences settings = ClockWorkService.settings;
+                    SharedPreferences.Editor edit = settings.edit();
+                    edit.putString(AlarmClockConstants.LAST_CHANGE_DATE+files[i].getName(), "");
+                    edit.commit();
+                }
+            }
+        }
+        else
+        {
+            Logger.d(TAG, "does not exist...");
+        }
+        return (path.delete());
     }
 
     public static AmbientAlarm getAlarmById(String alarmID)
@@ -189,5 +226,35 @@ public class AmbientAlarmManager
             updateListFromDataBase();
             return getAlarmById(alarmID);
         }
+    }
+
+    public static AmbientAlarm getAlarmByRegisteredAction(String actionID)
+    {
+        Logger.d(TAG, "getAlarmByRegsiteredAction");
+        if(registeredAlarms!=null)
+        {
+            Logger.d(TAG, "  size of AlarmList " + registeredAlarms.size());
+            for (AmbientAlarm alarm : registeredAlarms)
+            {
+                Logger.d(TAG, "    -->" + alarm.getAlarmID());
+                HashMap<String, ArrayList<AmbientAction>> actions = alarm.getRegisteredActions();
+                Collection<ArrayList<AmbientAction>> actionlists = actions.values();
+                Iterator<ArrayList<AmbientAction>> itte = actionlists.iterator();
+                while(itte.hasNext())
+                {
+                    ArrayList<AmbientAction> actionlist = itte.next();
+                    for(AmbientAction action: actionlist)
+                    {
+                        Logger.d(TAG, "ACTION "+action.getActionID());
+                        if(action.getActionID().equals(actionID))
+                        {
+                            return alarm;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+        return null;
     }
 }

@@ -28,6 +28,7 @@ import java.util.Set;
 import de.lukeslog.alarmclock.MediaPlayer.MediaPlayerService;
 import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
+import de.lukeslog.alarmclock.ambientalarm.AmbientAlarmManager;
 import de.lukeslog.alarmclock.main.ClockWorkService;
 import de.lukeslog.alarmclock.ambientService.dropbox.DropBox;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
@@ -200,7 +201,11 @@ public class MusicActionConfigurationFragment extends Fragment
                 dropboxfolder.setText(spinnerArray.get(arg2));
                 //use_dropbox.setChecked(true);
                 action.setDropBoxFolder(spinnerArray.get(arg2));
-                DropBox.syncFiles(action.getDropboxFolder(), action.actionID, "Music");
+                AmbientAlarm alarm = AmbientAlarmManager.getAlarmByRegisteredAction(action.actionID);
+                if(alarm!=null)
+                {
+                    DropBox.syncFiles(action.getDropboxFolder(), alarm.getAlarmID(), action.actionID);
+                }
             }
 
             @Override

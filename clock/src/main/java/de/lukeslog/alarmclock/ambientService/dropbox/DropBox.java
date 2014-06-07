@@ -112,7 +112,7 @@ public class DropBox
                             //wait untill other processes have stoped syncing their dropbox
                         }
 		    	    	syncinprogress=true;
-	        			File folder = new File(Environment.getExternalStorageDirectory().getPath() + "/AAC/"+alarmID+"/"+actionsubfolder+"/");
+	        			File folder = new File(Environment.getExternalStorageDirectory().getPath() + "/"+AlarmClockConstants.BASE_FOLDER+"/"+alarmID+"/"+actionsubfolder+"/");
 	        			folder.mkdirs();
 	    	    		ArrayList<String> fileNames = new ArrayList<String>();
 		    	    	try
@@ -145,11 +145,11 @@ public class DropBox
                                                             Logger.d(TAG, "music file " + e.fileName());
                                                             fileNames.add(e.fileName());
                                                             String thelastchange = e.modified;
-                                                            if (!(thelastchange.equals(settings.getString("lastchange" + e.fileName(), ""))))//last change has changed
+                                                            if (!(thelastchange.equals(settings.getString(AlarmClockConstants.LAST_CHANGE_DATE + e.fileName(), ""))))//last change has changed
                                                             {
                                                                 Logger.d(TAG, e.fileName() + " needs an update->");
                                                                 Editor edit = settings.edit();
-                                                                File file = new File(Environment.getExternalStorageDirectory().getPath() + "/AAC/" + alarmID + "/" + actionsubfolder + "/" + e.fileName());
+                                                                File file = new File(Environment.getExternalStorageDirectory().getPath() + "/"+AlarmClockConstants.BASE_FOLDER+"/" + alarmID + "/" + actionsubfolder + "/" + e.fileName());
                                                                 folder.mkdirs();
                                                                 //Log.d(TAG, "have new file");
                                                                 outputStream = new FileOutputStream(file);
@@ -157,7 +157,7 @@ public class DropBox
                                                                 //Log.d(TAG, "String->"+dropboxDir1.fileName()+"/"+e.fileName());
                                                                 mApi.getFile(dropboxDir1.fileName() + "/" + e.fileName(), null, outputStream, null);
                                                                 //Log.d(TAG, "stuff with stuff");
-                                                                edit.putString("lastchange" + e.fileName(), e.modified);
+                                                                edit.putString(AlarmClockConstants.LAST_CHANGE_DATE + e.fileName(), e.modified);
                                                                 edit.commit();
                                                             } else
                                                             {
@@ -208,7 +208,7 @@ public class DropBox
 		    	    			Logger.e(TAG, "DELETE" + files.get(i).getName());
 		    	    			files.get(i).delete();
 		    	    			Editor edit = settings.edit();
-		    	    			edit.putString("lastchange"+files.get(i).getName(), "");
+		    	    			edit.putString(AlarmClockConstants.LAST_CHANGE_DATE+files.get(i).getName(), "");
 		            			edit.commit();
 		    	    		}
 		    	    	}
@@ -232,23 +232,11 @@ public class DropBox
         if(mWifi.isConnected())
         {
             Logger.d(TAG, "WE ARE. BUT IS THERE INTERNET?");
-            try
-            {
-                InetAddress host = InetAddress.getByName("http://www.google.com");
-                boolean r = host.isReachable(1000);
-                Logger.d(TAG, "wifi connected, google is reachable = "+r);
-                return r;
-            }
-            catch (UnknownHostException e)
-            {
-                Logger.e(TAG, "1. "+e.getMessage());
-                e.printStackTrace();
-            }
-            catch (IOException e)
-            {
-                Logger.e(TAG, "2. "+e.getMessage());
-                e.printStackTrace();
-            }
+            NetworkInfo activeNetworkInfo = connManager.getActiveNetworkInfo();
+            boolean b = activeNetworkInfo != null && activeNetworkInfo.isConnected();
+            Logger.d(TAG, "ARE WE = "+b);
+            return b;
+
         }
         return false;
     }

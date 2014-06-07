@@ -1,5 +1,6 @@
 package de.lukeslog.alarmclock.actions;
 
+import android.app.AlarmManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import org.joda.time.DateTime;
 
 import de.lukeslog.alarmclock.MediaPlayer.MediaPlayerService;
+import de.lukeslog.alarmclock.ambientalarm.AmbientAlarmManager;
 import de.lukeslog.alarmclock.support.Logger;
 import de.lukeslog.alarmclock.ui.AmbientAlarmActivity;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
@@ -132,7 +134,11 @@ public class MusicAction extends AmbientAction
 
             if (mWifi.isConnected())
             {
-                DropBox.syncFiles(dropboxFolder, actionID, "Music");
+                AmbientAlarm alarm = AmbientAlarmManager.getAlarmByRegisteredAction(actionID);
+                if(alarm!=null)
+                {
+                    DropBox.syncFiles(dropboxFolder, alarm.getAlarmID(), actionID);
+                }
             }
         }
     }
