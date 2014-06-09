@@ -9,7 +9,7 @@ Imagine music slowly swelling up while the lights simulate a sunrise. Imagine th
 your bath and all of it controlled by your alarm time instead of at a fixed time. Using Home Automation technology from ezControl,
 the Philips Hue and other technologies the Ambient Alarm Clock makes these scenarios possible.
 
-You can [Download the Ambient Alarm Clock here](https://dl.dropbox.com/s/xf87wni28ro97q2/AAC13.apk).
+You can [Download the Ambient Alarm Clock here](https://dl.dropbox.com/s/11k264963s2ofek/AAC14.apk).
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/TVLukeProductions/AmbientAlarmClock/master/pics/overview.jpg" alt="UI"/>
@@ -70,12 +70,13 @@ Yes. Whenever I make the app better to make sure I get up better I get used to t
 
 ## Version History
 #### Current
-**AmbientAlarmClock 2.14** (June 8th 2014)
+**AmbientAlarmClock 2.14** (June 9th 2014)
 
 Change Log:
+* Fixed a massive energy consumption bug
 * Fixed a bug in the alarm countdown
 * Fade in for Hue now can be selected in the UI
-* ...
+* Translated to German
 
 #### Older Versions
 **AmbientAlarmClock 2.13** (June 7th 2014)
