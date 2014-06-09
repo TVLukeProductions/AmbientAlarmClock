@@ -23,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Add New Alarm"
+        android:text="@string/addnewalarm"
         android:id="@+id/addnewalarmtext"
         android:layout_gravity="center_horizontal"
         android:layout_weight="1.00"/>

@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Define Color"
+        android:text="@string/definecolor"
         android:id="@+id/textView2"/>
 
 
@@ -22,7 +22,7 @@
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Red: "
+            android:text="@string/redc"
             android:id="@+id/redtext"
             android:layout_gravity="right"/>
 
@@ -42,7 +42,7 @@
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Green: "
+            android:text="@string/greenc"
             android:id="@+id/greentext"
             android:layout_gravity="right"/>
 
@@ -63,7 +63,7 @@
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Blue: "
+            android:text="@string/bluec"
             android:id="@+id/bluetext"
             android:layout_gravity="right"/>
 
@@ -99,14 +99,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Connect To Bridge"
+        android:text="@string/connecttohue"
         android:id="@+id/textView"/>
 
     <Button
         android:id="@+id/findhue"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Find Hue" />
+        android:text="@string/findhue" />
 
     <TextView
         android:id="@+id/secondstext"

@@ -52,7 +52,7 @@ public class CountdownActionConfigurationFragment extends Fragment
                     try
                     {
                         int i = Integer.parseInt(countdownTextEdit.getEditableText().toString());
-                        action.setDurationInSeconds(Integer.parseInt(countdownTextEdit.getEditableText().toString())*60);
+                        action.setDurationInSeconds(i*60);
                     }
                     catch(Exception e)
                     {

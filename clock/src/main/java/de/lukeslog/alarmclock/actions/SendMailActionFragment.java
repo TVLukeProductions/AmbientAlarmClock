@@ -41,9 +41,6 @@ public class SendMailActionFragment extends Fragment
         subject.setText(action.getSubject());
         content.setText(action.getText());
 
-        TextView actionName = (TextView) fragment.findViewById(R.id.actionname);
-        actionName.setText(action.getActionName());
-
         Button saveMailButton = (Button) fragment.findViewById(R.id.savemailbutton);
         saveMailButton.setOnClickListener(new View.OnClickListener()
         {

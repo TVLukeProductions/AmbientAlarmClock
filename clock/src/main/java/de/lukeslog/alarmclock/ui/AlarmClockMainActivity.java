@@ -262,7 +262,7 @@ public class AlarmClockMainActivity extends Activity
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id)
             {
-                Logger.d(TAG, "longclock");
+                Logger.d(TAG, "longclick");
                 if (!ambientalarms.get(position).isCurrentlyLocked())
                 {
                     AlertDialog.Builder builder = new AlertDialog.Builder(ctx);

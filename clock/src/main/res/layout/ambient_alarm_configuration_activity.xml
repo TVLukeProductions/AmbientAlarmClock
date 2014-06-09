@@ -65,7 +65,7 @@
             <CheckBox
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Lock on Alarm"
+                android:text="@string/lockonalarm"
                 android:id="@+id/lockcheck"
                 android:checked="false"/>
 
@@ -89,7 +89,7 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:background="#FFD800"
             android:textColor="#000"
-            android:text="Days"
+            android:text="@string/days"
             android:id="@+id/daysheader"/>
 
         <LinearLayout
@@ -146,7 +146,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Actions"
+            android:text="@string/actions"
             android:background="#FFD800"
             android:textColor="#000"
             android:id="@+id/actionsheader"/>
@@ -167,7 +167,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Add Action"
+                android:text="@string/addactions"
                 android:id="@+id/addactiontext"
                 android:layout_gravity="center_horizontal"/>
         </LinearLayout>

@@ -28,7 +28,6 @@ public class PhilipsHueAction extends AmbientAction
     List<HueBridge> bridges;
     Collection<HueLightBulb> lights;
     boolean fadein = false;
-    boolean lightshowX=true;
     int red=255;
     int green=255;
     int blue =255;

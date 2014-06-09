@@ -40,7 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="ActionName:"
+        android:text="@string/actionname"
         android:id="@+id/textView"/>
 
     <EditText
@@ -81,7 +81,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text=" alarm."
+            android:text="@string/alarmdot"
             android:id="@+id/textView3"/>
 
     </LinearLayout>
@@ -89,7 +89,7 @@
     <CheckBox
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Join Snoozing"
+        android:text="@string/joinsnooze"
         android:id="@+id/joinsnooze"
         android:checked="false"/>
 

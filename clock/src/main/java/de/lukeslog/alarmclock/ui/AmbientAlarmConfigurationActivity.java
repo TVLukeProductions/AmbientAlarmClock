@@ -465,7 +465,8 @@ public class AmbientAlarmConfigurationActivity extends Activity
         if(alarm.numberOfRegisteredActions()==0)
         {
             Logger.d(TAG, "->add");
-            x.setText("You have not added any actions. This alarm will not do anything.");
+            String noactiondoesnothing = getResources().getResourceName(R.string.noactionsdoesnothing);
+            x.setText(noactiondoesnothing);
             x.setBackgroundColor(Color.RED);
         }
         theView.addView(x);

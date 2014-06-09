@@ -180,8 +180,10 @@ public class ActionActivity extends Activity
 
         final Spinner timeunits = (Spinner) findViewById(R.id.timeunits);
         List<String> list2 = new ArrayList<String>();
-        list2.add("minutes");
-        list2.add("hours");
+        String minutes = getResources().getResourceName(R.string.minutes);
+        String hours = getResources().getResourceName(R.string.hours);
+        list2.add(minutes);
+        list2.add(hours);
         ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list2);
         dataAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         timeunits.setAdapter(dataAdapter2);
@@ -199,17 +201,19 @@ public class ActionActivity extends Activity
 
             }
         });
-        if(t>60 && t%60==0)
+        if(minutesCanBeExpressedAsHours(t))
         {
-            t=t/60;
+            t=minutesAsHours(t) ;
             timeunits.setSelection(1);
         }
 
 
         Spinner beforeafter = (Spinner) findViewById(R.id.beforeafter);
         List<String> list = new ArrayList<String>();
-        list.add("before");
-        list.add("after");
+        String before = getResources().getString(R.string.before);
+        String after = getResources().getString(R.string.after);
+        list.add(before);
+        list.add(after);
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         beforeafter.setAdapter(dataAdapter);
@@ -234,6 +238,16 @@ public class ActionActivity extends Activity
 
         timing=""+t;
         timingText.setText(timing);
+    }
+
+    public boolean minutesCanBeExpressedAsHours(int timevalue)
+    {
+        return timevalue>60 && timevalue%60==0;
+    }
+
+    public int minutesAsHours(int m)
+    {
+        return m/60;
     }
 
     private void reregisteraction()

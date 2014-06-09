@@ -207,7 +207,8 @@ public class MusicAction extends AmbientAction
                     switchedToRadio = true;
                 }
             });
-            b.setText("Switch To Radio");
+            String switchToRadio = alarmActivity.getResources().getResourceName(R.string.switchToRadio);
+            b.setText(switchToRadio);
             b.setId(89543);
             if(switchedToRadio)
             {

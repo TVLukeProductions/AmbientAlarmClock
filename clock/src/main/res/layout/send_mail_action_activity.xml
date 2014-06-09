@@ -6,19 +6,11 @@
               android:orientation="vertical"
               android:weightSum="1">
 
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
-        android:id="@+id/actionname"/>
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Send Mail To:"
+        android:text="@string/sendmailto"
         android:id="@+id/sendtotectview"/>
 
     <EditText
@@ -32,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Subject"
+        android:text="@string/subject"
         android:id="@+id/mailsubjecttextview"/>
 
     <EditText
@@ -44,7 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Content"
+        android:text="@string/content"
         android:id="@+id/contenttextview"/>
 
     <EditText
@@ -59,7 +51,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Save"
+        android:text="@string/save"
         android:id="@+id/savemailbutton"/>
 
 

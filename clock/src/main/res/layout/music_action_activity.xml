@@ -9,7 +9,7 @@
     <CheckBox
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Fade In On Alarm"
+        android:text="@string/fadein"
         android:id="@+id/fade"
         android:checked="false"/>
 
@@ -31,7 +31,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Test"
+        android:text="@string/test"
         android:id="@+id/testradio"/>
 
     <TextView
@@ -47,20 +47,20 @@
         android:id="@+id/textView6"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="All files have to be .mp3 files!"
+        android:text="@string/mustbemp3"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <CheckBox
         android:id="@+id/use_local"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Use Local File System" />
+        android:text="@string/uselocalfilesystem" />
 
     <TextView
         android:id="@+id/textView634231"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Folder Name (has To be Top Level)"
+        android:text="@string/foldername"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <EditText
@@ -79,13 +79,13 @@
         android:id="@+id/use_dropbox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Use DropBox" />
+        android:text="@string/usedropbox" />
 
     <TextView
         android:id="@+id/textView4534"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Folder Name (has To be Top Level)"
+        android:text="@string/foldername"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <EditText
