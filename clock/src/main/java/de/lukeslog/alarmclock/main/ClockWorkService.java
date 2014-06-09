@@ -36,8 +36,6 @@ public class ClockWorkService  extends IntentService
     private static Context context=null;
     private static boolean running = true;
 
-    private Thread runner;
-
     private static ArrayList<Timable> notifications = new ArrayList<Timable>();
 
     public ClockWorkService()
@@ -67,7 +65,6 @@ public class ClockWorkService  extends IntentService
     public int onStartCommand(Intent intent, int flags, int startId)
     {
         super.onStartCommand(intent, flags, startId);
-        //Log.d(TAG, "ClockWorkService onStartCommand()");
 
         return START_NOT_STICKY;
     }
@@ -93,6 +90,7 @@ public class ClockWorkService  extends IntentService
     {
         if(running)
         {
+            Logger.d(TAG, ".");
             DateTime currentTime = new DateTime();
             if (lasttime == null)
             {
@@ -138,7 +136,8 @@ public class ClockWorkService  extends IntentService
         DateTime inaminute = new DateTime();
         inaminute = inaminute.plusMinutes(1);
         inaminute = inaminute.withSecondOfMinute(0);
-        int secondstoadd = Seconds.secondsBetween(inaminute, now).getSeconds();
+        int secondstoadd = Seconds.secondsBetween(now, inaminute).getSeconds();
+        Logger.d(TAG, ""+secondstoadd);
         cal.add(Calendar.SECOND, secondstoadd);
         Intent intent = new Intent(this, ClockWorkService.class);
         PendingIntent pendingIntent = PendingIntent.getService(this, AlarmClockConstants.TICK, intent, 0);

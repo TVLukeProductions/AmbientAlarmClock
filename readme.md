@@ -4,7 +4,10 @@ A simple but effective alarm clock that plays you some music, offers you the new
 Ambient Technology is the vision of technology that adapts your surroundings to your needs and offers services
 to improve your live using sensing and acting technology.
 
-Imagine your coffee machine turning on 5 minutes before your alarm clock rings so you always wake up to the scent of fresh coffee. Imagine music slowly swelling up while the lights simulate a sunrise. Imagine the heating in your bath turning on before you step into your bath and all of it controlled by your alarm time instead of at a fixed time. Using Home Automation technology from ezControl, the Philips Hue and other technologies the Ambient Alarm Clock makes these scenarios possible.
+Imagine your coffee machine turning on 5 minutes before your alarm clock rings so you always wake up to the scent of fresh coffee.
+Imagine music slowly swelling up while the lights simulate a sunrise. Imagine the heating in your bath turning on before you step into
+your bath and all of it controlled by your alarm time instead of at a fixed time. Using Home Automation technology from ezControl,
+the Philips Hue and other technologies the Ambient Alarm Clock makes these scenarios possible.
 
 You can [Download the Ambient Alarm Clock here](https://dl.dropbox.com/s/xf87wni28ro97q2/AAC13.apk).
 
@@ -15,10 +18,12 @@ You can [Download the Ambient Alarm Clock here](https://dl.dropbox.com/s/xf87wni
 Features:
 #### Alarm Clock
 * Alarm Clock that wakes you up with music of your choice.
-* You can chose what songs you want to wake up to by selecting a folder on your device with music (or use DropBox). The alarm clock will select one song out of the selected folder at random.
+* You can chose what songs you want to wake up to by selecting a folder on your device with music (or use DropBox). The alarm clock
+will select one song out of the selected folder at random.
 * You can have the song fade in slowly or start loud.
 * Define your own snooze time or if you even want a snooze button shown at all.
-* Choose a set of actions for each alarm which are then performed by the clock. Actions can include control over light, music or home appliances as well as data shown on the device.
+* Choose a set of actions for each alarm which are then performed by the clock. Actions can include control over light, music or
+home appliances as well as data shown on the device.
 * Each action can be activated individually on a chosen time before or after the alarm.
 
 #### Website on wake up
@@ -37,17 +42,20 @@ want it to, stop the alert when it has run out, so you don't even have to be the
 * Listen to the radio after the alarm has rung. You have the choice between several radio stations
 
 #### DropBox Integration
-* Use either a local folder or define a DropBox folder to synchronize your wake up songs. You can chose what songs to wake up to by just putting it into the folder.
+* Use either a local folder or define a DropBox folder to synchronize your wake up songs. You can chose what songs to wake up to
+by just putting it into the folder.
 
 #### Last FM Integration
 * Scrobble the song you woke up to on [last.fm](http://www.last.fm)
 
 #### Philips Hue Integration
 * Turn on the lights when its time to wake up with the Philips Hue that can be connected with almost no effort
-* Choose the color of light to wake you up (not yet implemented)
+* Choose to fade in the light slowly
+* Choose the color of light to wake you up
 
 #### Home Automation
 * Control home appliances like your coffee machine or the heating with the EZControl Home automation server
+* Control the heating via EZControl
 
 ## FAQ
 **What the Hell? There are like a billion alarm clock apps out there!**
@@ -62,19 +70,27 @@ Yes. Whenever I make the app better to make sure I get up better I get used to t
 
 ## Version History
 #### Current
+**AmbientAlarmClock 2.14** (June 8th 2014)
+
+Change Log:
+* Fixed a bug in the alarm countdown
+* Fade in for Hue now can be selected in the UI
+* ...
+
+#### Older Versions
 **AmbientAlarmClock 2.13** (June 7th 2014)
 
 Change Log:
 * Fixed an annoying bug which would make the Alarm Activity reappear after the "awake" or "snooze" button was pressed.
 * Fixes file synchronization when an alarm is deleted (deleting remaining files)
 
-#### Older Versions
 **AmbientAlarmClock 2.12** (June 3rd 2014)
 * Completely rewritten code base
 * Now supports multiple independent ambient alarms
 * Users can configure which alarms should be used on which days
 * Users can configure actions to be performed for each alarm
-* Actions include all previously available actions like turning on lights, switching power plugs, playing music with syncing DropBox folders and muc more
+* Actions include all previously available actions like turning on lights, switching power plugs, playing music with syncing DropBox
+folders and much more
 * Faster, nicer and more responsive UI
 
 Change Log:
@@ -88,7 +104,8 @@ Change Log:
 * Now supports multiple independent ambient alarms
 * Users can configure which alarms should be used on which days
 * Users can configure actions to be performed for each alarm
-* Actions include all previously available actions like turning on lights, switching power plugs, playing music with syncing DropBox folders and muc more
+* Actions include all previously available actions like turning on lights, switching power plugs, playing music with syncing DropBox
+folders and muc more
 * Faster, nicer and more responsive UI
 
 Change Log:
