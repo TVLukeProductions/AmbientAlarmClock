@@ -44,7 +44,7 @@
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Snooze"
+                android:text="@string/snooze"
                 android:id="@+id/snoozing"
                 android:checked="false"/>
 
@@ -52,7 +52,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="SnoozeTime (Min)"
+                android:text="@string/snoozetime"
                 android:id="@+id/textView"/>
 
             <EditText

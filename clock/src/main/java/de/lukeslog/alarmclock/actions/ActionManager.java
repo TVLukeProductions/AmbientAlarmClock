@@ -98,10 +98,10 @@ public class ActionManager
         fillDescription(descriptionCountdownAction, AmbientAction.COUNTDOWN_ACTION, "Countdown Action", "countdown_action_icon", "Showing you a countdown when the alarm rings.");
 
         HashMap<String, String> descriptionSendMailAction = new HashMap<String, String>();
-        fillDescription(descriptionSendMailAction, AmbientAction.SENDMAIL_ACTION, "Send Mail Action", "send_mail_action_icon", "sending an email at a specified time");
+        fillDescription(descriptionSendMailAction, AmbientAction.SENDMAIL_ACTION, "Send Mail Action", "send_mail_action_icon", "Sending an email at a specified time");
 
         HashMap<String, String> descriptionPhilipsHueAction = new HashMap<String, String>();
-        fillDescription(descriptionPhilipsHueAction, AmbientAction.PHILIPSHUE_ACTION, "Philips Hue Action", "light_action_icon", "turning on the light when you wake up");
+        fillDescription(descriptionPhilipsHueAction, AmbientAction.PHILIPSHUE_ACTION, "Philips Hue Action", "light_action_icon", "Turning on the light when you wake up.");
 
         HashMap<String, String> descriptionMusicAction = new HashMap<String, String>();
         fillDescription(descriptionMusicAction, AmbientAction.MUSIC_ACTION, "Music Action", "music_action_icon", "Playing Music on Wakeup.");
@@ -110,7 +110,7 @@ public class ActionManager
         fillDescription(descriptionEZControlPlugAction, AmbientAction.EZCONTROLPLUG_ACTION, "ezControl Plug Action", "action_icon", "Switching a plug using the ezControl Home Automation System.");
 
         HashMap<String, String> descriptionEZControlHeatAction = new HashMap<String, String>();
-        fillDescription(descriptionEZControlHeatAction, AmbientAction.EZCONTROLHEAT_ACTION, "ezControl Radiator Action", "action_icon", "Controling The Radiator");
+        fillDescription(descriptionEZControlHeatAction, AmbientAction.EZCONTROLHEAT_ACTION, "ezControl Radiator Action", "action_icon", "Controlling The Radiator.");
 
         HashMap<String, String> descriptionWebsiteAction = new HashMap<String, String>();
         fillDescription(descriptionWebsiteAction, AmbientAction.WEBSITE_ACTION, "Website Action", "action_icon", "Show a website on the alarm-screen.");
@@ -159,7 +159,7 @@ public class ActionManager
     {
         if(actionTypeName.equals(AmbientAction.COUNTDOWN_ACTION))
         {
-            CountdownAction cda = new CountdownAction("New Count Down Action", 3600);
+            CountdownAction cda = new CountdownAction("New Countdown Action", 3600);
             return cda;
         }
         if(actionTypeName.equals(AmbientAction.SENDMAIL_ACTION))
@@ -179,7 +179,7 @@ public class ActionManager
         }
         if(actionTypeName.equals(AmbientAction.EZCONTROLPLUG_ACTION))
         {
-            EZControlPlugAction ezpa = new EZControlPlugAction("new ezControl Plug Action");
+            EZControlPlugAction ezpa = new EZControlPlugAction("New ezControl Plug Action");
             return ezpa;
         }
         if(actionTypeName.equals((AmbientAction.EZCONTROLHEAT_ACTION)))

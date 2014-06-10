@@ -180,8 +180,8 @@ public class ActionActivity extends Activity
 
         final Spinner timeunits = (Spinner) findViewById(R.id.timeunits);
         List<String> list2 = new ArrayList<String>();
-        String minutes = getResources().getResourceName(R.string.minutes);
-        String hours = getResources().getResourceName(R.string.hours);
+        String minutes = getResources().getString(R.string.minutes);
+        String hours = getResources().getString(R.string.hours);
         list2.add(minutes);
         list2.add(hours);
         ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list2);
@@ -340,7 +340,6 @@ public class ActionActivity extends Activity
             {
                 if(action.getActionID().equals(this.action.getActionID()))
                 {
-                    //Log.d(TAG, "found the action at: "+actiontime);
                     return actiontime;
                 }
             }

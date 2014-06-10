@@ -278,7 +278,8 @@ public class PhilipsHueActionConfigurationFragment extends Fragment
                 connectbar.setVisibility(View.VISIBLE);
                 Logger.d(TAG, "p=0 start disc and auth");
             }
-            text.setText("Press the button on your Hue bridge in the next 30 seconds to grant access.");
+            String thirty = getResources().getString(R.string.thirtyhue);
+            text.setText(thirty);
             connectbutton.setClickable(false);
             Logger.d(TAG, "int p");
             double px = progress[0];

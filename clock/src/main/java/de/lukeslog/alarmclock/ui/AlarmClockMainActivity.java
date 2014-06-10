@@ -216,7 +216,8 @@ public class AlarmClockMainActivity extends Activity
             }
             else
             {
-                Toast.makeText(this, "Please provide log-in data in the settings", Toast.LENGTH_LONG).show();//TODO: language
+                String toasttext = getResources().getString(R.string.pleaseprovidedatainsettings);
+                Toast.makeText(this, toasttext, Toast.LENGTH_LONG).show();//TODO: language
             }
 
         }

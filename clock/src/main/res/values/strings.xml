@@ -35,7 +35,7 @@
     <string name="after">after</string>
     <string name="minutes">minutes</string>
     <string name="hours">hours</string>
-    <string name="switchToRadio">Switch To Radio.</string>
+    <string name="switchToRadio">Switch To Radio</string>
     <string name="pickdevice">Pick Device</string>
     <string name="actionname">Name of the Action</string>
     <string name="joinsnooze">Join Snoozing</string>
@@ -66,6 +66,8 @@
     <string name="searchfordevices">Search For Devices</string>
     <string name="displayoptions">Display Options</string>
     <string name="sources">Sources</string>
+    <string name="snoozetime">Snooze Time (Min)</string>
+    <string name="pleaseprovidedatainsettings">Please provide log-in data in the settings</string>
     <!-- preferences strings-->
     <string name="pref_email_title">Email Settings</string>
     <string name="email_logdata">Email Data</string>

@@ -1,15 +1,15 @@
 # Ambient Alarm Clock
 
 A simple but effective alarm clock that plays you some music, offers you the news, turns on the light and more.
-Ambient Technology is the vision of technology that adapts your surroundings to your needs and offers services
+*Ambient Technology* is the vision of technology that adapts your surroundings to your needs and offers services
 to improve your live using sensing and acting technology.
 
-Imagine your coffee machine turning on 5 minutes before your alarm clock rings so you always wake up to the scent of fresh coffee.
+Imagine your coffee machine turning on 5 minutes before your alarm clock rings so you always wake up to the scent of freshly brewed coffee.
 Imagine music slowly swelling up while the lights simulate a sunrise. Imagine the heating in your bath turning on before you step into
-your bath and all of it controlled by your alarm time instead of at a fixed time. Using Home Automation technology from ezControl,
-the Philips Hue and other technologies the Ambient Alarm Clock makes these scenarios possible.
+the shower and all of it controlled relative to your set alarm time instead of any fixed time. Using home automation technology from ezControl,
+the *Philips Hue* and other technologies the *Ambient Alarm Clock* makes these scenarios possible.
 
-You can [Download the Ambient Alarm Clock here](https://dl.dropbox.com/s/11k264963s2ofek/AAC14.apk).
+You can [Download the *Ambient Alarm Clock* here](https://dl.dropbox.com/s/11k264963s2ofek/AAC14.apk).
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/TVLukeProductions/AmbientAlarmClock/master/pics/overview.jpg" alt="UI"/>
@@ -18,7 +18,7 @@ You can [Download the Ambient Alarm Clock here](https://dl.dropbox.com/s/11k2649
 Features:
 #### Alarm Clock
 * Alarm Clock that wakes you up with music of your choice.
-* You can chose what songs you want to wake up to by selecting a folder on your device with music (or use DropBox). The alarm clock
+* You can chose what songs you want to wake up to by selecting a folder on your device with music (or use *DropBox*). The alarm clock
 will select one song out of the selected folder at random.
 * You can have the song fade in slowly or start loud.
 * Define your own snooze time or if you even want a snooze button shown at all.
@@ -31,7 +31,7 @@ home appliances as well as data shown on the device.
 
 #### Countdown on wake up
 * You don't have all the time in the world. You need to get the bus? You always want to know how much time is left until you need to
-get out? Activate the Countdown, which will start with the first alarm and tell you when you have to go. The alarm-clock can, if you
+get out? Activate the countdown, which will start with the first alarm and tell you when you have to go. The alarm clock can, if you
 want it to, stop the alert when it has run out, so you don't even have to be there any more.
 
 #### Reminder to go to bed
@@ -42,20 +42,20 @@ want it to, stop the alert when it has run out, so you don't even have to be the
 * Listen to the radio after the alarm has rung. You have the choice between several radio stations
 
 #### DropBox Integration
-* Use either a local folder or define a DropBox folder to synchronize your wake up songs. You can chose what songs to wake up to
+* Use either a local folder or define a *DropBox* folder to synchronize your wake up songs. You can chose what songs to wake up to
 by just putting it into the folder.
 
 #### Last FM Integration
-* Scrobble the song you woke up to on [last.fm](http://www.last.fm)
+* *Scrobble* the song you woke up to on [last.fm](http://www.last.fm)
 
 #### Philips Hue Integration
-* Turn on the lights when its time to wake up with the Philips Hue that can be connected with almost no effort
-* Choose to fade in the light slowly
-* Choose the color of light to wake you up
+* Turn on the lights when its time to wake up with the *Philips Hue* that can be connected with almost no effort.
+* Choose to fade in the light slowly.
+* Choose the color of light to wake you up.
 
 #### Home Automation
-* Control home appliances like your coffee machine or the heating with the EZControl Home automation server
-* Control the heating via EZControl
+* Control home appliances like your coffee machine or the heating with the *EZControl Home* automation server
+* Control the heating via *EZControl*.
 
 ## FAQ
 **What the Hell? There are like a billion alarm clock apps out there!**
@@ -70,6 +70,12 @@ Yes. Whenever I make the app better to make sure I get up better I get used to t
 
 ## Version History
 #### Current
+**AmbientAlarmClock 2.14b** (June 10th 2014)
+
+Change Log:
+* Small Bug (Text on buttons and fields partially missing).
+
+#### Older Versions
 **AmbientAlarmClock 2.14** (June 9th 2014)
 
 Change Log:
@@ -78,7 +84,6 @@ Change Log:
 * Fade in for Hue now can be selected in the UI
 * Translated to German
 
-#### Older Versions
 **AmbientAlarmClock 2.13** (June 7th 2014)
 
 Change Log:
