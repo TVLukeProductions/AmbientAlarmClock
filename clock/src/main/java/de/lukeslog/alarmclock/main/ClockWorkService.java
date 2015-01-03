@@ -147,7 +147,7 @@ public class ClockWorkService  extends IntentService
 
     private void tick(DateTime time)
     {
-        Logger.i(TAG + "_time", ". "+time.getHourOfDay()+":"+time.getMinuteOfHour()+":"+time.getSecondOfMinute()+":"+time.getMillisOfSecond());
+        Logger.d(TAG + "_time", ". "+time.getHourOfDay()+":"+time.getMinuteOfHour()+":"+time.getSecondOfMinute()+":"+time.getMillisOfSecond());
         AmbientAlarmManager.notifyActiveAlerts(time);
         ActionManager.notifyOfCurrentTime(time);
     }

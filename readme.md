@@ -70,12 +70,20 @@ Yes. Whenever I make the app better to make sure I get up better I get used to t
 
 ## Version History
 #### Current
+
+**Ambient Alarm Clock 2.18** (03.01.2015)
+
+* Replaced Hue Library
+* Some new features
+* Bugfixes
+
+#### Older Versions
+
 **AmbientAlarmClock 2.14b** (June 10th 2014)
 
 Change Log:
 * Small Bug (Text on buttons and fields partially missing).
 
-#### Older Versions
 **AmbientAlarmClock 2.14** (June 9th 2014)
 
 Change Log:
@@ -186,8 +194,8 @@ Change Log:
 <span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">Ambient Alarm Clock</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/TVLuke/AmbientAlarmClock/" property="cc:attributionName" rel="cc:attributionURL">Lukas Ruge</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.<br />Permissions beyond the scope of this license may be available at <a xmlns:cc="http://creativecommons.org/ns#" href="http://www.lukeslog.de/" rel="cc:morePermissions">http://www.lukeslog.de/</a>.
 
 #Kudos
-This app uses a lot of libraries, i just link to code here:
-* The Code to control Hue Lights comes from this project [https://github.com/jaetzold/philips-hue-java-sdk](https://github.com/jaetzold/philips-hue-java-sdk)
+This app uses a lot of libraries, I just link to them here:
+* [Philips Hue Library](https://github.com/PhilipsHue/PhilipsHueSDK-Java-MultiPlatform-Android)
 * The Ability to send mail is provided by code from http://www.jondev.net/articles/Sending_Emails_without_User_Intervention_%28no_Intents%29_in_Android
 * This app uses [Joda-Time](http://www.joda.org/joda-time/) and so should everybody else
 * This app uses the [jid3lib](http://javamusictag.sourceforge.net/) to recognize ID3 Tags from MP3 sources

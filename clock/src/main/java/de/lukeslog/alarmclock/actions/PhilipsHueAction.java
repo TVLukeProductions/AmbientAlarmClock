@@ -6,14 +6,28 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.philips.lighting.hue.listener.PHLightListener;
+import com.philips.lighting.hue.sdk.PHAccessPoint;
+import com.philips.lighting.hue.sdk.PHBridgeSearchManager;
+import com.philips.lighting.hue.sdk.PHHueSDK;
+import com.philips.lighting.hue.sdk.PHMessageType;
+import com.philips.lighting.hue.sdk.PHSDKListener;
+import com.philips.lighting.hue.sdk.utilities.PHUtilities;
+import com.philips.lighting.model.PHBridge;
+import com.philips.lighting.model.PHBridgeResource;
+import com.philips.lighting.model.PHBridgeResourcesCache;
+import com.philips.lighting.model.PHHueError;
+import com.philips.lighting.model.PHLight;
+import com.philips.lighting.model.PHLightState;
+
 import org.joda.time.DateTime;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
-import de.jaetzold.philips.hue.ColorHelper;
-import de.jaetzold.philips.hue.HueBridge;
-import de.jaetzold.philips.hue.HueLightBulb;
 import de.lukeslog.alarmclock.support.Logger;
 import de.lukeslog.alarmclock.ui.AmbientAlarmActivity;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
@@ -25,12 +39,15 @@ import de.lukeslog.alarmclock.R;
 public class PhilipsHueAction extends AmbientAction
 {
     public static String BRIDGEUSERNAME = "552627b33010930f275b72ab1c7be258";
-    List<HueBridge> bridges;
-    Collection<HueLightBulb> lights;
+    static PHHueSDK phHueSDK = PHHueSDK.getInstance();
+    static PHBridge bridge;
+    static List<PHLight> lights = new ArrayList<PHLight>();
     boolean fadein = false;
     int red=255;
     int green=255;
     int blue =255;
+    String lightsToTurnOn="";
+    public static String lastKnownIP="";
 
     public PhilipsHueAction(String actionName)
     {
@@ -48,16 +65,46 @@ public class PhilipsHueAction extends AmbientAction
             green = Integer.parseInt(configBundle.getString("green"));
             blue = Integer.parseInt(configBundle.getString("blue"));
             fadein = configBundle.getString("fadein").equals("1");
+            lightsToTurnOn = configBundle.getString("lightsToTurnOn");
+            lastKnownIP = configBundle.getString("lastKnownIP");
         }
         catch(Exception e)
         {
-
+            Logger.e(TAG, "Exception 1 "+e);
         }
+    }
+
+    public static List<PHLight> getLights() {
+        Logger.d(TAG, "get Lights");
+        if(lights.size()==0) {
+            Logger.d(TAG, "lights is null-<-<-<-");
+            if(bridge!=null) {
+
+            } else {
+                connectToHueLights();
+            }
+            if(bridge!=null) {
+                PHBridgeResourcesCache cache = bridge.getResourceCache();
+                // And now you can get any resource you want, for example:
+                lights = cache.getAllLights();
+                Logger.d(TAG, "and now?");
+                if (lights != null) {
+                    Logger.d(TAG, "no more");
+                } else {
+                    Logger.d(TAG, "still null... WHAT THE FUCK.");
+                    Logger.d(TAG, "" + bridge.getResourceCache().getLights().size());
+                }
+            }
+        }
+        Logger.d(TAG, "Lights sizes: "+lights.size());
+        return lights;
     }
 
     @Override
     public void action(boolean isFirstAlert)
     {
+        Logger.e(TAG, "----------------------------------");
+        Logger.e(TAG, "PHILIPS HUE ACTION LOG");
         if(fadein)
         {
             turnOnTheLightsSlowly();
@@ -66,6 +113,7 @@ public class PhilipsHueAction extends AmbientAction
         {
             turnOnTheLights();
         }
+        Logger.e(TAG, "----------------------------------");
     }
 
     @Override
@@ -139,6 +187,8 @@ public class PhilipsHueAction extends AmbientAction
         {
             configBundle.putString("fadein", "0");
         }
+        configBundle.putString("lightsToTurnOn", lightsToTurnOn);
+        configBundle.putString("lastKnownIP", lastKnownIP);
         return configBundle;
     }
 
@@ -169,6 +219,11 @@ public class PhilipsHueAction extends AmbientAction
         return blue;
     }
 
+    public String getLightsToTurnOn()
+    {
+        return lightsToTurnOn;
+    }
+
     public void setRed(int red)
     {
         this.red = red;
@@ -184,200 +239,174 @@ public class PhilipsHueAction extends AmbientAction
         this.blue = blue;
     }
 
+    public void setLightsToTurnOn(String lightsToTurnOn)
+    {
+        this.lightsToTurnOn = lightsToTurnOn;
+    }
+
     protected void turnOnTheLights()
     {
+        if(lights==null  || lights.size()==0) {
+            connectToHueLights();
+            int counter=0;
+            while((lights==null  || lights.size()==0) && counter<100){
+                try {
+                    Thread.sleep(10);
+                    counter++;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            lights(0);
+        }
         try
         {
             lights(0);
         }
         catch(Exception e)
         {
-
+            Logger.e(TAG, "Exception 2 "+e);
         }
     }
 
     protected void turnOnTheLightsSlowly()
     {
+        if(lights==null || lights.size()==0) {
+            connectToHueLights();
+            int counter=0;
+            while((lights==null  || lights.size()==0) && counter<100){
+                try {
+                    Thread.sleep(100);
+                    counter++;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            lights(50);
+        }
         try
         {
             lights(50);
         }
         catch(Exception e)
         {
-
+            Logger.e(TAG, "Exception 3 "+e);
         }
+    }
+
+    private static void authenticateHueSDK() {
+        Logger.d(TAG, "SDK Authentication...");
+        phHueSDK.setAppName(PhilipsHueAction.BRIDGEUSERNAME);
+        phHueSDK.setDeviceName(android.os.Build.MODEL);
+        phHueSDK.getNotificationManager().registerSDKListener(philipsHuelistener);
+
+
     }
 
     private void turnOfTheLights()
     {
-        new Thread(new Runnable()
-        {
-            @SuppressWarnings("unchecked")
-            public void run()
-            {
-                try
-                {
-                    bridges = HueBridge.discover();
+        if(lights==null) {
+            connectToHueLights();
+        }
+        if(lights!=null) {
+            Logger.d(TAG, "Available LightBulbs : " + lights.size());
+            for (PHLight bulb : lights) {
+                if (lightsToTurnOn.contains(bulb.getName())) {
+                    try {
+                        setHueColor(bulb, 0, 0, 0, 0);
+                    } catch (Exception e) {
+                        Logger.e(TAG, e.getMessage());
+                        Logger.e(TAG, "Exception 4 "+e);
+                    }
                 }
-                catch(Exception e)
-                {
+            }
+        }
+    }
+
+    public static void connectToHueLights()
+    {
+        if(!lastKnownIP.equals("")) {
+            Logger.d(TAG, "lastknownIP is not empty...");
+            PHAccessPoint accessPoint = new PHAccessPoint();
+            accessPoint.setIpAddress(lastKnownIP);
+            accessPoint.setUsername(BRIDGEUSERNAME);
+            connectToAccessPoint(accessPoint);
+        }
+        else {
+            Logger.d(TAG, "lastKnownIP is empty...");
+        }
+    }
+
+    public static void connectToAccessPoint(PHAccessPoint accessPoint) {
+        Logger.d(TAG, "this should be an acces Point now...");
+        if (lastKnownIP.equals("")) {
+            lastKnownIP = accessPoint.getIpAddress();
+        }
+        Logger.d(TAG, "We should get the IP " + lastKnownIP);
+        if (phHueSDK == null) {
+            Logger.d(TAG, "sdk is null, we need to do studd");
+            authenticateHueSDK();
+        }
+        if (phHueSDK != null) {
+            Logger.d(TAG, "the sdk is not null");
+            try {
+                phHueSDK.setAppName(PhilipsHueAction.BRIDGEUSERNAME);
+                phHueSDK.setDeviceName(android.os.Build.MODEL);
+                phHueSDK.getNotificationManager().registerSDKListener(PhilipsHueAction.philipsHuelistener);
+                accessPoint.setUsername(BRIDGEUSERNAME);
+                Logger.d(TAG, "sdk has a name now... I guess!");
+                phHueSDK.connect(accessPoint);
+            } catch (Exception e) {
+                Logger.e(TAG, e.getLocalizedMessage());
+            }
+        }
+    }
+
+    public static void findBridges()
+    {
+        Logger.d(TAG, "XxXxXxX");
+        List<PHBridge> bridges  = phHueSDK.getAllBridges();
+        Logger.d(TAG, "we have "+bridges.size()+" bridges in the list");
+        if(bridges.size()>0)
+        {
+            Logger.d(TAG, "now"+bridges.get(0));
+            phHueSDK.setSelectedBridge(bridges.get(0));
+            bridge=bridges.get(0);
+            if(bridge!=null) {
+                Logger.d(TAG, "OK, at least right now bridge is not null");
+            }
+            bridge.getResourceCache();
+            getLights();
+        } else if (bridges.size()==0) {
+            //TODO: Stuff needs to be done
+            if(bridge!=null){
+                getLights();
+            }
+        }
+        Logger.d(TAG, "done");
+    }
+
+
+    private void lights(final int i) {
+        Logger.d(TAG, "Available LightBulbs : "+lights.size());
+        for (PHLight bulb : lights) {
+            if(lightsToTurnOn.contains(bulb.getName())) {
+                try {
+                    setHueColor(bulb, red, green, blue, i);
+                }
+                catch (Exception e) {
                     Logger.e(TAG, e.getMessage());
-                }
-                for(HueBridge bridge : bridges)
-                {
-                    bridge.setUsername(BRIDGEUSERNAME);
-                    if(bridge.authenticate(true))
-                    {
-                        Logger.d(TAG, "Access granted. username: " + bridge.getUsername());
-                        try
-                        {
-                            lights = (Collection<HueLightBulb>) bridge.getLights();
-                        }
-                        catch(Exception e)
-                        {
-                            Logger.e(TAG, e.getMessage());
-                        }
-                        Logger.d(TAG, "Available LightBulbs : "+lights.size());
-                        for (HueLightBulb bulb : lights)
-                        {
-                            try
-                            {
-                                Logger.d(TAG, bulb.toString());
-                                bulb.setOn(false);
-                            }
-                            catch(Exception e)
-                            {
-                                Logger.e(TAG, e.getMessage());
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Logger.d(TAG, "Authentication failed.");
-                    }
+                    Logger.e(TAG, "Exception 5 "+e);
                 }
             }
-        }).start();
+        }
     }
 
-    private void connectToHueLights()
+    public static void identifiy(final PHLight bulb)
     {
-        new Thread(new Runnable()
-        {
-            @SuppressWarnings("unchecked")
-            public void run()
-            {
-                bridges = HueBridge.discover();
-                for(HueBridge bridge : bridges)
-                {
-                    bridge.setUsername(BRIDGEUSERNAME);
-                    if(bridge.authenticate(true))
-                    {
-                        Logger.d(TAG, "Access granted. username: " + bridge.getUsername());
-                        lights = (Collection<HueLightBulb>) bridge.getLights();
-                        Logger.d(TAG, "Available LightBulbs: "+lights.size());
-                        for (HueLightBulb bulb : lights)
-                        {
-                            Logger.d(TAG, bulb.toString());
-                            //identifiy(bulb);
-                        }
-                        Logger.d(TAG, "");
-                    }
-                    else
-                    {
-                        Logger.d(TAG, "Authentication failed.");
-                    }
-                }
-            }
-        }).start();
-    }
-
-    private void lights(final int i)
-    {
-        new Thread(new Runnable()
-        {
-            @SuppressWarnings("unchecked")
-            public void run()
-            {
-                try
-                {
-                    bridges = HueBridge.discover();
-                }
-                catch(Exception e)
-                {
-                    Logger.e(TAG, e.getMessage());
-                }
-                for(HueBridge bridge : bridges)
-                {
-                    bridge.setUsername(BRIDGEUSERNAME);
-                    if(bridge.authenticate(true))
-                    {
-                        Logger.d(TAG, "Access granted. username: " + bridge.getUsername());
-                        try
-                        {
-                            lights = (Collection<HueLightBulb>) bridge.getLights();
-                        }
-                        catch(Exception e)
-                        {
-                            Logger.e(TAG, e.getMessage());
-                        }
-                        Logger.d(TAG, "Available LightBulbs : "+lights.size());
-                        for (HueLightBulb bulb : lights)
-                        {
-                            try
-                            {
-                                setHueColor(bulb, red, green, blue, i);
-                                Thread.sleep(500);
-
-                            }
-                            catch(Exception e)
-                            {
-                                Logger.e(TAG, e.getMessage());
-                            }
-
-                        }
-                        //System.out.println("");
-                    }
-                    else
-                    {
-                        Logger.d(TAG, "Authentication failed.");
-                    }
-                }
-            }
-        }).start();
-    }
-
-    public static void identifiy(final HueLightBulb bulb)
-    {
-        new Thread(new Runnable()
-        {
-            public void run()
-            {
-                try
-                {
-                    Logger.d(TAG, bulb.toString());
-                    boolean originalyon=false;
-                    if(bulb.getOn())
-                    {
-                        originalyon=true;
-                    }
-                    Integer bri = null;
-                    Integer hu = null;
-                    Integer sa = null;
-                    double cix = 0;
-                    double ciy = 0;
-                    int ct = 0;
-                    if(originalyon)
-                    {
-                        bri = bulb.getBrightness();
-                        hu = bulb.getHue();
-                        sa = bulb.getSaturation();
-                        cix = bulb.getCiex();
-                        ciy = bulb.getCiey();
-                        ct = bulb.getColorTemperature();
-                        bulb.setOn(false);
-                    }
-                    try
+        PHLightState originalState = bulb.getLastKnownLightState();
+        setHueColor(bulb, 255, 0, 255, 0);
+        try
                     {
                         Thread.sleep(250);
                     }
@@ -385,148 +414,161 @@ public class PhilipsHueAction extends AmbientAction
                     {
                         e.printStackTrace();
                     }
-                    bulb.setOn(true);
-                    bulb.setBrightness(ColorHelper.convertRGB2Hue("255255255").get("bri"));
-                    bulb.setHue(ColorHelper.convertRGB2Hue("255255255").get("hue"));
-                    bulb.setSaturation(ColorHelper.convertRGB2Hue("255255255").get("sat"));
+        setHueColor(bulb, originalState, 0);
                     try
                     {
                         Thread.sleep(500);
                     }
                     catch (InterruptedException e)
                     {
-
+                        Logger.e(TAG, "Exception 6 "+e);
                         e.printStackTrace();
                     }
-                    bulb.setOn(false);
+        setHueColor(bulb, 255, 0, 255, 0);
                     try
                     {
                         Thread.sleep(250);
                     }
                     catch (InterruptedException e)
                     {
+                        Logger.e(TAG, "Exception 7 "+e);
                         e.printStackTrace();
                     }
-                    if(originalyon)
-                    {
-                        bulb.setOn(true);
-                        bulb.setBrightness(bri);
-                        bulb.setHue(hu);
-                        bulb.setSaturation(sa);
-                        bulb.setCieXY(cix, ciy);
-                        bulb.setColorTemperature(ct);
-                    }
-                }
-                catch(Exception e)
-                {
-                    Logger.e(TAG, "error while setting lights 2");
-                }
-            }
-        }).start();
+        setHueColor(bulb, originalState, 0);
     }
 
-    public static void setHueColor(final HueLightBulb bulb, double r, double g, double b, final int fadein)
+    public static void setHueColor(final PHLight bulb, final int r, final int g, final int b, final int fadeIn)
     {
-        //method from http://www.everyhue.com/vanilla/discussion/166/hue-rgb-to-hsv-algorithm/p1
-        //r = (float(rInt) / 255)
-        r=r/255.0;
-        //g = (float(gInt) / 255)
-        g=g/255.0;
-        //b = (float(bInt) / 255)
-        b=b/255.0;
+                float xy[] = PHUtilities.calculateXYFromRGB(r, g, b, bulb.getModelNumber());
+                PHLightState lightState = new PHLightState();
+                lightState.setX(xy[0]);
+                lightState.setY(xy[1]);
+                setHueColor(bulb, lightState, fadeIn);
+    }
 
-        if (r > 0.04045)
-        {
-            r = Math.pow(((r + 0.055) / 1.055), 2.4);
-        }
-        else
-        {
-            r = r / 12.92;
-        }
-        if (g > 0.04045)
-        {
-            g = Math.pow(((g + 0.055) / 1.055), 2.4);
-        }
-        else
-        {
-            g = g / 12.92;
-        }
-        if (b > 0.04045)
-        {
-            b = Math.pow(((b + 0.055) / 1.055), 2.4);
-        }
-        else
-        {
-            b = b / 12.92;
-        }
-
-        r = r * 100;
-        g = g * 100;
-        b = b * 100;
-
-        //Observer = 2deg, Illuminant = D65
-        //These are tristimulus values
-        //X from 0 to 95.047
-        //Y from 0 to 100.000
-        //Z from 0 to 108.883
-        double X = r * 0.4124 + g * 0.3576 + b * 0.1805;
-        double Y = r * 0.2126 + g * 0.7152 + b * 0.0722;
-        double Z = r * 0.0193 + g * 0.1192 + b * 0.9505;
-
-        //Compute xyY
-        double sum = X + Y + Z;
-        double chroma_x = 0;
-        double chroma_y = 0;
-        if (sum > 0)
-        {
-            chroma_x = X / (X + Y + Z); //x
-            chroma_y = Y / (X + Y + Z); //y
-        }
-        final double ch_x =chroma_x;
-        final double ch_y = chroma_y;
-        //int brightness = (int)(Math.floor(Y / 100 *254)); //luminosity, Y
-        new Thread(new Runnable()
-        {
-            public void run()
-            {
-                try
-                {
-
-                    //Log.d(TAG, "1");
-                    bulb.setOn(true);
-                    //Log.d(TAG, "12");
-                    bulb.setBrightness(0);
-                    //Log.d(TAG, "3");
-                    bulb.setCieXY(ch_x , ch_y);
-                    //Log.d(TAG, "4");
-                    if(fadein>0)
-                    {
-                        int steps = 255/fadein;
-                        for(int i=0; i<=255; i=i+steps)
-                        {
-                            bulb.setBrightness(i);
-                            //Log.d(TAG, ""+i);
-                            try
-                            {
-                                Thread.sleep(5000);
-                            }
-                            catch(Exception h)
-                            {
-                                Logger.e(TAG, "thread sleep exception");
-                            }
+    public static void setHueColor(final PHLight bulb, final PHLightState lightState, final int fadeIn)
+    {
+        Logger.d(TAG, "we are trying to turn the bulb "+bulb.getName()+" ON");
+        Logger.d(TAG, ""+bulb.getLightType().name());
+        Logger.d(TAG, ""+bulb.supportsBrightness());
+        Logger.d(TAG, ""+bulb.getIdentifier());
+        if(bridge!=null) {
+            new Thread(new Runnable() {
+                public void run() {
+                    lightState.setTransitionTime(fadeIn * 70);
+                    lightState.setOn(true);
+                    bridge.updateLightState(bulb, lightState);
+                    bridge.updateLightState(bulb, lightState, new PHLightListener() {
+                        @Override
+                        public void onReceivingLightDetails(PHLight phLight) {
 
                         }
-                    }
-                    else
-                    {
-                        bulb.setBrightness(255);
-                    }
+
+                        @Override
+                        public void onReceivingLights(List<PHBridgeResource> phBridgeResources) {
+
+                        }
+
+                        @Override
+                        public void onSearchComplete() {
+
+                        }
+
+                        @Override
+                        public void onSuccess() {
+
+                        }
+
+                        @Override
+                        public void onError(int i, String s) {
+                            Logger.e(TAG, s);
+                        }
+
+                        @Override
+                        public void onStateUpdate(Map<String, String> stringStringMap, List<PHHueError> phHueErrors) {
+
+                        }
+                    });
                 }
-                catch(Exception e)
-                {
-                    Logger.e(TAG, "there was an error when setting the lightbulb");
+            }).start();
+        }
+    }
+
+    // Local SDK Listener
+    protected static PHSDKListener philipsHuelistener = new PHSDKListener() {
+
+        @Override
+        public void onAccessPointsFound(List accessPoint) {
+            // Handle your bridge search results here.  Typically if multiple results are returned you will want to display them in a list
+            // and let the user select their bridge.   If one is found you may opt to connect automatically to that bridge.
+            Logger.d(TAG, "PHSDKListener: Access Point");
+            if(accessPoint!=null) {
+                Logger.d(TAG, "AccessPointList not null");
+                if (accessPoint.size() > 0) {
+                    Logger.d(TAG, "lets try to connect");
+                    PHAccessPoint a = (PHAccessPoint) accessPoint.get(0);
+                    connectToAccessPoint(a);
                 }
             }
-        }).start();
-    }
+        }
+
+        @Override
+        public void onCacheUpdated(List cacheNotificationsList, PHBridge bridge) {
+            // Here you receive notifications that the BridgeResource Cache was updated. Use the PHMessageType to
+            // check which cache was updated, e.g.
+            Logger.d(TAG, "PHSDKListener: on Cache Update");
+            if (cacheNotificationsList.contains(PHMessageType.LIGHTS_CACHE_UPDATED)) {
+                Logger.d(TAG, "Lights Cache Updated ");
+            }
+        }
+
+        @Override
+        public void onBridgeConnected(PHBridge b)
+        {
+            Logger.d(TAG, "PHSDKListener: on Bridge Connected");
+            phHueSDK.setSelectedBridge(b);
+            bridge=b;
+            phHueSDK.enableHeartbeat(b, PHHueSDK.HB_INTERVAL);
+            // Here it is recommended to set your connected bridge in your sdk object (as above) and start the heartbeat.
+            // At this point you are connected to a bridge so you should pass control to your main program/activity.
+            // Also it is recommended you store the connected IP Address/ Username in your app here.
+            // This will allow easy automatic connection on subsequent use.
+            PHBridgeResourcesCache cache = phHueSDK.getSelectedBridge().getResourceCache();
+            // And now you can get any resource you want, for example:
+            lights = cache.getAllLights();
+            findBridges();
+        }
+
+        @Override
+        public void onAuthenticationRequired(PHAccessPoint accessPoint) {
+            Logger.d(TAG, "PHSDKListener: onAuthenticationRequred");
+            phHueSDK.startPushlinkAuthentication(accessPoint);
+            // Arriving here indicates that Pushlinking is required (to prove the User has physical access to the bridge).  Typically here
+            // you will display a pushlink image (with a timer) indicating to to the user they need to push the button on their bridge within 30 seconds.
+        }
+
+        @Override
+        public void onConnectionResumed(PHBridge b) {
+            Logger.d(TAG, "PHSDKListener: onConnectionResumed");
+            if(bridge==null) {
+                bridge = b;
+            }
+        }
+
+        @Override
+        public void onConnectionLost(PHAccessPoint accessPoint) {
+            Logger.d(TAG, "PHSDKListener: on Connection Lost");
+            // Here you would handle the loss of connection to your bridge.
+        }
+
+        @Override
+        public void onError(int code, final String message) {
+            // Here you can handle events such as Bridge Not Responding, Authentication Failed and Bridge Not Found
+        }
+
+        @Override
+        public void onParsingErrors(List parsingErrorsList) {
+            // Any JSON parsing errors are returned here.  Typically your program should never return these.
+        }
+    };
 }

@@ -17,9 +17,6 @@ import de.lukeslog.alarmclock.support.UISupport;
 import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.support.Day;
 
-/**
- * Created by lukas on 02.04.14.
- */
 public class AlarmListAdapter extends BaseAdapter
 {
 

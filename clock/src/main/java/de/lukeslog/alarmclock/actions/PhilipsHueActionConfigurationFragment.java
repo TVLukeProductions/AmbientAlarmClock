@@ -10,23 +10,23 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import java.util.Collection;
+import com.philips.lighting.hue.sdk.PHBridgeSearchManager;
+import com.philips.lighting.hue.sdk.PHHueSDK;
+import com.philips.lighting.model.PHLight;
+
+import java.util.ArrayList;
 import java.util.List;
 
-import de.jaetzold.philips.hue.HueBridge;
-import de.jaetzold.philips.hue.HueLightBulb;
 import de.lukeslog.alarmclock.R;
 import de.lukeslog.alarmclock.ambientalarm.AmbientAlarm;
 import de.lukeslog.alarmclock.support.AlarmClockConstants;
 import de.lukeslog.alarmclock.support.Logger;
 
-/**
- * Created by lukas on 24.04.14.
- */
 public class PhilipsHueActionConfigurationFragment extends Fragment
 {
     public static final String PREFS_NAME = AlarmClockConstants.PREFS_NAME;
@@ -37,6 +37,8 @@ public class PhilipsHueActionConfigurationFragment extends Fragment
     TextView text;
     PhilipsHueAction action;
     AmbientAlarm alarm;
+    static List<PHLight> lights = new ArrayList<PHLight>();
+    View fragment;
 
     /** Called when the activity is first created. */
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -44,21 +46,24 @@ public class PhilipsHueActionConfigurationFragment extends Fragment
     {
         super.onCreate(savedInstanceState);
 
-        View fragment = inflater.inflate(R.layout.philips_hue_action_activity, container, false);
-
-        //well... this is kinda evil.
+       fragment = inflater.inflate(R.layout.philips_hue_action_activity, container, false);
+        Logger.d(TAG+"_HueConfig", "config screen.");
         ActionActivity parent = (ActionActivity) getActivity();
         action = (PhilipsHueAction) parent.getAction();
         alarm = parent.getAlarm();
+
+        action.connectToHueLights();
 
         collorpicker(fragment);
 
         fadeincheckbox(fragment);
 
+        pupulatebulbselection();
+
         connectbar = (ProgressBar) fragment.findViewById(R.id.progressBar1);
         connectbutton = (Button) fragment.findViewById(R.id.findhue);
         text = (TextView) fragment.findViewById(R.id.secondstext);
-
+        
         connectbutton.setOnClickListener(new View.OnClickListener()
         {
 
@@ -67,49 +72,19 @@ public class PhilipsHueActionConfigurationFragment extends Fragment
             {
                 new Thread(new Runnable()
                 {
-                    @SuppressWarnings("unchecked")
                     public void run()
                     {
-                        List<HueBridge> bridges = HueBridge.discover();
-                        for(HueBridge bridge : bridges)
-                        {
-                            Logger.d(TAG, "Found " + bridge);
-                            // You may need a better scheme to store your username that to just hardcode it.
-                            // suggestion: Save a mapping from HueBridge.getUDN() to HueBridge.getUsername() somewhere.
-                            bridge.setUsername(PhilipsHueAction.BRIDGEUSERNAME);
-                            if(!bridge.authenticate(false))
-                            {
-                                Logger.d(TAG, "Press the button on your Hue bridge in the next 30 seconds to grant access.");
-                                if(bridge.authenticate(true))
-                                {
-                                    Logger.d(TAG, "Access granted. username: " + bridge.getUsername());
-                                    Collection<HueLightBulb> lights = (Collection<HueLightBulb>) bridge.getLights();
-                                    Logger.d(TAG, "Available LightBulbs: "+lights.size());
-                                    for (HueLightBulb bulb : lights)
-                                    {
-                                        Logger.d(TAG, bulb.toString());
-                                        PhilipsHueAction.identifiy(bulb);
-                                    }
-                                    System.out.println("");
-                                }
-                                else
-                                {
-                                    Logger.d(TAG, "Authentication failed.");
-                                }
-                            }
-                            else
-                            {
-                                Logger.d(TAG, "Already granted access. username: " + bridge.getUsername());
-                                Collection<HueLightBulb> lights = (Collection<HueLightBulb>) bridge.getLights();
-                                Logger.d(TAG, "Available LightBulbs: "+lights.size());
-                                for (HueLightBulb bulb : lights)
-                                {
-                                    Logger.d(TAG, bulb.toString());
-                                    PhilipsHueAction.identifiy(bulb);
-                                }
-                                Logger.d(TAG, "");
-                            }
-                        }
+                        Logger.d(TAG+"_HueConfig", "CONNECT TO HUE!!!");
+                        PhilipsHueAction.phHueSDK.setAppName(PhilipsHueAction.BRIDGEUSERNAME);
+                        Logger.d(TAG+"_HueConfig", "CONNECT TO HUE!!!");
+                        PhilipsHueAction.phHueSDK.setDeviceName(android.os.Build.MODEL);
+                        Logger.d(TAG+"_HueConfig", "CONNECT TO HUE!!!");
+                        PhilipsHueAction.phHueSDK.getNotificationManager().registerSDKListener(PhilipsHueAction.philipsHuelistener);
+                        Logger.d(TAG+"_HueConfig", "CONNECT TO HUE!!!");
+                        PHBridgeSearchManager sm = (PHBridgeSearchManager) PhilipsHueAction.phHueSDK.getSDKService(PHHueSDK.SEARCH_BRIDGE);
+                        Logger.d(TAG+"_HueConfig", "CONNECT TO HUE!!!");
+                        sm.search(true, true);
+                        Logger.d(TAG + "_HueConfig", "CONNECT TO HUE!!!");
                     }
                 }).start();
                 new Countdown().execute();
@@ -117,6 +92,73 @@ public class PhilipsHueActionConfigurationFragment extends Fragment
 
         });
         return fragment;
+    }
+
+
+    private void pupulatebulbselection()
+    {
+        Logger.d(TAG, "try to populate the lightbulb section");
+        new FindLightBulbs().execute();
+    }
+
+    private class FindLightBulbs extends AsyncTask<Integer, Integer, Long>
+    {
+        protected Long doInBackground(Integer... urls)
+        {
+            try
+            {
+                if(!PhilipsHueAction.lastKnownIP.equals("")) {
+                        lights = PhilipsHueAction.getLights();
+                }
+                else {
+                    Logger.d(TAG, "the LAst Known IP is somehow not set");
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.e(TAG+"_HueConfig", "ERROR"+e.toString() );
+            }
+            return 0l;
+        }
+
+        protected void onProgressUpdate(Integer... progress)
+        {
+
+        }
+
+        protected void onPostExecute(Long result)
+        {
+            Logger.d(TAG+"_HueConfig", "onPostExecute");
+            if(lights.size()>0)
+            {
+                LinearLayout space = (LinearLayout) fragment.findViewById(R.id.selectbulbs);
+                Logger.d(TAG + "_HueConfig", "LIGHTS? " + lights.size());
+                for (PHLight light : lights) {
+                    final String lightName = light.getName();
+                    CheckBox l = new CheckBox(fragment.getContext());
+                    l.setText(light.getName());
+                    if (action.getLightsToTurnOn().contains("_" + lightName + "_")) {
+                        l.setChecked(true);
+                    }
+                    l.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            if (isChecked) {
+                                action.setLightsToTurnOn(action.getLightsToTurnOn() + "_" + lightName + "_");
+                            } else {
+                                action.setLightsToTurnOn(action.getLightsToTurnOn().replace("_" + lightName + "_", ""));
+                            }
+
+                        }
+                    });
+                    space.addView(l);
+                }
+            }
+            else {
+                new FindLightBulbs().execute();
+                Logger.d(TAG, "lights is null");
+            }
+        }
     }
 
     private void fadeincheckbox(View fragment)
@@ -272,25 +314,29 @@ public class PhilipsHueActionConfigurationFragment extends Fragment
 
         protected void onProgressUpdate(Integer... progress)
         {
-            if(progress[0]==0)
-            {
-                Logger.d(TAG, "set visble");
-                connectbar.setVisibility(View.VISIBLE);
-                Logger.d(TAG, "p=0 start disc and auth");
+            try {
+                if (progress[0] == 0) {
+                    Logger.d(TAG, "set visble");
+                    connectbar.setVisibility(View.VISIBLE);
+                    Logger.d(TAG, "p=0 start disc and auth");
+                }
+                String thirty = getResources().getString(R.string.thirtyhue);
+                text.setText(thirty);
+                connectbutton.setClickable(false);
+                Logger.d(TAG, "int p");
+                double px = progress[0];
+                int p = (int) (px / (0.3));
+                if (progress[0] == 29) {
+                    p = 100;
+                }
+                Logger.d(TAG, "p=" + p);
+                connectbar.setProgress(p);
+                Logger.d(TAG, "done");
             }
-            String thirty = getResources().getString(R.string.thirtyhue);
-            text.setText(thirty);
-            connectbutton.setClickable(false);
-            Logger.d(TAG, "int p");
-            double px = progress[0];
-            int p = (int) (px/(0.3));
-            if(progress[0]==29)
+            catch(Exception e)
             {
-                p=100;
+                //This can happen if the activity restarts during countdown... better to catch it.
             }
-            Logger.d(TAG, "p="+p);
-            connectbar.setProgress(p);
-            Logger.d(TAG, "done");
         }
 
         protected void onPostExecute(Long result)
@@ -300,6 +346,9 @@ public class PhilipsHueActionConfigurationFragment extends Fragment
             connectbutton.setClickable(true);
             text.setText("");
             Logger.d(TAG, "on Post Execute 2");
+            pupulatebulbselection();
+            Logger.d(TAG, "on Post Execute 3");
+
         }
     }
 }

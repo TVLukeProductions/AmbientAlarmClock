@@ -74,8 +74,10 @@ public class ActionManager
 
     public static void notifyOfCurrentTime(DateTime currentTime)
     {
+        Logger.d(TAG, "notifyactionsoftime...");
         for(AmbientAction action: actionList)
         {
+            Logger.d(TAG, action.actionName);
             action.tick(currentTime);
         }
     }

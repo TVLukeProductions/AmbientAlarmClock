@@ -255,7 +255,9 @@ public class AmbientAlarm implements Timable
 
     private void performActionIfActionIsRequired(DateTime currentTime)
     {
+        Logger.d(TAG, "performActionIfActionIsRequired");
         //an action has been registered to be performed x minutes before alert
+        Logger.d(TAG, "do we have an action for: "+"-"+ minutesToAlertTime(currentTime));
         if(registeredActions.containsKey("-"+ minutesToAlertTime(currentTime)))
         {
             Logger.d(TAG, "jap1");

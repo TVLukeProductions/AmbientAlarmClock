@@ -1,7 +1,7 @@
 apply plugin: 'android'
 android {
     compileSdkVersion 19
-    buildToolsVersion '19.0.3'
+    buildToolsVersion '19.1 '
 
     signingConfigs {
         debug {
@@ -38,13 +38,15 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 14
-        versionCode 14
-        versionName "2.14b"
+        versionCode 18
+        versionName "2.18"
     }
 
     dependencies {
         compile fileTree(dir: 'libs', include: ['*.jar'])
         compile files('libs/joda-time-2.3.jar')
+        //compile files('libs/huelocalsdk.jar')
+        //compile files('libs/huesdkresources.jar')
         //this stuff is needed for chromecast
         //compile 'com.google.android.gms:play-services:4.3.23'
         //compile "com.android.support:support-v4:18.0.+"

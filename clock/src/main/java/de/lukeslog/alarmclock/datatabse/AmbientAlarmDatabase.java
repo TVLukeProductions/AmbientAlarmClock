@@ -98,7 +98,12 @@ public class AmbientAlarmDatabase
     public static void createDataBase(Context context)
     {
         openHelper = new OpenHelper(context);
-        database = openHelper.getWritableDatabase();
+        try {
+            database = openHelper.getWritableDatabase();
+        } catch(Exception e){
+            database.close();
+            database = openHelper.getWritableDatabase();
+        }
 
     }
 
@@ -345,13 +350,18 @@ public class AmbientAlarmDatabase
 
     private static boolean alarmEntryExists(AmbientAlarm ambientAlarm)
     {
-        Logger.d(TAG, " alarmEntryExists()");
-        String[] args={ambientAlarm.getAlarmID()};
-        Logger.d(TAG, "alarmID=" + ambientAlarm.getAlarmID());
-        Cursor cursor = database.rawQuery("SELECT * FROM "+TABLE_ALARM+" WHERE "+TABLE_ALARM_ALARMID+" = ? ", args);
-        boolean exists = (cursor.getCount() > 0);
-        cursor.close();
-        Logger.d(TAG, "existst? "+exists);
+        boolean exists = false;
+        try {
+            Logger.d(TAG, " alarmEntryExists()");
+            String[] args = {ambientAlarm.getAlarmID()};
+            Logger.d(TAG, "alarmID=" + ambientAlarm.getAlarmID());
+            Cursor cursor = database.rawQuery("SELECT * FROM " + TABLE_ALARM + " WHERE " + TABLE_ALARM_ALARMID + " = ? ", args);
+            exists = (cursor.getCount() > 0);
+            cursor.close();
+            Logger.d(TAG, "existst? " + exists);
+        } catch( Exception e){
+            Logger.e(TAG, "alarmEntryExists threw an error.");
+        }
         return exists;
     }
 

@@ -14,7 +14,6 @@ public class UISupport
         String minuteString="";
         String secondsString="";
         String hourString="";
-        String unit = "s";
         if(seconds<0)
         {
             minuteString="00";

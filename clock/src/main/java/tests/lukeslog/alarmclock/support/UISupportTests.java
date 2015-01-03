@@ -13,27 +13,32 @@ public class UISupportTests extends InstrumentationTestCase
 {
     public void testSecondsToCountdownStringFor0() throws Exception
     {
-        assertEquals("00:00", UISupport.secondsToCountdownString(0));
+        assertEquals("00:00 m", UISupport.secondsToCountdownString(0));
     }
 
     public void testSecondsToCountdownStringForMinusFour() throws Exception
     {
-        assertEquals("00:00", UISupport.secondsToCountdownString(-4));
+        assertEquals("00:00 m", UISupport.secondsToCountdownString(-4));
     }
 
     public void testSecondsToCountdownStringForSixty() throws Exception
     {
-        assertEquals("01:00", UISupport.secondsToCountdownString(60));
+        assertEquals("01:00 h", UISupport.secondsToCountdownString(3600));
     }
 
     public void testSecondsToCountdownStringForEightyOne() throws Exception
     {
-        assertEquals("01:21", UISupport.secondsToCountdownString(81));
+        assertEquals("01:21 h", UISupport.secondsToCountdownString(4860));
+    }
+
+    public void testSecondsToCountdownStringForHundretEighty() throws Exception
+    {
+        assertEquals("03:00 h", UISupport.secondsToCountdownString(10800));
     }
 
     public void testSecondsToCountdownStringForTreeThousand() throws Exception
     {
-        assertEquals("50:00", UISupport.secondsToCountdownString(3000));
+        assertEquals("50:00 m", UISupport.secondsToCountdownString(3000));
     }
 
     public void testGetTimeAsStringForTwelveThirty() throws Exception

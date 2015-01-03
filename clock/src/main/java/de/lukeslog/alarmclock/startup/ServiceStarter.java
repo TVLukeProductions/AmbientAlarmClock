@@ -30,8 +30,13 @@ public class ServiceStarter
     {
         ctx=context;
 
-        AmbientAlarmDatabase.createDataBase(context);
+        try {
+            AmbientAlarmDatabase.createDataBase(context);
+        } catch(Exception e){
+            Logger.e(TAG, "creatw Data Base from Service failed...");
+        }
         AmbientAlarmManager.updateListFromDataBase();
+
 
         setupBootClassArray();
         Radiostations.setUp();
